@@ -2,3 +2,4 @@
 
 Magnus Grønmo
 Ånund Jore
+Marius Fredrichsen
