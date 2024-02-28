@@ -1,8 +1,8 @@
 ### team-7
 
-Marius Fredrichsen
-Halimah Babakarkhail
-Ånund Kielland Jore!
-Magnus Grønmo!!
-Shannen Finnøy.
-Eida Iman Wared ⭐︎
+Marius Fredrichsen \n
+Shannen Finnøy \n
+Eida Iman Wared \n
+Halimah Babakarkhail \n
+Ånund Kielland Jore! \n
+Magnus Grønmo!! \n
