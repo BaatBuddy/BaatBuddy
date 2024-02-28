@@ -1,9 +1,8 @@
-# team-7
+### team-7
 
-Magnus Grønmo
-Ånund Jore
 Marius Fredrichsen
-Shannen Finnøy
-Eida Iman Wared
 Halimah Babakarkhail
-Endring
+Ånund Kielland Jore!
+Magnus Grønmo!!
+Shannen Finnøy.
+Eida Iman Wared ⭐︎
