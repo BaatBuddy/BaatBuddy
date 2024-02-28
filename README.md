@@ -5,4 +5,4 @@ Eida Iman Wared
 Halimah Babakarkhail
 Ånund Kielland Jore!
 Magnus Grønmo!!
-Shannen Finnøy
+Shannen Finnøy.
