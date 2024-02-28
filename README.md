@@ -4,3 +4,4 @@ Magnus Grønmo
 Ånund Jore
 Marius Fredrichsen
 Shannen Finnøy
+Eida Iman Wared
