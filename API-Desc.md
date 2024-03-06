@@ -16,7 +16,8 @@ Det er også påkrevd å ha med lat og lon i api-kallet. Hvor denne grensen er, 
 Datamodellen finnes [her](https://docs.api.met.no/doc/oceanforecast/datamodel).
 
 ### Målinger (Propterties)
-Målingene i en instans vil bestå av en meta som sier noe om hva slags type måleenheter som blir brukt.
+Målingene i en API instans vil bestå av en meta som sier noe om hva slags type måleenheter som blir brukt og når den er oppdatert. I tillegg er det en timeseries som er en serie med tider den har data på. Tidene går fra en time før nærmeste hel time rundet ned, eks: Hvis man gjør et kall 19:36 så får man tiden for 18:00 også. Time serien er en liste der hvor hvert element har en tid og data. Data igjen har en instant som igjen er details, og inne i details er det alt som ligger i meta, men bare med faktisk måledata.
+
 | NAVN | MÅLEENHET | BESKRIVELSE |
 |--------|--------|-------|
 | sea_surface_wave_height | meter (m) | Significant wave height defined as the average of the highest one-third (33%) of waves (measured from trough to crest) |
