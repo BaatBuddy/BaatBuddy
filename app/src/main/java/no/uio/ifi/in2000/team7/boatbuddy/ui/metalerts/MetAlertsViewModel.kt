@@ -17,10 +17,10 @@ data class MetAlertsUIState(
 
 class MetAlertsViewModel : ViewModel() {
 
-    private val repository: MetAlertsRepository = MetAlertsRepository()
+    private val repository : MetAlertsRepository = MetAlertsRepository()
 
     private val _metalertsUIState = MutableStateFlow(MetAlertsUIState(null))
-    val metalertsUIState: StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
+    val metalertsUIState : StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
 
     init {
         loadmetalerts()
@@ -32,7 +32,7 @@ class MetAlertsViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 
             val metalerts = repository.getMetAlertsData()
-            _metalertsUIState.update { it.copy(metalerts = metalerts) }
+            _metalertsUIState.update {it.copy(metalerts = metalerts)}
 
         }
 

@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.appcompat:appcompat:1.6.1")
     val ktor_version = "2.3.8"
     val lifecycle_version = "2.7.0"
     implementation("androidx.core:core-ktx:1.12.0")
