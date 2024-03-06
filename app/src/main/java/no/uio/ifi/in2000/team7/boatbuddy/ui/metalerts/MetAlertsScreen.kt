@@ -10,26 +10,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 
+
 @Composable
-fun MetAlertsScreen(metAlertsViewModel: MetAlertsViewModel = viewModel()) {
+fun Screen (metAlertsViewModel: MetAlertsViewModel = viewModel()){
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
 
     Column(modifier = Modifier
-    .fillMaxSize()
-    .fillMaxWidth()
-    .padding(35.dp)) {
+        .fillMaxSize()
+        .fillMaxWidth()
+        .padding(35.dp)) {
 
 
 
         Text(text = metAlertsUIState.metalerts.toString(), modifier = Modifier.verticalScroll(
-            rememberScrollState()
-        ))
+            rememberScrollState()))
 
     }
 
@@ -37,6 +37,5 @@ fun MetAlertsScreen(metAlertsViewModel: MetAlertsViewModel = viewModel()) {
 
 @Composable
 fun MetCard(modifier: Modifier, metalerts: MetAlertsData) {
-
 
 }

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -9,6 +10,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 import java.net.UnknownHostException
 
 class MetAlertsDataSource(private val path: String = "https://api.met.no/weatherapi/metalerts/2.0/current.json") {
+
     private val client = HttpClient{
         install(ContentNegotiation) {
             gson()
@@ -19,11 +21,12 @@ class MetAlertsDataSource(private val path: String = "https://api.met.no/weather
 
         return try {
             val result: MetAlertsData = client.get(path).body()
+            Log.d("TEST123", "LSNK-asfmkn")
             result
         } catch (
             e: UnknownHostException
         ) {
             null
         }
-    }
-}
+
+}}
