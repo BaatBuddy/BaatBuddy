@@ -1,4 +1,6 @@
 # Bruk av APIs
+- OceanForecast API
+- Sunrise API
 
 ## OceanForecast API
 En instans av OceanForecast API'et består av et område (geometry) og områdets målinger (properties) over tid (timeseries).
