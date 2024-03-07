@@ -18,15 +18,12 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 
 @Composable
 fun Screen (metAlertsViewModel: MetAlertsViewModel = viewModel()){
-
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxSize()
         .fillMaxWidth()
         .padding(35.dp)) {
-
-
 
         Text(text = metAlertsUIState.metalerts.toString(), modifier = Modifier.verticalScroll(
             rememberScrollState()))
