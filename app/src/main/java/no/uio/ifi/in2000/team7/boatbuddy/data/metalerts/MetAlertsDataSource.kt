@@ -18,10 +18,8 @@ class MetAlertsDataSource(private val path: String = "https://api.met.no/weather
     }
 
     suspend fun getMetAlertsData() : MetAlertsData? {
-
         return try {
             val result: MetAlertsData = client.get(path).body()
-            Log.d("TEST123", "LSNK-asfmkn")
             result
         } catch (
             e: UnknownHostException
