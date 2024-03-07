@@ -76,13 +76,16 @@ title: Sunrise API
 ---
 graph TD
 
-API -->|String|type1[type]
-    API --> geometry & when & properties
+API((API-endpoint))
+
+API --> |String| type & geometry & when & properties
 
     geometry -->|String| type2[type]
-    geometry --> coordinates
+    geometry --> |Array|coordinates
+    coordinates --> |double|longitude & latitude
 
-    when --> |String|interval
+    when --> |Array|interval
+    interval --> |String| start & slutt
 
     properties --> 
 
@@ -93,14 +96,18 @@ API -->|String|type1[type]
   A -->|String| E(Solarmidnight)
 
   B --> |String| time1[time]
-  B --> |String| azimuth1[azimuth]
+  B --> |double| azimuth1[azimuth]
   C --> |String| time2[time]
-  C --> |String| azimuth2[azimuth]
+  C --> |double| azimuth2[azimuth]
   D --> |String| time3[time]
-  D --> |String| disc_centre_elevation1[disc_centre_elevation]
+  D --> |double| disc_centre_elevation1[disc_centre_elevation]
+  D --> |boolean| visible1[visible]
+
   E --> |String| time4[time]
-  E --> |int| disc_centre_elevation2[disc_centre_elevation]
+  E --> |double| disc_centre_elevation2[disc_centre_elevation]
   E --> |boolean| visible2[visible]
+
+```
 
 
 
