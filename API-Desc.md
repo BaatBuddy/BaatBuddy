@@ -84,10 +84,6 @@ Tilsvarende for nedgang har vi tidspunktet der det øverste punktet soldisken ig
 
 Den visuelle solradien når den befinner seg ved horisonten er omtrent 0.266°. Ideelt sett kunne man da sagt at soloppgang inntreffer når senteret til solskiven er 0.266° under horisonten. En svært viktig faktor for når soloppgang visuelt intreffer er refraksjon grunnet Jordas atmosfære. Grunnet jordas atmosfære vil lys fra objekter i verdensrommet avbøyes og deres visuelle posisjon vil avvike fra deres faktiske posisjon. Nedenfor vises en illustrasjon av fenomenet.
 
-Atmosfærisk refraksjon
-
-Kilde: https://upload.wikimedia.org/wikipedia/commons/3/39/Atmospheric_refraction_-_sunset_and_sunrise.png
-
 Selv om lysavbøyning grunnet atmosfærens refraksjon ikke har en konstant verdi, men varierer grunnet forhold som blant varierende temperatur, har man kommet frem til en gjennomsnittsverdi på omtrent 0.566°. Legger man til den visuelle Solradien og atmosfærens refraksjon, har man har da kommet frem til en definisjon der soloppgang inntreffer når Solen er 0.833° under horisonten. For videre lesning, der vi har basert mye av vår informasjon, anbefales United States Naval Observatory sine nettsider:
 
 https://aa.usno.navy.mil/faq/RST_defs
