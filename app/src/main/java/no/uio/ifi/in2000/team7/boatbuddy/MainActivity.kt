@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import no.uio.ifi.in2000.team7.boatbuddy.ui.metalerts.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,25 +24,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
 
                 ) {
-                    Greeting("BoatBuddy")
+                    Screen()
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BoatbuddyTheme {
-        Greeting("Android")
     }
 }
