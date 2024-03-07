@@ -90,6 +90,8 @@ https://aa.usno.navy.mil/faq/RST_defs
 
 For månen har vi en tilsvarende definisjon. Siden Månen er nærmere enn Solen så vil dens visuelle størrelse variere i større grad der den beveger seg i sin elliptiske bane rundt jorden. Vi har likevel valgt å bruke en gjennomsnittsverdi på 0.266° for månens visuelle radius. Tatt i betrakting verdien for atmosfærens refraksjon har da månen og sola har samme definisjon på opp- og nedgang i Sunrise 3.0.
 
+
+### Flowchart of the API
 ```mermaid
 ---
 title: Sunrise API
