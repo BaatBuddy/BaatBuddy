@@ -1,4 +1,6 @@
 # Bruk av APIs
+- OceanForecast API
+- Sunrise API
 
 ## OceanForecast API
 En instans av OceanForecast API'et består av et område (geometry) og områdets målinger (properties) over tid (timeseries).
@@ -69,3 +71,72 @@ flowchart TB
     units -->|celsius| u4[sea_water_temperature]
     units -->|degrees| u5[sea_water_to_direction]
 ```
+
+## Sunrise API
+
+Sunrise
+Sunrise 3.0 er en tjeneste som leverer data om sol og måne. Backenden er skrevet i Python, og kildekoden er tilgjengelig på GitHub med fri lisens.
+
+Tjenesten leverer henholdsvis opp- og nedgangstider, samt når det to legemene krysser meridian og antimeridian. Nedenfor følger en beskrivelse av disse fenomenene.
+
+### Oppgang/Nedgang for Solen
+Oppgang for sola er det tidspunktet der det øverste punktet på soldisken krysser horisonten.
+
+Tilsvarende for nedgang har vi tidspunktet der det øverste punktet soldisken igjen krysser horisonten på vei ned. Den astronomiske horisonten er et imaginært plan som står 90° på den aksen som peker rett opp fra observatøren, også kalt zenith.
+
+Den visuelle solradien når den befinner seg ved horisonten er omtrent 0.266°. Ideelt sett kunne man da sagt at soloppgang inntreffer når senteret til solskiven er 0.266° under horisonten. En svært viktig faktor for når soloppgang visuelt intreffer er refraksjon grunnet Jordas atmosfære. Grunnet jordas atmosfære vil lys fra objekter i verdensrommet avbøyes og deres visuelle posisjon vil avvike fra deres faktiske posisjon. Nedenfor vises en illustrasjon av fenomenet.
+
+![a](https://in2000.met.no/images/examples/atmosphere_refrac.png)
+
+Selv om lysavbøyning grunnet atmosfærens refraksjon ikke har en konstant verdi, men varierer grunnet forhold som blant varierende temperatur, har man kommet frem til en gjennomsnittsverdi på omtrent 0.566°. Legger man til den visuelle Solradien og atmosfærens refraksjon, har man har da kommet frem til en definisjon der soloppgang inntreffer når Solen er 0.833° under horisonten. For videre lesning, der vi har basert mye av vår informasjon, anbefales United States Naval Observatory sine nettsider:
+
+https://aa.usno.navy.mil/faq/RST_defs
+
+For månen har vi en tilsvarende definisjon. Siden Månen er nærmere enn Solen så vil dens visuelle størrelse variere i større grad der den beveger seg i sin elliptiske bane rundt jorden. Vi har likevel valgt å bruke en gjennomsnittsverdi på 0.266° for månens visuelle radius. Tatt i betrakting verdien for atmosfærens refraksjon har da månen og sola har samme definisjon på opp- og nedgang i Sunrise 3.0.
+
+
+### Flowchart of the API
+```mermaid
+---
+title: Sunrise API
+---
+graph TD
+
+API((API-endpoint))
+
+API --> |String| type & geometry & when & properties
+
+    geometry -->|String| type2[type]
+    geometry --> |Array|coordinates
+    coordinates --> |double|longitude & latitude
+
+    when --> |Array|interval
+    interval --> |String| start & slutt
+
+    properties --> 
+
+
+  A[Sun] -->|String| B(Sunrise)
+  A -->|String| C(Sunset)
+  A -->|String| D(Solarnoon)
+  A -->|String| E(Solarmidnight)
+
+  B --> |String| time1[time]
+  B --> |double| azimuth1[azimuth]
+  C --> |String| time2[time]
+  C --> |double| azimuth2[azimuth]
+  D --> |String| time3[time]
+  D --> |double| disc_centre_elevation1[disc_centre_elevation]
+  D --> |boolean| visible1[visible]
+
+  E --> |String| time4[time]
+  E --> |double| disc_centre_elevation2[disc_centre_elevation]
+  E --> |boolean| visible2[visible]
+
+```
+
+
+
+
+  
+
