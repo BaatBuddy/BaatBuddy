@@ -69,3 +69,41 @@ flowchart TB
     units -->|celsius| u4[sea_water_temperature]
     units -->|degrees| u5[sea_water_to_direction]
 ```
+
+```mermaid
+---
+title: Sunrise API
+---
+graph TD
+
+API -->|String|type1[type]
+    API --> geometry & when & properties
+
+    geometry -->|String| type2[type]
+    geometry --> coordinates
+
+    when --> |String|interval
+
+    properties --> 
+
+
+  A[Sun] -->|String| B(Sunrise)
+  A -->|String| C(Sunset)
+  A -->|String| D(Solarnoon)
+  A -->|String| E(Solarmidnight)
+
+  B --> |String| time1[time]
+  B --> |String| azimuth1[azimuth]
+  C --> |String| time2[time]
+  C --> |String| azimuth2[azimuth]
+  D --> |String| time3[time]
+  D --> |String| disc_centre_elevation1[disc_centre_elevation]
+  E --> |String| time4[time]
+  E --> |int| disc_centre_elevation2[disc_centre_elevation]
+  E --> |boolean| visible2[visible]
+
+
+
+
+  
+
