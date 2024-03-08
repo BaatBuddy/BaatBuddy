@@ -62,7 +62,7 @@ class SunriseDataSource(
             // args-order -> lat , lon , date ("YYYY-MM-DD")
             val results = client.get("weatherapi/sunrise/3.0/sun?lat=%s&lon=%s&date=%s&offset=+01:00".format(lat, lon, date))
 
-            // checks if the api-call was valid
+            // checks if the api-call is valid
             if (results.status.value !in 200 .. 299) return null
 
             val data: SunriseAPI = results.body()
@@ -77,7 +77,7 @@ class SunriseDataSource(
                 sunriseAzimuth = properties.sunrise.azimuth,
 
                 sunsetTime = properties.sunset.time,
-                sunsetAzimuth = properties.sunrise.azimuth,
+                sunsetAzimuth = properties.sunset.azimuth,
 
                 solarnoonTime = properties.solarnoon.time,
                 solarnoonElevation = properties.solarnoon.disc_centre_elevation,
