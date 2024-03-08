@@ -12,19 +12,18 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 
 data class MetAlertsUIState(
-    val metalerts : MetAlertsData?
+    val metalerts: MetAlertsData?
 )
 
 class MetAlertsViewModel : ViewModel() {
 
-    private val repository : MetAlertsRepository = MetAlertsRepository()
+    private val repository: MetAlertsRepository = MetAlertsRepository()
 
     private val _metalertsUIState = MutableStateFlow(MetAlertsUIState(null))
-    val metalertsUIState : StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
+    val metalertsUIState: StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
 
     init {
         loadmetalerts()
-
     }
 
     private fun loadmetalerts() {
@@ -32,7 +31,7 @@ class MetAlertsViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 
             val metalerts = repository.getMetAlertsData()
-            _metalertsUIState.update {it.copy(metalerts = metalerts)}
+            _metalertsUIState.update { it.copy(metalerts = metalerts) }
 
         }
 
