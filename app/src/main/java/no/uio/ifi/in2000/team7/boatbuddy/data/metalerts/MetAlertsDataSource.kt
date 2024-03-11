@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -41,6 +42,8 @@ class MetAlertsDataSource(
 
             val data: MetAlertsAPI = results.body()
 
+            Log.d("SSSS", data.toString())
+
 
             MetAlertsData(
                 lang = data.lang,
@@ -51,16 +54,13 @@ class MetAlertsDataSource(
                         start = it.`when`.interval[0],
                         end = it.`when`.interval[1],
                         awarenessResponse = properties.awarenessResponse,
-                        awarenessSeriousness = properties.awarenessSeriousness,
                         awareness_level = properties.awareness_level,
                         awareness_type = properties.awareness_type,
                         certainty = properties.certainty,
-                        consequences = properties.consequences,
                         geographicDomain = properties.geographicDomain,
                         instruction = properties.instruction,
                         riskMatrixColor = properties.riskMatrixColor,
                         severity = properties.severity,
-                        triggerLevel = properties.triggerLevel,
                         type = properties.type,
                         affected_area = it.geometry.coordinates
                     )

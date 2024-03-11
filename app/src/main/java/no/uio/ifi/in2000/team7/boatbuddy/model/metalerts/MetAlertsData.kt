@@ -11,16 +11,13 @@ data class FeatureData(
     val start: String,
     val end: String,
     val awarenessResponse: String,
-    val awarenessSeriousness: String,
     val awareness_level: String,
     val awareness_type: String,
     val certainty: String,
-    val consequences: String,
     val geographicDomain: String,
     val instruction: String,
     val riskMatrixColor: String,
     val severity: String,
-    val triggerLevel: String?,
     val type: String,
     val affected_area : List<List<List<Any>>>
 

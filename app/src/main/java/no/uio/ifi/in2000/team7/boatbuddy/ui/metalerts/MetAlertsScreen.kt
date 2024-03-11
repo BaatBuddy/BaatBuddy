@@ -73,7 +73,9 @@ fun MetCard(modifier: Modifier, feature: FeatureData) {
 
             Text(text = "start: " + feature.start)
             Text(text = "end: " + feature.end)
-            Text(text = "instruks: " + feature.instruction)
+            if (feature.instruction.isNotEmpty()) {
+                Text(text = "instruks: " + feature.instruction)
+            }
 
         }
     }
