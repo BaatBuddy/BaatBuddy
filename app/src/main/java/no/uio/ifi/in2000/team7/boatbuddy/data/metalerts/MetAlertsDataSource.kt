@@ -71,6 +71,16 @@ class MetAlertsDataSource(
                 e: UnknownHostException
             ) {
                 null
+
+    suspend fun getMetAlertsData() : MetAlertsData? {
+        return try {
+            val result: MetAlertsData = client.get(path).body()
+            result
+        } catch (
+            e: UnknownHostException
+        ) {
+            null
+
         }
     }
 

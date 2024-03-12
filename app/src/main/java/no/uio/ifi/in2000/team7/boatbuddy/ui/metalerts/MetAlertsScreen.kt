@@ -23,7 +23,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
+
 fun MetAlertsScreen (metAlertsViewModel: MetAlertsViewModel = viewModel()){
+
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
 
@@ -35,9 +37,14 @@ fun MetAlertsScreen (metAlertsViewModel: MetAlertsViewModel = viewModel()){
         .padding(35.dp)
         .verticalScroll(rememberScrollState())) {
 
+
         metAlertsUIState.metalerts?.features?.filter{it.geographicDomain == "marine"}?.forEach { feature ->
             MetCard(modifier = Modifier, feature = feature)
         }
+
+        Text(text = metAlertsUIState.metalerts.toString(), modifier = Modifier.verticalScroll(
+            rememberScrollState()))
+
 
     }
 
