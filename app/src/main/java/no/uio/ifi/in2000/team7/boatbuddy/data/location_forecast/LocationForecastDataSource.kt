@@ -34,4 +34,9 @@ class LocationForecastDataSource(private val path: String = "https://gw-uio.inta
             null
         }
     }
+
+    //Tar imot Lat, lon og altitude
+    suspend fun getLocationForecastDataEssential() {
+
+    }
 }
