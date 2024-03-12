@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.sunrise
 
-import android.util.Log
-import androidx.core.text.isDigitsOnly
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,7 +10,6 @@ import io.ktor.util.appendIfNameAbsent
 import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseAPI
 import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
 import java.net.UnknownHostException
-import kotlin.math.max
 
 class SunriseDataSource(
     private val path: String =
@@ -56,14 +53,19 @@ class SunriseDataSource(
         ).any())*/
     }
 
-    suspend fun getSunriseData(lat: String, lon: String, date: String) : SunriseData? {
+    suspend fun getSunriseData(lat: String, lon: String, date: String): SunriseData? {
+
+        var url: String = "weatherapi/sunrise/3.0/sun?lat=%s&lon=%s".format(lat, lon)
+        if (date.isNotBlank()) {
+            url += "&date=%s&offset=+01:00".format(date)
+        }
 
         return try {
             // args-order -> lat , lon , date ("YYYY-MM-DD")
-            val results = client.get("weatherapi/sunrise/3.0/sun?lat=%s&lon=%s&date=%s&offset=+01:00".format(lat, lon, date))
+            val results = client.get(url)
 
             // checks if the api-call is valid
-            if (results.status.value !in 200 .. 299) return null
+            if (results.status.value !in 200..299) return null
 
             val data: SunriseAPI = results.body()
 
