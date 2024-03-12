@@ -36,11 +36,21 @@ fun MetAlertsScreen (metAlertsViewModel: MetAlertsViewModel = viewModel()){
         .padding(35.dp)
         .verticalScroll(rememberScrollState())) {
 
+
         Text(text = metAlertsUIState.metalerts.toString(), modifier = Modifier.verticalScroll(
             rememberScrollState()))
         metAlertsUIState.metalerts?.features?.filter{it.geographicDomain == "marine"}?.forEach { feature ->
             MetCard(modifier = Modifier, feature = feature)
         }
+
+
+        metAlertsUIState.metalerts?.features?.filter{it.geographicDomain == "marine"}?.forEach { feature ->
+            MetCard(modifier = Modifier, feature = feature)
+        }
+
+        Text(text = metAlertsUIState.metalerts.toString(), modifier = Modifier.verticalScroll(
+            rememberScrollState()))
+
 
     }
 

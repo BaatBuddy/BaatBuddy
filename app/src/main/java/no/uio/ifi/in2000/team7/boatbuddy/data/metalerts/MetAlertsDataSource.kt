@@ -31,6 +31,7 @@ class MetAlertsDataSource(
     }
 
     suspend fun getMetAlertsData(): MetAlertsData? {
+
         return try {
             val result: MetAlertsData = client.get(path).body()
             result
@@ -42,48 +43,53 @@ class MetAlertsDataSource(
         suspend fun getMetAlertsData(): MetAlertsData? {
 
 
-            return try {
-
-                val results = client.get("weatherapi/metalerts/2.0/current.json")
-
-                //checks if API-call is valid
-                if (results.status.value !in 200..299) return null
-
-                val data: MetAlertsAPI = results.body()
-
-                Log.d("SSSS", data.toString())
 
 
-                MetAlertsData(
-                    lang = data.lang,
-                    lastChange = data.lastChange,
-                    features = data.features.map {
-                        val properties = it.properties
-                        FeatureData(
-                            start = it.`when`.interval[0],
-                            end = it.`when`.interval[1],
-                            awarenessResponse = properties.awarenessResponse,
-                            awareness_level = properties.awareness_level,
-                            awareness_type = properties.awareness_type,
-                            certainty = properties.certainty,
-                            geographicDomain = properties.geographicDomain,
-                            instruction = properties.instruction,
-                            riskMatrixColor = properties.riskMatrixColor,
-                            severity = properties.severity,
-                            type = properties.type,
-                            affected_area = it.geometry.coordinates
-                        )
-                    }
-                )
+                return try {
 
-            } catch (
-                e: UnknownHostException
-            ) {
-                null
-            }
+
+                    val results = client.get("weatherapi/metalerts/2.0/current.json")
+
+                    //checks if API-call is valid
+                    if (results.status.value !in 200..299) return null
+
+                    val data: MetAlertsAPI = results.body()
+
+                    Log.d("SSSS", data.toString())
+
+
+                    MetAlertsData(
+                        lang = data.lang,
+                        lastChange = data.lastChange,
+                        features = data.features.map {
+                            val properties = it.properties
+                            FeatureData(
+                                start = it.`when`.interval[0],
+                                end = it.`when`.interval[1],
+                                awarenessResponse = properties.awarenessResponse,
+                                awareness_level = properties.awareness_level,
+                                awareness_type = properties.awareness_type,
+                                certainty = properties.certainty,
+                                geographicDomain = properties.geographicDomain,
+                                instruction = properties.instruction,
+                                riskMatrixColor = properties.riskMatrixColor,
+                                severity = properties.severity,
+                                type = properties.type,
+                                affected_area = it.geometry.coordinates
+                            )
+                        }
+                    )
+
+                } catch (
+                    e: UnknownHostException
+                ) {
+                    null
+
+                }
 
         }
     }
 }
+
 
 
