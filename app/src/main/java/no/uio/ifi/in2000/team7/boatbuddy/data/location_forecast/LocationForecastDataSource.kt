@@ -11,7 +11,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.dto.LocationForc
 import java.net.UnknownHostException
 
 class LocationForecastDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=59.93&lon=10.72&altitude=90") {
-
+    // https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=59.93&lon=10.72&altitude=90
     private val client = HttpClient() {
         defaultRequest {
             url(path)
@@ -23,20 +23,23 @@ class LocationForecastDataSource(private val path: String = "https://gw-uio.inta
         }
     }
 
+    //Tar imot Lat, lon og altitude
+    suspend fun getLocationForecastData(
+        lat: String,
+        lon: String,
+        altitude: String
+    ): LocationForcastCompactDTO? {
 
-    suspend fun getLocationForecastData(): LocationForcastCompactDTO? {
-
+        val pathLon =
+            "https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=%s&lon=%s&altitude=%s"
         return try {
-            val result: LocationForcastCompactDTO = client.get(path).body()
-
+            //order of args -> lat, lon, altitude
+            val result: LocationForcastCompactDTO =
+                client.get(pathLon.format(lat, lon, altitude)).body()
             result
         } catch (e: UnknownHostException) {
             null
         }
-    }
-
-    //Tar imot Lat, lon og altitude
-    suspend fun getLocationForecastDataEssential() {
 
     }
 }
