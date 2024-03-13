@@ -19,6 +19,13 @@ fun LocationForecastScreen(locationForecastViewModel: LocationForecastViewModel 
 
     val locationForecastUiState by locationForecastViewModel.locationForecastUiState.collectAsState()
 
+    var lat = "59"
+    var lon = "10"
+    var altitude = "92"
+
+    locationForecastViewModel.initialize(lat, lon, altitude)
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()

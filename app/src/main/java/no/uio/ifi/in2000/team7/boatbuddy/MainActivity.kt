@@ -8,6 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 
+import no.uio.ifi.in2000.team7.boatbuddy.ui.locationforecast.LocationForecastScreen
+
+
 import no.uio.ifi.in2000.team7.boatbuddy.ui.oceanforecast.OceanForecastScreen
 
 import no.uio.ifi.in2000.team7.boatbuddy.ui.sunrise.SunriseScreen
@@ -19,7 +22,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.metalerts.MetAlertsScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.oceanforecast.OceanForecastScreen
 
 import no.uio.ifi.in2000.team7.boatbuddy.ui.sunrise.SunriseScreen
-
 
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
@@ -35,13 +37,11 @@ class MainActivity : ComponentActivity() {
 
                 ) {
 
-
+                    //Screen()
+                    //SunriseScreen()
+                    LocationForecastScreen()
                     MetAlertsScreen()
-
-
-
                     OceanForecastScreen()
-                   
                     SunriseScreen()
 
                 }
