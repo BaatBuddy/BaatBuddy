@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
-import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.dto.LocationForcastCompactDTO
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForcastCompactDTO
 
 interface LocationForecastRepo {
     suspend fun getLocationForecastData(
