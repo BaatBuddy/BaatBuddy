@@ -16,7 +16,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
 data class SunriseUIState(
     val sunriseData: SunriseData? = null
 )
-class SunriseViewModel: ViewModel() {
+
+class SunriseViewModel : ViewModel() {
     private val repository: SunriseRepository = SunriseRepository()
 
     private val _sunriseUIState = MutableStateFlow(SunriseUIState(null))
@@ -26,14 +27,14 @@ class SunriseViewModel: ViewModel() {
     private var lastPosDate = ""
 
     @MainThread
-    fun initialize(lat: String, lon: String, date: String) {
+    fun initialize(lat: String, lon: String, date: String = "") {
         // checks if the last initialize call has identical data
-        initialized = lastPosDate == lat+lon+date
+        initialized = lastPosDate == lat + lon + date
 
         if (initialized) return
 
         initialized = true
-        lastPosDate = lat+lon+date
+        lastPosDate = lat + lon + date
 
         loadSunriseData(lat, lon, date)
     }
