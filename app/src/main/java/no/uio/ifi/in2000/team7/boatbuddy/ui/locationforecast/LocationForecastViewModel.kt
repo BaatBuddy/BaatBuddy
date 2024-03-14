@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.dto.LocationForcastCompactDTO
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForcastCompactDTO
 
 data class LocationForecastUiState(
     val locationForecast: LocationForcastCompactDTO?
