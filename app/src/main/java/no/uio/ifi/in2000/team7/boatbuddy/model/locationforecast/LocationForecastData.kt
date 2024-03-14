@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast
 
 data class LocationForecastData(
+    //These are all current/instant values
     val air_pressure_at_sea_level: Double, //Lufttrykk på havnivå
     val air_temperature: Double, //Lufttemperatur 2m over bakken
     val cloud_area_fraction: Double, //Total skydekke for alle høyder

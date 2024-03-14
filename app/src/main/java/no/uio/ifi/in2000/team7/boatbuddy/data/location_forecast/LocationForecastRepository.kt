@@ -1,13 +1,13 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForcastCompactDTO
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
 
 interface LocationForecastRepo {
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
         altitude: String
-    ): LocationForcastCompactDTO?
+    ): LocationForecastData?
 }
 
 class LocationForecastRepository(private val dataSource: LocationForecastDataSource = LocationForecastDataSource()) :
@@ -15,7 +15,7 @@ class LocationForecastRepository(private val dataSource: LocationForecastDataSou
     override suspend fun getLocationForecastData(
         lat: String, lon: String, altitude: String
 
-    ): LocationForcastCompactDTO? {
+    ): LocationForecastData? {
         return dataSource.getLocationForecastData(lat, lon, altitude)
     }
 
