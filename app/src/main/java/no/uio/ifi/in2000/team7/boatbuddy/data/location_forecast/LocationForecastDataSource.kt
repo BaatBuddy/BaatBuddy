@@ -1,50 +1,54 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
-import io.ktor.serialization.gson.gson
-import io.ktor.util.appendIfNameAbsent
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForcastCompactDTO
+import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastAPI
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeData
 import java.net.UnknownHostException
 
-class LocationForecastDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=59.93&lon=10.72&altitude=90") {
+class LocationForecastDataSource {
     // https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=59.93&lon=10.72&altitude=90
-    private val client = HttpClient() {
-        defaultRequest {
-            url(path)
-            headers.appendIfNameAbsent("X-Gravitee-API-Key", "ea3539d4-efa7-46bd-828d-d05b0c6a86ae")
-        }
-        install(ContentNegotiation) {
-            gson()
 
-        }
-    }
 
     //Tar imot Lat, lon og altitude
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
-        altitude: String
+        altitude: String = "0" // 0 if no argument
     ): LocationForecastData? {
 
-        val pathLon =
-            "https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=%s&lon=%s&altitude=%s"
+        val path = "/weatherapi/locationforecast/2.0/compact?lat=%s&lon=%s&altitude=%s"
         return try {
             //order of args -> lat, lon, altitude
-            val result: LocationForcastCompactDTO =
-                client.get(pathLon.format(lat, lon, altitude)).body()
+            val results = client.get(path.format(lat, lon, altitude))
+
+            if (results.status.value !in 200..299) return null
+
+            val data: LocationForecastAPI = results.body()
+
+            val coordinates = data.geometry.coordinates
+            val timeseries = data.properties.timeseries
 
             LocationForecastData(
-                air_pressure_at_sea_level = result.properties.timeseries.get(0).data.instant.details.air_pressure_at_sea_level,
-                air_temperature = result.properties.timeseries.get(0).data.instant.details.air_temperature,
-                cloud_area_fraction = result.properties.timeseries.get(0).data.instant.details.cloud_area_fraction,
-                relative_humidity = result.properties.timeseries.get(0).data.instant.details.relative_humidity,
-                wind_from_direction = result.properties.timeseries.get(0).data.instant.details.wind_from_direction,
-                wind_speed = result.properties.timeseries.get(0).data.instant.details.wind_speed
+                lat = coordinates[1],
+                lon = coordinates[0],
+                timeseries = timeseries.map { timesery ->
+                    val details = timesery.data.instant.details
+                    TimeData(
+                        time = timesery.time,
+                        air_pressure_at_sea_level = details.air_pressure_at_sea_level,
+                        air_temperature = details.air_temperature,
+                        cloud_area_fraction = details.cloud_area_fraction,
+                        fog_area_fraction = details.fog_area_fraction,
+                        ultraviolet_index_clear_sky = details.ultraviolet_index_clear_sky,
+                        relative_humidity = details.relative_humidity,
+                        wind_from_direction = details.wind_from_direction,
+                        wind_speed = details.wind_speed,
+                        wind_speed_of_gust = details.wind_speed_of_gust
+                    )
+                }
             )
 
 
