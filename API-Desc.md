@@ -28,9 +28,8 @@ vises på kartet nedenfor:
 Datamodellen finnes [her](https://docs.api.met.no/doc/oceanforecast/datamodel).
 
 ### Målinger (Propterties)
+Målingene i en API instans vil bestå av en meta som sier noe om hva slags type måleenheter som blir brukt og når den er oppdatert. I tillegg er det en timeseries som er en serie med tider den har data på. Tidene går fra en time før nærmeste hel time rundet ned, eks: Hvis man gjør et kall 19:36 så får man tiden for 18:00 også. Time serien er en liste der hvor hvert element har en tid og data. Data igjen har en instant som igjen er details, og inne i details er det alt som ligger i meta, men bare med faktisk måledata.
 
-Målingene i en instans vil bestå av en meta som sier noe om hva slags type måleenheter som blir
-brukt.
 | NAVN | MÅLEENHET | BESKRIVELSE |
 |--------|--------|-------|
 | sea_surface_wave_height | meter (m) | Significant wave height defined as the average of the
@@ -51,7 +50,6 @@ title: OceanForecast API
 ---
 flowchart TB
     API((API-endpoint))
-
 
     API -->|String|type1[type]
     API --> geometry & properties
@@ -86,6 +84,22 @@ flowchart TB
     units -->|celsius| u4[sea_water_temperature]
     units -->|degrees| u5[sea_water_to_direction]
 ```
+```mermaid
+graph TD
+    APIData((Data-endpoint))
+
+    APIData -->|List<Double>| coordinatesData[coordinates]
+    APIData -->|String| updated_atData[updated_at]
+    APIData -->|List<TimeLocationData>| timeseriesData[timeseries]
+    timeseriesData -->|String| td1[time]
+    timeseriesData -->|Double| td2[sea_surface_wave_from_direction]
+    timeseriesData -->|Double| td3[sea_surface_wave_height]
+    timeseriesData -->|Double| td4[sea_water_speed]
+    timeseriesData -->|Double| td5[sea_water_temperature]
+    timeseriesData -->|Double| td6[sea_water_to_direction]
+
+```
+API-Endpoint er endepunktet som man har til API-et, deserialisering blir gjort med denne klassen i Android. API-data er endepunktet som API-Endpoint blir konvertert til for å tillategjøre lett henting av nyttig data.
 
 ## Sunrise API
 
@@ -137,34 +151,56 @@ graph TD
 
 API((API-endpoint))
 
-API --> |String| type & geometry & when & properties
+API -->|String| type & licenseURL
+API --> geometry & when & properties
 
     geometry -->|String| type2[type]
-    geometry --> |Array|coordinates
-    coordinates --> |double|longitude & latitude
+    geometry -->|List<Double>|coordinates
+    coordinates -->|Double|lat & lon
 
-    when --> |Array|interval
-    interval --> |String| start & slutt
+  properties --> 
 
-    properties --> 
+    A[body] --> B(Sunrise)
+    A --> C(Sunset)
+    A --> D(Solarnoon)
+    A --> E(Solarmidnight)
 
+    B -->|String| time1[time]
+    B -->|Double| azimuth1[azimuth]
+    C -->|String| time2[time]
+    C -->|Double| azimuth2[azimuth]
+    D -->|String| time3[time]
+    D -->|Double| disc_centre_elevation1[disc_centre_elevation]
+    D -->|Boolean| visible1[visible]
 
-  A[Sun] -->|String| B(Sunrise)
-  A -->|String| C(Sunset)
-  A -->|String| D(Solarnoon)
-  A -->|String| E(Solarmidnight)
+    E -->|String| time4[time]
+    E -->|Double| disc_centre_elevation2[disc_centre_elevation]
+    E -->|Boolean| visible2[visible]
 
-  B --> |String| time1[time]
-  B --> |double| azimuth1[azimuth]
-  C --> |String| time2[time]
-  C --> |double| azimuth2[azimuth]
-  D --> |String| time3[time]
-  D --> |double| disc_centre_elevation1[disc_centre_elevation]
-  D --> |boolean| visible1[visible]
+  when -->|List|interval
+  interval -->|String| start & slutt
+```
+```mermaid
+graph TD
 
-  E --> |String| time4[time]
-  E --> |double| disc_centre_elevation2[disc_centre_elevation]
-  E --> |boolean| visible2[visible]
+APIData((Data-endpoint))
+
+APIData -->|List| coordinatesData -->|Double| lat & lon
+APIData -->|List| intervalData -->|String| start & e[end]
+
+APIData -->|String| sunriseTime
+APIData -->|Double| sunriseAzimuth
+
+APIData -->|String| sunsetTime
+APIData -->|Double| sunsetAzimuth
+
+APIData -->|String| solarnoonTime
+APIData -->|Double| solarnoonElevation
+APIData -->|Boolean| solarnoonVisible
+
+APIData -->|String| solarmidnightTime
+APIData -->|Double| solarmidnightElevation
+APIData -->|Boolean| solarmidnightVisible
 
 ```
 
