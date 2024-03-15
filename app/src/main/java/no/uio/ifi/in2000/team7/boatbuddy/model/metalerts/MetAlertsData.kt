@@ -13,18 +13,18 @@ data class FeatureData(
     val awarenessResponse: String,
     val awareness_level: String,
     val awareness_type: String,
+    val consequences: String,
     val certainty: String,
-    val geographicDomain: String,
+    val geographicDomain: String?,
     val instruction: String,
     val riskMatrixColor: String,
     val severity: String,
     val type: String,
-    val affected_area : List<List<List<Any>>>
+    val affected_area: List<List<List<Any>>>
 
 )
 
 
-
-    /*posisjon, farevarsel, vurdering osv.
-    * val coordinates: List<List<List<List<Any>>>>,*/
+/*posisjon, farevarsel, vurdering osv.
+* val coordinates: List<List<List<List<Any>>>>,*/
 

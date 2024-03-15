@@ -51,6 +51,7 @@ android {
 
 dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     val ktor_version = "2.3.8"
     val lifecycle_version = "2.7.0"
     implementation("androidx.core:core-ktx:1.12.0")
@@ -83,4 +84,9 @@ dependencies {
     //OSM
     implementation("org.osmdroid:osmdroid-android:6.1.10")
     implementation("androidx.appcompat:appcompat:1.3.0") // Use the latest version available
+
+    //For navigation
+    val navVersion = "2.7.7"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+
 }
