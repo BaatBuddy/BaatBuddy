@@ -79,4 +79,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
+    //OSM
+    implementation("org.osmdroid:osmdroid-android:6.1.10")
+    implementation("androidx.appcompat:appcompat:1.3.0") // Use the latest version available
 }

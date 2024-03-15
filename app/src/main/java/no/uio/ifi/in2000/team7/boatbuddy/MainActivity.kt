@@ -1,29 +1,17 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
+
 import android.os.Bundle
+import android.preference.PreferenceManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-
-import no.uio.ifi.in2000.team7.boatbuddy.ui.locationforecast.LocationForecastScreen
-
-
-import no.uio.ifi.in2000.team7.boatbuddy.ui.oceanforecast.OceanForecastScreen
-
-import no.uio.ifi.in2000.team7.boatbuddy.ui.sunrise.SunriseScreen
-
-
-import androidx.compose.ui.tooling.preview.Preview
-import no.uio.ifi.in2000.team7.boatbuddy.ui.metalerts.MetAlertsScreen
-
-import no.uio.ifi.in2000.team7.boatbuddy.ui.oceanforecast.OceanForecastScreen
-
-import no.uio.ifi.in2000.team7.boatbuddy.ui.sunrise.SunriseScreen
-
+import no.uio.ifi.in2000.team7.boatbuddy.ui.openseamap.OSMScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
+import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,13 +24,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
 
                 ) {
-
-                    //Screen()
-                    //SunriseScreen()
-                    LocationForecastScreen()
-                    MetAlertsScreen()
-                    OceanForecastScreen()
-                    SunriseScreen()
+                    Configuration.getInstance()
+                        .load(this, PreferenceManager.getDefaultSharedPreferences(this));
+                    val screen = OSMScreen()
+                    screen.CreateMap()
 
                 }
             }
