@@ -1,34 +1,14 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast
 
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
-import io.ktor.serialization.gson.gson
-import io.ktor.util.appendIfNameAbsent
+import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.OceanForecastAPI
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.OceanForecastData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeLocationData
 import java.net.UnknownHostException
 
-class OceanForecastDataSource(
-    private val path: String =
-        "https://gw-uio.intark.uh-it.no/in2000/"
-) {
-
-    private val client = HttpClient {
-        defaultRequest {
-            url(path)
-            headers.appendIfNameAbsent(
-                name = "X-Gravitee-API-Key",
-                value = "ea3539d4-efa7-46bd-828d-d05b0c6a86ae"
-            )
-        }
-        install(ContentNegotiation) {
-            gson()
-        }
-    }
+class OceanForecastDataSource {
 
     suspend fun getOceanForecastData(lat: String, lon: String): OceanForecastData? {
 

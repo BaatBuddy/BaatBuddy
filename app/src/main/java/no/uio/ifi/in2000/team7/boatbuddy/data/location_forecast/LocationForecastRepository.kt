@@ -6,7 +6,7 @@ interface LocationForecastRepo {
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
-        altitude: String
+        altitude: String = "0"
     ): LocationForecastData?
 }
 
