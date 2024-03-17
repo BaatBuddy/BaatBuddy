@@ -5,11 +5,11 @@ data class OceanForecastData(
 
     val updated_at: String,
 
-    val timeseries: List<TimeLocationData>
+    val timeseries: List<TimeOceanData>
 
 )
 
-data class TimeLocationData(
+data class TimeOceanData(
     val time: String,
     val sea_surface_wave_from_direction: Double,
     val sea_surface_wave_height: Double,

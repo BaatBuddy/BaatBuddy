@@ -5,7 +5,7 @@ import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.OceanForecastAPI
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.OceanForecastData
-import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeLocationData
+import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
 import java.net.UnknownHostException
 
 class OceanForecastDataSource {
@@ -33,7 +33,7 @@ class OceanForecastDataSource {
                 updated_at = properties.meta.updated_at,
                 timeseries = properties.timeseries.map {
                     val details = it.data.instant.details
-                    TimeLocationData(
+                    TimeOceanData(
                         time = it.time,
                         sea_surface_wave_from_direction = details.sea_surface_wave_from_direction,
                         sea_surface_wave_height = details.sea_surface_wave_height,
