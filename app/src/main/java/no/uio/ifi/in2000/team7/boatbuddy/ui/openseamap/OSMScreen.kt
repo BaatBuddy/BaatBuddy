@@ -1,9 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.openseamap
 
-import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -13,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import no.uio.ifi.in2000.team7.boatbuddy.R
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration.getInstance
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
@@ -24,10 +21,13 @@ import org.osmdroid.views.overlay.Marker
 class MapViewDisposable(val mapView: MapView)
 
 @Composable
-fun OSMScreen() {
+fun OSMScreen(osmViewModel: OSMViewModel = viewModel()) {
+
+
     val map = rememberMapView()
-    var mapController: IMapController = map.controller
+    lateinit var mapController: IMapController
     var marker: Marker? = null
+    var startPoint: GeoPoint = GeoPoint(59.964363, 10.730983);
 
     DisposableEffect(MapViewDisposable(map)) {
         map.onResume()
@@ -41,6 +41,10 @@ fun OSMScreen() {
         AndroidView(
             factory = { context ->
                 map.setTileSource(TileSourceFactory.MAPNIK)
+                map.setMultiTouchControls(true)
+                mapController = map.controller
+                osmViewModel.zoomLevel.value?.let { mapController.setZoom(it) }
+                mapController.setCenter(osmViewModel.mapCenter.value);
                 map
             },
             modifier = Modifier.fillMaxSize()
@@ -59,39 +63,36 @@ fun rememberMapView(): MapView {
 }
 
 
+/*@Composable
+fun CreateMap(mainActivity: MainActivity) {
 
+    val mainContext = mainActivity.baseContext
+    getInstance().load(mainContext, PreferenceManager.getDefaultSharedPreferences(mainContext))
 
+    mainActivity.setContentView(R.layout.activity_main)
 
-    /*@Composable
-    fun CreateMap(mainActivity: MainActivity) {
+    map = mainActivity.findViewById<MapView>(R.id.map)
+    map.setTileSource(TileSourceFactory.MAPNIK)
 
-        val mainContext = mainActivity.baseContext
-        getInstance().load(mainContext, PreferenceManager.getDefaultSharedPreferences(mainContext))
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { context ->
+            MapView(context).apply {
 
-        mainActivity.setContentView(R.layout.activity_main)
+                val tileSource = viewModel.tileSource
 
-        map = mainActivity.findViewById<MapView>(R.id.map)
-        map.setTileSource(TileSourceFactory.MAPNIK)
+                val tileProvider = MapTileProviderBasic(context)
+                tileProvider.tileSource = tileSource
 
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { context ->
-                MapView(context).apply {
+                val tilesOverlay = TilesOverlay(tileProvider, context)
+                overlays.add(tilesOverlay)
 
-                    val tileSource = viewModel.tileSource
+                viewModel.zoomLevel.value?.let { controller.setZoom(it) }
+                controller.setCenter(viewModel.mapCenter.value)
 
-                    val tileProvider = MapTileProviderBasic(context)
-                    tileProvider.tileSource = tileSource
-
-                    val tilesOverlay = TilesOverlay(tileProvider, context)
-                    overlays.add(tilesOverlay)
-
-                    viewModel.zoomLevel.value?.let { controller.setZoom(it) }
-                    controller.setCenter(viewModel.mapCenter.value)
-
-                }
             }
-        )
-    }*/
+        }
+    )
+}*/
 
 
