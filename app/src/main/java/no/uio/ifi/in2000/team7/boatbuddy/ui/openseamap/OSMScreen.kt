@@ -1,21 +1,77 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.openseamap
 
+import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import org.osmdroid.tileprovider.MapTileProviderBasic
+import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team7.boatbuddy.R
+import org.osmdroid.api.IMapController
+import org.osmdroid.config.Configuration.getInstance
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.TilesOverlay
+import org.osmdroid.views.overlay.Marker
 
-class OSMScreen {
 
-    val viewModel = OSMViewModel()
+class MapViewDisposable(val mapView: MapView)
 
-    @Composable
-    fun CreateMap() {
+@Composable
+fun OSMScreen() {
+    val map = rememberMapView()
+    var mapController: IMapController = map.controller
+    var marker: Marker? = null
 
-        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+    DisposableEffect(MapViewDisposable(map)) {
+        map.onResume()
+
+        onDispose {
+            map.onPause()
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        AndroidView(
+            factory = { context ->
+                map.setTileSource(TileSourceFactory.MAPNIK)
+                map
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun rememberMapView(): MapView {
+    val context = LocalContext.current
+    val mapView = remember { MapView(context) }
+
+    getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context))
+
+    return mapView
+}
+
+
+
+
+
+    /*@Composable
+    fun CreateMap(mainActivity: MainActivity) {
+
+        val mainContext = mainActivity.baseContext
+        getInstance().load(mainContext, PreferenceManager.getDefaultSharedPreferences(mainContext))
+
+        mainActivity.setContentView(R.layout.activity_main)
+
+        map = mainActivity.findViewById<MapView>(R.id.map)
+        map.setTileSource(TileSourceFactory.MAPNIK)
 
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -36,7 +92,6 @@ class OSMScreen {
                 }
             }
         )
-    }
+    }*/
 
 
-}

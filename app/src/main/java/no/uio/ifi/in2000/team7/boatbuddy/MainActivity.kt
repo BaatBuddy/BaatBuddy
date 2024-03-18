@@ -10,22 +10,23 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
 class MainActivity : ComponentActivity() {
 
-    lateinit var navController: NavHostController
+    private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
+
             BoatbuddyTheme {
-                // A surface container using the 'background' color from the theme
+                // A surface container using the 'background' color from the theme\
                 navController = rememberNavController()
-                NavGraph(navController = navController)
+                NavGraph(navController = navController, mainActivity = this)
 
                 /*Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
 
-                ) {
-
+                )
 
                 }*/
             }
