@@ -17,4 +17,5 @@ class OSMViewModel : ViewModel() {
     private val _zoomLevel = MutableLiveData(17.0)
     val zoomLevel: LiveData<Double> = _zoomLevel
 
+
 }

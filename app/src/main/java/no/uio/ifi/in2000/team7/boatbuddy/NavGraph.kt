@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
