@@ -1,10 +1,13 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data
 
+import android.util.Log
+import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
+
 
 object APIClient {
     val client = HttpClient {
