@@ -26,15 +26,12 @@ class LocationForecastDataSource {
         return try {
             //order of args -> lat, lon, altitude
             val results = client.get(path.format(lat, lon, altitude))
-            Log.i("ASDASD", results.toString())
             if (results.status.value !in 200..299) return null
-            Log.i("ASDASD","ASDASD")
 
             val data: LocationForecastAPI = results.body()
 
             val coordinates = data.geometry.coordinates
             val timeseries = data.properties.timeseries
-            Log.i("ASDASD","ASDASD")
 
             LocationForecastData(
                 lat = coordinates[1],

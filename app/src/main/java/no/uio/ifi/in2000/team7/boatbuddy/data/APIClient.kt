@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data
 
+import android.util.Log
+import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -11,10 +13,9 @@ object APIClient {
     val client = HttpClient {
         defaultRequest {
             url("https://gw-uio.intark.uh-it.no/in2000/")
-            val variables = System.getenv()
             headers.appendIfNameAbsent(
                 name = "X-Gravitee-API-Key",
-                value = variables["APIKEY"] ?: ""
+                value = "ea3539d4-efa7-46bd-828d-d05b0c6a86ae"
             )
         }
         install(ContentNegotiation) {

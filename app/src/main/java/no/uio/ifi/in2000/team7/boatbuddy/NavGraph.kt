@@ -20,10 +20,10 @@ fun NavGraph(navController: NavHostController, mainActivity: MainActivity) {
             navController = navController, startDestination = Screen.HomeScreen.route
         ) {
             composable(route = Screen.HomeScreen.route) {
-                HomeScreen(navController = navController, mainActivity = mainActivity)
+                HomeScreen()
             }
             composable(route = Screen.InfoScreen.route) {
-                InfoScreen(navController = navController)
+                InfoScreen()
             }
         }
     }

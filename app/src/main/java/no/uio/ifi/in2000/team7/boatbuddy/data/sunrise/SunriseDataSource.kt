@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.sunrise
 
+import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
