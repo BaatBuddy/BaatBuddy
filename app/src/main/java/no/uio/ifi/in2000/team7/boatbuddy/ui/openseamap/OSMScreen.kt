@@ -42,7 +42,7 @@ fun OSMScreen(
         }
     }
     Column(
-        modifier = Modifier
+         modifier = Modifier
             .padding(bottom = 100.dp)
     ) {
         Box(Modifier.fillMaxSize()) {

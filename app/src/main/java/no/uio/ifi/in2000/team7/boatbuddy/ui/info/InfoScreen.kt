@@ -25,7 +25,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.locationforecast.InfoScreenViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    navController: NavController,
     infoScreenViewModel: InfoScreenViewModel = viewModel()
 ) {
 
@@ -70,7 +69,7 @@ fun InfoScreen(
 
 
             }
-
+            Text(text = "Dette er farevarsler")
             Column {
                 weatherUIState.metAlerts?.features?.forEach {
                     AlertCard(modifier = modifier, feature = it)

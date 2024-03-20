@@ -14,7 +14,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.openseamap.OSMScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavController, mainActivity: MainActivity) {
+fun HomeScreen() {
     val snackBarHostState = remember { SnackbarHostState() }
 
     Scaffold(

@@ -6,13 +6,15 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
 
+
 object APIClient {
     val client = HttpClient {
         defaultRequest {
             url("https://gw-uio.intark.uh-it.no/in2000/")
+            val variables = System.getenv()
             headers.appendIfNameAbsent(
                 name = "X-Gravitee-API-Key",
-                value = "ea3539d4-efa7-46bd-828d-d05b0c6a86ae"
+                value = variables["APIKEY"] ?: ""
             )
         }
         install(ContentNegotiation) {
