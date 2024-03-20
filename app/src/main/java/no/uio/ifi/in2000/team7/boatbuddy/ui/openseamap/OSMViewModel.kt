@@ -11,10 +11,11 @@ class OSMViewModel : ViewModel() {
     val dataSource = OSMDataSource()
     val tileSource = dataSource.getTileSource()
 
-    private val _mapCenter = MutableLiveData(GeoPoint(59.9111, 10.7528))
+    private val _mapCenter = MutableLiveData(GeoPoint(59.964363, 10.730983))
     val mapCenter: LiveData<GeoPoint> = _mapCenter
 
     private val _zoomLevel = MutableLiveData(17.0)
     val zoomLevel: LiveData<Double> = _zoomLevel
+
 
 }

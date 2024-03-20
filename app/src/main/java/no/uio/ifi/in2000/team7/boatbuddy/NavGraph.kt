@@ -12,7 +12,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, mainActivity: MainActivity) {
 
     Scaffold(bottomBar = { BottomBar(navController) }) {
 
@@ -20,10 +20,10 @@ fun NavGraph(navController: NavHostController) {
             navController = navController, startDestination = Screen.HomeScreen.route
         ) {
             composable(route = Screen.HomeScreen.route) {
-                HomeScreen(navController = navController)
+                HomeScreen()
             }
             composable(route = Screen.InfoScreen.route) {
-                InfoScreen(navController = navController)
+                InfoScreen()
             }
         }
     }

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.locationforecast
+package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
