@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.locationforecast
+package no.uio.ifi.in2000.team7.boatbuddy.ui.test.locationforecast
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

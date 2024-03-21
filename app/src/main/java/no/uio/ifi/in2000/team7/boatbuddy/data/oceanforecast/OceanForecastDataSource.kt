@@ -13,13 +13,11 @@ class OceanForecastDataSource {
     suspend fun getOceanForecastData(lat: String, lon: String): OceanForecastData? {
 
         return try {
-            // args-order -> lat , lon
-            val results = client.get(
-                "weatherapi/oceanforecast/2.0/complete?lat=%s&lon=%s".format(
-                    lat,
-                    lon
-                )
-            )
+            var path: String = "weatherapi/oceanforecast/2.0/complete"
+            if (lat.isNotBlank() && lon.isNotBlank()) {
+                path += "?lat=%s&lon=%s".format(lat, lon)
+            }
+            val results = client.get(path)
 
             // checks if the api-call is valid
             if (results.status.value !in 200..299) return null

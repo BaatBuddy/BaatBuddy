@@ -11,8 +11,9 @@ interface LocationForecastRepo {
     ): LocationForecastData?
 }
 
-class LocationForecastRepository(private val dataSource: LocationForecastDataSource = LocationForecastDataSource()) :
-    LocationForecastRepo {
+class LocationForecastRepository(
+    private val dataSource: LocationForecastDataSource = LocationForecastDataSource()
+) : LocationForecastRepo {
     override suspend fun getLocationForecastData(
         lat: String, lon: String, altitude: String
 

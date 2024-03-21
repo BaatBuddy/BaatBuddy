@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
+import android.location.Location
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -18,16 +19,30 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
+import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    infoScreenViewModel: InfoScreenViewModel = viewModel()
+    infoScreenViewModel: InfoScreenViewModel = viewModel(),
+    metAlertsViewModel: MetAlertsViewModel = viewModel(),
+    locationForecastViewModel: LocationForecastViewModel = viewModel(),
+    oceanForecastViewModel: OceanForecastViewModel = viewModel(),
+    sunriseViewModel: SunriseViewModel = viewModel()
 ) {
 
     val weatherUIState by infoScreenViewModel.weatherUIState.collectAsState()
+    val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
+    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
+    val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
+    val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
 
-    infoScreenViewModel.initialize("59.9", "10.7", "0")
+    val lat = "59.9"
+    val lon = "10.7"
+    metAlertsViewModel.initialize(lat = lat, lon = lon)
+    locationForecastViewModel.initialize(lat = lat, lon = lon)
+    oceanForecastViewModel.initialize(lat = lat, lon = lon)
+    sunriseViewModel.initialize(lat = lat, lon = lon)
     Scaffold(
         modifier = Modifier
             .padding(8.dp)
@@ -45,7 +60,7 @@ fun InfoScreen(
 
                 Column {
                     Text(text = "Dette er havdata")
-                    weatherUIState.oceanForecast?.timeseries?.let { timeOceanData ->
+                    oceanForecastUIState.oceanForecast?.timeseries?.let { timeOceanData ->
                         OceanCard(
                             modifier = modifier,
                             timeOceanData = timeOceanData[1]
@@ -55,7 +70,7 @@ fun InfoScreen(
 
                 Column {
                     Text(text = "Dette er værdata")
-                    weatherUIState.locationForecast?.timeseries?.let { timeLocationData ->
+                    locationForecastUIState.locationForecast?.timeseries?.let { timeLocationData ->
                         LocationCard(
                             modifier = modifier,
                             timeLocationData = timeLocationData[1]
@@ -66,10 +81,19 @@ fun InfoScreen(
 
 
             }
-            Text(text = "Dette er farevarsler")
-            Column {
-                weatherUIState.metAlerts?.features?.forEach {
-                    AlertCard(modifier = modifier, feature = it)
+            Row {
+                Text(text = "Dette er farevarsler")
+                Column {
+                    metalertsUIState.metalerts?.features?.forEach {
+                        AlertCard(modifier = modifier, feature = it)
+                    }
+                }
+                Column {
+                    val sunriseData: SunriseData? = sunriseUIState.sunriseData
+                    if (sunriseData != null) {
+                        Text(text = "soloppgang ${sunriseData.sunriseTime}")
+                        Text(text = "solnedgang ${sunriseData.sunsetTime}")
+                    }
                 }
             }
         }
@@ -116,8 +140,8 @@ fun LocationCard(modifier: Modifier, timeLocationData: TimeLocationData) {
         Column() {
             Text(text = "tid: ${timeLocationData.time}")
             Text(text = "lufttemperatur: ${timeLocationData.air_temperature}")
-            Text(text = "bølgeretning: ${timeLocationData.wind_speed}(${timeLocationData.wind_speed_of_gust})") //wave direction?
-            Text(text = "strømhastighet: ${timeLocationData.fog_area_fraction}")
+            Text(text = "vindhastighet: ${timeLocationData.wind_speed}(${timeLocationData.wind_speed_of_gust})") //wave direction?
+            Text(text = "tåke: ${timeLocationData.fog_area_fraction}")
         }
     }
 }

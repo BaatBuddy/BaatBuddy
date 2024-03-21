@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.sunrise
+package no.uio.ifi.in2000.team7.boatbuddy.ui.test.oceanforecast
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
@@ -15,27 +15,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+
 @Composable
-fun SunriseScreen(sunriseViewModel: SunriseViewModel = viewModel()) {
-    val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
+fun OceanForecastScreen(oceanForecastViewModel: OceanForecastViewModel = viewModel()) {
+
+    val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
 
     // filler data
     var lon by remember { mutableStateOf("") }
     var lat by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
 
-    
+
     Column {
         Text(
-            text = sunriseUIState.sunriseData.toString(),
+            text = oceanForecastUIState.oceanForecastData.toString(),
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         )
-        TextField(value = lon, onValueChange = {lon = it}, label = { Text(text = "lon")})
-        TextField(value = lat, onValueChange = {lat = it}, label = { Text(text = "lat")})
-        TextField(value = date, onValueChange = {date = it}, label = { Text(text = "date")})
-        Button(onClick = { sunriseViewModel.initialize(lat, lon, date) }) {
-            
+        TextField(value = lon, onValueChange = { lon = it }, label = { Text(text = "lon") })
+        TextField(value = lat, onValueChange = { lat = it }, label = { Text(text = "lat") })
+        Button(onClick = { oceanForecastViewModel.initialize(lat, lon) }) {
+
         }
     }
 }

@@ -59,7 +59,7 @@ class InfoScreenViewModel : ViewModel() {
                 locationForecastRepository.getLocationForecastData(lat, lon, altitude)
             val oceanForecast = oceanForecastRepository.getOceanForecastData(lat, lon)
             val sunrise = sunriseRepository.getSunriseData(lat, lon, "2024-03-15") // Fix later
-            val metAlerts = metAlertsRepository.getMetAlertsData() // add list of lat and lon
+            val metAlerts = metAlertsRepository.getMetAlertsData(lat, lon) // add list of lat and lon
 
             _weatherUIState.update { it.copy(locationForecast, oceanForecast, sunrise, metAlerts) }
         }

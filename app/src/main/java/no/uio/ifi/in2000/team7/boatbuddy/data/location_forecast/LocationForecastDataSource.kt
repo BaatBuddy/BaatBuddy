@@ -17,15 +17,22 @@ class LocationForecastDataSource {
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
-        altitude: String = "0" // 0 if no argument
+        altitude: String
     ): LocationForecastData? {
 
 
-        val path = "weatherapi/locationforecast/2.0/compact?lat=%s&lon=%s&altitude=%s"
+        var path = "weatherapi/locationforecast/2.0/compact"
+
+        if (lat.isNotBlank() && lon.isNotBlank()) {
+            path += "?lat=%s&lon=%s".format(lat, lon)
+            if (altitude.isNotBlank()) {
+                path += "&altitude=%s".format(altitude)
+            }
+        }
 
         return try {
             //order of args -> lat, lon, altitude
-            val results = client.get(path.format(lat, lon, altitude))
+            val results = client.get(path)
             if (results.status.value !in 200..299) return null
 
             val data: LocationForecastAPI = results.body()

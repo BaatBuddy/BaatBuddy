@@ -11,13 +11,16 @@ import java.net.UnknownHostException
 
 class MetAlertsDataSource {
 
-    suspend fun getMetAlertsData(): MetAlertsData? {
+    suspend fun getMetAlertsData(lat: String, lon: String): MetAlertsData? {
 
 
         return try {
+            var path: String = "weatherapi/metalerts/2.0/current.json"
+            if (lat.isNotBlank() && lon.isNotBlank()) {
+                path += "?lat=%s&lon=%s".format(lat, lon)
+            }
 
-
-            val results = client.get("weatherapi/metalerts/2.0/current.json")
+            val results = client.get(path)
 
             //checks if API-call is valid
             if (results.status.value !in 200..299) return null
