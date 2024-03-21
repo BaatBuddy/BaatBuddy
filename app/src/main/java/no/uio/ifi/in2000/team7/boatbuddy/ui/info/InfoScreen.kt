@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
 import android.location.Location
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -24,21 +25,21 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    infoScreenViewModel: InfoScreenViewModel = viewModel(),
+    // infoScreenViewModel: InfoScreenViewModel = viewModel(),
     metAlertsViewModel: MetAlertsViewModel = viewModel(),
     locationForecastViewModel: LocationForecastViewModel = viewModel(),
     oceanForecastViewModel: OceanForecastViewModel = viewModel(),
     sunriseViewModel: SunriseViewModel = viewModel()
 ) {
 
-    val weatherUIState by infoScreenViewModel.weatherUIState.collectAsState()
+    // val weatherUIState by infoScreenViewModel.weatherUIState.collectAsState()
     val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
     val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
     val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
 
     val lat = "59.9"
-    val lon = "10.7"
+    val lon = "10.1"
     metAlertsViewModel.initialize(lat = lat, lon = lon)
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)
@@ -60,11 +61,13 @@ fun InfoScreen(
 
                 Column {
                     Text(text = "Dette er havdata")
-                    oceanForecastUIState.oceanForecast?.timeseries?.let { timeOceanData ->
-                        OceanCard(
-                            modifier = modifier,
-                            timeOceanData = timeOceanData[1]
-                        )
+                    if (oceanForecastUIState.oceanForecast?.timeseries?.isNotEmpty() == true) {
+                        oceanForecastUIState.oceanForecast?.timeseries?.let { timeOceanData ->
+                            OceanCard(
+                                modifier = modifier,
+                                timeOceanData = timeOceanData[1]
+                            )
+                        }
                     }
                 }
 
@@ -81,21 +84,25 @@ fun InfoScreen(
 
 
             }
-            Row {
+
+            Column {
                 Text(text = "Dette er farevarsler")
-                Column {
-                    metalertsUIState.metalerts?.features?.forEach {
-                        AlertCard(modifier = modifier, feature = it)
-                    }
+                metalertsUIState.metalerts?.features?.forEach {
+                    AlertCard(modifier = modifier, feature = it)
                 }
-                Column {
-                    val sunriseData: SunriseData? = sunriseUIState.sunriseData
-                    if (sunriseData != null) {
-                        Text(text = "soloppgang ${sunriseData.sunriseTime}")
-                        Text(text = "solnedgang ${sunriseData.sunsetTime}")
-                    }
+                Text(text = "Dette er soldata")
+                if (sunriseUIState.sunriseData != null) {
+                    sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
+                    sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
                 }
             }
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+            ) {
+
+            }
+
         }
     }
 
