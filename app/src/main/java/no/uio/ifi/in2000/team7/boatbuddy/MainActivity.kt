@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.mapbox.maps.MapboxExperimental
-import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MBScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
                 NavGraph(navController = navController)
 
-                MBScreen()
+                //MBScreen()
 
                 /*Surface(
                     modifier = Modifier.fillMaxSize(),

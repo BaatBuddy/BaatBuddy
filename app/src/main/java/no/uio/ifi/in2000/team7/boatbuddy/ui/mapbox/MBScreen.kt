@@ -13,10 +13,10 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
@@ -40,12 +40,11 @@ fun MBScreen() {
     MapboxOptions.accessToken =
         "pk.eyJ1IjoiYWFudW5kaiIsImEiOiJjbHR5Y2FpdnEwY2xsMmtwanFxb3k1Yjk0In0.6jHYW1-ZRQE1EYwM2aQj1A"
 
+    //var mapView: MapView
 
-
-
-    com.mapbox.maps.extension.compose.MapboxMap(
+    MapboxMap(
         Modifier.fillMaxSize(),
-        
+
 
         mapViewportState = MapViewportState().apply
 
@@ -56,6 +55,8 @@ fun MBScreen() {
                 pitch(0.0)
                 bearing(0.0)
             }
+
+            
         }
     ) {
 
