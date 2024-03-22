@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.sunrise
+package no.uio.ifi.in2000.team7.boatbuddy.ui.test.sunrise
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

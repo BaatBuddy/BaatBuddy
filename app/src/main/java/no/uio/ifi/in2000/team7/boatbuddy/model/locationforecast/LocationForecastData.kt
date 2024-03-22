@@ -3,10 +3,10 @@ package no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast
 data class LocationForecastData(
     val lat: Double,
     val lon: Double,
-    val timeseries: List<TimeData>
+    val timeseries: List<TimeLocationData>
 )
 
-data class TimeData(
+data class TimeLocationData(
     val time: String,
     //These are all current/instant values
     val air_pressure_at_sea_level: Double, // luftrykk i hPa

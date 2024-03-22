@@ -15,15 +15,21 @@ import no.uio.ifi.in2000.team7.boatbuddy.Screen
 fun BottomBar(
     navController: NavController
 ) {
-    var selectedItem by rememberSaveable {
+    var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
     NavigationBar {
         listOf(Screen.HomeScreen, Screen.InfoScreen).forEachIndexed { index, item ->
             NavigationBarItem(
-                selected = selectedItem == index,
-                onClick = { selectedItem = index; navController.navigate(item.route) },
+                selected = selectedIndex == index,
+                onClick = {
+                    if (selectedIndex != index) {
+                        selectedIndex = index
+                        navController.navigate(item.route)
+                    }
+
+                },
                 icon = { Icon(imageVector = item.icon, contentDescription = null) })
 
         }

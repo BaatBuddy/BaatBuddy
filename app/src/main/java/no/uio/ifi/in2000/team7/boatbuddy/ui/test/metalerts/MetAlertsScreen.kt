@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.metalerts
+package no.uio.ifi.in2000.team7.boatbuddy.ui.test.metalerts
 
 
 import android.annotation.SuppressLint
@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

@@ -1,11 +1,12 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
+import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastAPI
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import java.net.UnknownHostException
 
 class LocationForecastDataSource {
@@ -16,14 +17,22 @@ class LocationForecastDataSource {
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
-        altitude: String = "0" // 0 if no argument
+        altitude: String
     ): LocationForecastData? {
 
-        val path = "/weatherapi/locationforecast/2.0/compact?lat=%s&lon=%s&altitude=%s"
+
+        var path = "weatherapi/locationforecast/2.0/compact"
+
+        if (lat.isNotBlank() && lon.isNotBlank()) {
+            path += "?lat=%s&lon=%s".format(lat, lon)
+            if (altitude.isNotBlank()) {
+                path += "&altitude=%s".format(altitude)
+            }
+        }
+
         return try {
             //order of args -> lat, lon, altitude
-            val results = client.get(path.format(lat, lon, altitude))
-
+            val results = client.get(path)
             if (results.status.value !in 200..299) return null
 
             val data: LocationForecastAPI = results.body()
@@ -36,7 +45,7 @@ class LocationForecastDataSource {
                 lon = coordinates[0],
                 timeseries = timeseries.map { timesery ->
                     val details = timesery.data.instant.details
-                    TimeData(
+                    TimeLocationData(
                         time = timesery.time,
                         air_pressure_at_sea_level = details.air_pressure_at_sea_level,
                         air_temperature = details.air_temperature,
@@ -54,6 +63,7 @@ class LocationForecastDataSource {
 
         } catch (e: UnknownHostException) {
             null
+
         }
 
     }
