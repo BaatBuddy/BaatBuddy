@@ -14,10 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -25,10 +26,16 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
-import com.mapbox.maps.plugin.annotation.AnnotationConfig
+import com.mapbox.maps.extension.style.style
+import com.mapbox.maps.extension.style.utils.transition
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import no.uio.ifi.in2000.team7.boatbuddy.R
 
 @JvmOverloads
@@ -44,11 +51,70 @@ fun MBScreen() {
         "pk.eyJ1IjoiYWFudW5kaiIsImEiOiJjbHR5Y2FpdnEwY2xsMmtwanFxb3k1Yjk0In0.6jHYW1-ZRQE1EYwM2aQj1A"
     val context = LocalContext.current
 
-
     val mapView = MapView(context)
 
+    val annotationApi = mapView.annotations
+    val pointAnnotationManager = annotationApi.createPointAnnotationManager()
+    val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
+
+    val points = remember { mutableListOf<Point>() }
+
+    with(mapView) {
+
+        mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .center(Point.fromLngLat(10.20449, 59.74389))
+                .zoom(10.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+
+        mapboxMap.loadStyle(
+            Style.DARK
+        ) {
+            addAnnotationToMap(
+                context,
+                Point.fromLngLat(10.20449, 59.74389),
+                pointAnnotationManager,
+                points,
+                polylineAnnotationManager
+            )
+        }
+
+        mapboxMap.addOnMapClickListener { point ->
+            addAnnotationToMap(
+                context,
+                point,
+                pointAnnotationManager,
+                points,
+                polylineAnnotationManager
+            )
+            true
+        }
+
+    }
 
 
+
+    LaunchedEffect(pointAnnotationManager) {
+        pointAnnotationManager.addClickListener { clickedAnnotation ->
+            pointAnnotationManager.delete(clickedAnnotation)
+            points.remove(clickedAnnotation.point)
+            points.sortBy { it.latitude() + it.longitude() }
+
+            val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
+                .withPoints(points)
+                .withLineColor("#219EBC")
+                .withLineWidth(4.0)
+                .withLineBorderColor("#023047")
+                .withLineBorderWidth(1.0)
+
+            polylineAnnotationManager.create(polylineAnnotationOptions)
+
+            true
+        }
+    }
 
     Column {
         Box(
@@ -59,28 +125,22 @@ fun MBScreen() {
             AndroidView(
                 factory = { ctx ->
                     mapView
-
                 }
-
             )
-            mapView.mapboxMap.setCamera(
-                CameraOptions.Builder()
-                    .center(Point.fromLngLat(10.20449, 59.74389))
-                    .zoom(10.0)
-                    .bearing(0.0)
-                    .pitch(0.0)
-                    .build()
-            )
-            mapView.mapboxMap.loadStyle(
-                Style.DARK
-            ) { addAnnotationToMap(context, mapView) }
         }
+
         Button(
             onClick = {
                 mapView.mapboxMap.loadStyle(
-                    Style.STANDARD
+                    style(Style.STANDARD) {
+                        +transition {
+                            duration(100L)
+                            enablePlacementTransitions(true)
+                        }
+
+                        // other runtime styling
+                    }
                 )
-                addAnnotationToMap(context, mapView)
             }
         ) {
             Text(text = "Change Style")
@@ -90,19 +150,39 @@ fun MBScreen() {
 
 }
 
+/**
+ * https://docs.mapbox.com/android/maps/guides/annotations/annotations/
+ * https://docs.mapbox.com/android/maps/examples/default-point-annotation/
+ */
 
-private fun addAnnotationToMap(context: Context, mapView: MapView?) {
+private fun addAnnotationToMap(
+    context: Context,
+    point: Point,
+    pointAnnotationManager: PointAnnotationManager?,
+    points: MutableList<Point>,
+    polylineAnnotationManager: PolylineAnnotationManager?
+) {
     bitmapFromDrawableRes(
         context,
         R.drawable.ic_map_pin
     )?.let {
-        val annotationApi = mapView?.annotations
-        val pointAnnotationManager = annotationApi?.createPointAnnotationManager(AnnotationConfig())
+
         val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-            .withPoint(Point.fromLngLat(10.20449, 59.74389))
+            .withPoint(point)
             .withIconImage(it)
             .withIconAnchor(IconAnchor.BOTTOM)
+
         pointAnnotationManager?.create(pointAnnotationOptions)
+        points.add(point)
+
+        val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
+            .withPoints(points)
+            .withLineColor("#219EBC")
+            .withLineWidth(4.0)
+            .withLineBorderColor("#023047")
+            .withLineBorderWidth(1.0)
+
+        polylineAnnotationManager?.create(polylineAnnotationOptions)
     }
 }
 
@@ -297,8 +377,3 @@ permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantRes
 }
 }
  **/
-
-private fun getBitmapFromImage(ctx: Context, drawable: Int): Bitmap {
-    val db = ContextCompat.getDrawable(ctx, drawable)
-    return Bitmap.createBitmap(db!!.intrinsicWidth, db.intrinsicHeight, Bitmap.Config.ARGB_8888)
-}
