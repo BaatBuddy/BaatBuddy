@@ -17,10 +17,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.i("ASDASD", "ASDASDASD")
         // requests user location to a object
         UserLocation.initialize(this)
         UserLocation.checkPermissions()
-        Log.i("ASDASD", UserLocation.areLocationPermissionsGranted().toString())
+        Log.i("ASDASD", "ASDASDASD")
 
         setContent {
 
