@@ -2,26 +2,32 @@ package no.uio.ifi.in2000.team7.boatbuddy
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.mapbox.maps.MapboxExperimental
+import no.uio.ifi.in2000.team7.boatbuddy.data.UserLocation
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
 
-    @OptIn(MapboxExperimental::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // requests user location to a object
+        UserLocation.initialize(this)
+        UserLocation.checkPermissions()
+        Log.i("ASDASD", UserLocation.areLocationPermissionsGranted().toString())
+
         setContent {
 
             BoatbuddyTheme {
                 // A surface container using the 'background' color from the theme\
                 navController = rememberNavController()
-                NavGraph(navController = navController, mainActivity = this)
+                NavGraph(navController = navController)
 
                 //MBScreen()
 
