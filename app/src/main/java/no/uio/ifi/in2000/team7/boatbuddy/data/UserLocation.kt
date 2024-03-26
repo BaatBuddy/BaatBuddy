@@ -42,4 +42,8 @@ object UserLocation {
         )
     }
 
+    fun getUserLocation() {
+
+    }
+
 }

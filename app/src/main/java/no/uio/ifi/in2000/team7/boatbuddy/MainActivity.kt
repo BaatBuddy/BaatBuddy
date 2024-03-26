@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         Log.i("ASDASD", "ASDASDASD")
         // requests user location to a object
         UserLocation.initialize(this)
-        UserLocation.checkPermissions()
+        //UserLocation.checkPermissions()
         Log.i("ASDASD", "ASDASDASD")
 
         setContent {
