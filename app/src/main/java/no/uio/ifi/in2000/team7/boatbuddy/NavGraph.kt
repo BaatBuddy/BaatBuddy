@@ -9,10 +9,11 @@ import androidx.navigation.compose.composable
 import no.uio.ifi.in2000.team7.boatbuddy.ui.BottomBar
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.Start
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NavGraph(navController: NavHostController, mainActivity: MainActivity) {
+fun NavGraph(navController: NavHostController) {
 
     Scaffold(bottomBar = { BottomBar(navController) }) {
 
@@ -25,8 +26,14 @@ fun NavGraph(navController: NavHostController, mainActivity: MainActivity) {
             composable(route = Screen.InfoScreen.route) {
                 InfoScreen()
             }
+            composable(route = Screen.UserLocationScreen.route) {
+                Start()
+            }
+
         }
     }
 }
+
+
 
 

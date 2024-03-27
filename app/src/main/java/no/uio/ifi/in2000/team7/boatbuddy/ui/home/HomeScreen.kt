@@ -7,9 +7,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.MainActivity
-import no.uio.ifi.in2000.team7.boatbuddy.ui.openseamap.OSMScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MBScreen
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -28,7 +26,8 @@ fun HomeScreen() {
         }
     ) {
 
-        OSMScreen()
+        MBScreen()
+
     }
 
 }
