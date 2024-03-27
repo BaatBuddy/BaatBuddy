@@ -10,7 +10,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.Screen
-import no.uio.ifi.in2000.team7.boatbuddy.data.UserLocation
 
 @Composable
 fun BottomBar(
@@ -23,21 +22,14 @@ fun BottomBar(
     NavigationBar {
         listOf(
             Screen.HomeScreen,
-            Screen.InfoScreen,
-            Screen.UserLocationScreen
+            Screen.InfoScreen
         ).forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = selectedIndex == index,
                 onClick = {
                     if (selectedIndex != index) {
                         selectedIndex = index
-                        if (item == Screen.UserLocationScreen) {
-                            //locationPermissionLauncher.launch(permissionsList)
-                            UserLocation.checkPermissions()
-                        } else {
-                            navController.navigate(item.route)
-                        }
-
+                        navController.navigate(item.route)
                     }
 
                 },

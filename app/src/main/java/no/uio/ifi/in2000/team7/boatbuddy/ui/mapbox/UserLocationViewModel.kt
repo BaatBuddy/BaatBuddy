@@ -24,12 +24,14 @@ class UserLocationViewModel : ViewModel() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     var locationState by mutableStateOf<LocationResult?>(null)
+    var permissionsGranted by mutableStateOf(false)
 
     @SuppressLint("MissingPermission")
     private fun createLocationRequest(context: Context, permissionGranted: String) {
 
         // If fine location is granted
         if (permissionGranted == permission.ACCESS_FINE_LOCATION) {
+            permissionsGranted = true
             locationRequest = LocationRequest.Builder(5000)
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                 .setMinUpdateIntervalMillis(100)
@@ -37,9 +39,10 @@ class UserLocationViewModel : ViewModel() {
         }
         // If coarse location is granted
         else if (permissionGranted == permission.ACCESS_COARSE_LOCATION) {
-            locationRequest = LocationRequest.Builder(10000)
+            permissionsGranted = true
+            locationRequest = LocationRequest.Builder(10000) //10000
                 .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setMinUpdateIntervalMillis(5000)
+                .setMinUpdateIntervalMillis(500) // 5000
                 .build()
         }
         // No permission granted
@@ -68,7 +71,6 @@ class UserLocationViewModel : ViewModel() {
     }
 
     private fun createLocationCallback() {
-
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)

@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
@@ -8,31 +7,24 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.gms.location.LocationResult
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
@@ -69,10 +61,10 @@ fun loadStyle(style: String, onStyleLoaded: Style.OnStyleLoaded? = null) {
 
 }
 
+
 @OptIn(MapboxExperimental::class)
 @Composable
 fun MBScreen(locationViewModel: UserLocationViewModel = viewModel()) {
-
     MapboxOptions.accessToken =
         "pk.eyJ1IjoiYWFudW5kaiIsImEiOiJjbHR5Y2FpdnEwY2xsMmtwanFxb3k1Yjk0In0.6jHYW1-ZRQE1EYwM2aQj1A"
     val context = LocalContext.current
@@ -173,15 +165,8 @@ fun MBScreen(locationViewModel: UserLocationViewModel = viewModel()) {
             ) {
                 Text(text = "Change Style")
             }
-            Button(onClick = {
-                locationViewModel.fetchLocation(context, Manifest.permission.ACCESS_FINE_LOCATION)
-            }) {
-
-            }
 
         }
-
-        DisplayLocation(locationState = locationViewModel.locationState)
 
     }
 
@@ -411,30 +396,5 @@ class LocationPermissionHelper(val activityRef: WeakReference<Activity>) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-
-}
-
-@Composable
-fun DisplayLocation(locationState: LocationResult?) {
-
-    if (locationState != null) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally,
-
-            ) {
-            Text(
-                text = "Location: ${locationState.lastLocation?.latitude}, ${locationState.lastLocation?.longitude}",
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.titleLarge,
-
-                )
-            Log.d(
-                "MBScreen",
-                "Lokasjon: ${locationState.lastLocation?.latitude}, ${locationState.lastLocation?.longitude}"
-            )
-        }
-    }
 
 }
