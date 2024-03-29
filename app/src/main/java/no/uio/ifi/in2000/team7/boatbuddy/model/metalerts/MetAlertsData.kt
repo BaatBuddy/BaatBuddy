@@ -11,6 +11,9 @@ data class FeatureData(
     val start: String,
     val end: String,
     val awarenessResponse: String,
+    val awarenessSeriousness: String, // LAGT TIL
+    val eventAwarenessName: String, // LAGT TIL
+    val description: String, // LAGT TIL
     val awareness_level: String,
     val awareness_type: String,
     val consequences: String,

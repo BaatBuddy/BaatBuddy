@@ -39,8 +39,11 @@ class MetAlertsDataSource {
                         start = it.`when`.interval[0],
                         end = it.`when`.interval[1],
                         awarenessResponse = properties.awarenessResponse,
+                        awarenessSeriousness = properties.awarenessSeriousness, // LAGT TIL
+                        eventAwarenessName = properties.eventAwarenessName, // LAGT TIL
                         awareness_level = properties.awareness_level,
                         awareness_type = properties.awareness_type,
+                        consequences = properties.consequences,
                         certainty = properties.certainty,
                         geographicDomain = properties.geographicDomain,
                         instruction = properties.instruction,
@@ -48,7 +51,7 @@ class MetAlertsDataSource {
                         severity = properties.severity,
                         type = properties.type,
                         affected_area = it.geometry.coordinates,
-                        consequences = properties.consequences
+                        description = properties.description // LAGT TIL
                     )
                 }
             )
