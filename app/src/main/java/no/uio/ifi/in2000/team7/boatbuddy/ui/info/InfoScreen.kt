@@ -1,26 +1,42 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
-import android.location.Location
-import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
-import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -38,8 +54,8 @@ fun InfoScreen(
     val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
     val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
 
-    val lat = "59.9"
-    val lon = "10.1"
+    val lat = "58.2" // må hente posisjon fra bruker
+    val lon = "6.3025"
     metAlertsViewModel.initialize(lat = lat, lon = lon)
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)
@@ -87,9 +103,35 @@ fun InfoScreen(
 
             Column {
                 Text(text = "Dette er farevarsler")
+                var showMessage by remember { mutableStateOf(true) }
                 metalertsUIState.metalerts?.features?.forEach {
-                    AlertCard(modifier = modifier, feature = it)
+                    var cardHeight = remember { mutableStateOf(75.dp) }
+                    if (showMessage) {
+                        var card = NotificationCard(it.awarenessSeriousness,
+                            it.consequences,
+                            it.description,
+                            it.instruction,
+                            it.riskMatrixColor,
+                            showMessage = showMessage,
+                            height = cardHeight.value,
+                            onCardClickMax = { cardHeight.value = 250.dp },
+                            onCardClickMin = { cardHeight.value = 75.dp },
+                            onDismissRequested = { showMessage = false })
+                    }
                 }
+                }
+
+
+                //NotificationCard(
+                //    "Alvorlig situasjon",
+                //    "Vær forberedt",
+                    //"https://cdn.pixabay.com/photo/2019/06/24/10/42/alpaca-4295702_960_720.jpg",
+                  //  "Sterk ising på skip.",
+                   // "Fjern is raskt fra båten.",
+                   // "#FFA500",
+                   // showMessage = showMessage,
+                   // onDismissRequested = { showMessage = false }
+                // )
                 Text(text = "Dette er soldata")
                 if (sunriseUIState.sunriseData != null) {
                     sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
@@ -106,7 +148,6 @@ fun InfoScreen(
         }
     }
 
-}
 
 
 @Composable
@@ -143,6 +184,7 @@ fun OceanCard(modifier: Modifier, timeOceanData: TimeOceanData) {
 fun LocationCard(modifier: Modifier, timeLocationData: TimeLocationData) {
     Card(
         modifier = modifier
+            .background(Color.Blue)
     ) {
         Column() {
             Text(text = "tid: ${timeLocationData.time}")
@@ -152,5 +194,99 @@ fun LocationCard(modifier: Modifier, timeLocationData: TimeLocationData) {
         }
     }
 }
+
+@Composable
+fun NotificationCard( // må etterhvert hente inn posisjon
+    awarenessSeriousness: String, consequences: String,
+    description: String, resourceInstruction: String,
+    riskMatrixColor: String, showMessage: Boolean,
+    height: Dp, // Accept dynamic height
+    onCardClickMax: () -> Unit,
+    onCardClickMin: () -> Unit,// Denne funksjonen vil bli kalt når hele kortet klikkes
+    onDismissRequested: () -> Unit) {
+    //img: String
+    val minimerButtonColor = ButtonDefaults.buttonColors(
+        containerColor = Color.Black
+    )
+    val xButtonColor = ButtonDefaults.buttonColors(
+        containerColor = Color.Black
+    )
+
+            Card(
+                modifier = Modifier
+                    .wrapContentSize(Alignment.Center)
+                    .clickable { onCardClickMax() }
+                    .size(width = 500.dp, height = height)
+                    .background(Color.Blue)
+
+            )
+            {
+                Row {
+                    Button(
+                        onClick = onDismissRequested,
+                        modifier = Modifier
+                        .wrapContentSize(Alignment.TopEnd), // MÅ FÅ FLYTTA TIL TOPP HØYRE
+                        colors = xButtonColor
+                    )
+                    {
+                        Text("X")
+                    }
+                    Button(
+                        onClick = onCardClickMin,
+                        modifier = Modifier
+                        .wrapContentSize(Alignment.TopStart), // MÅ FÅ FLYTTA TIL TOPP HØYRE
+                        colors = minimerButtonColor
+                    )
+                    {
+                        Text("-")
+                    }
+                }
+                Text(
+                    text = "$awarenessSeriousness: ",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center),
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = consequences,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center),
+                    textAlign = TextAlign.Center,
+                )
+                // Image(
+                    // painter = painterResource(id = R.drawable.farevarsel),
+                 //   contentDescription = "Icon",
+                  //  modifier = Modifier
+                    //    .fillMaxWidth()
+                    //    .wrapContentSize(Alignment.Center)
+                    //    .size(200.dp)
+                // )
+                Text(
+                    text = description,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+
+                    )
+                Text(
+                    text = resourceInstruction,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+
+                    )
+                // FARGE UTIFRA HVOR FARLIG, GUL, ORANSJE ELLER RØDT
+                Text(
+                    text = "",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color(android.graphics.Color.parseColor(riskMatrixColor)),
+                        )
+                )
+            }
+        }
 
 
