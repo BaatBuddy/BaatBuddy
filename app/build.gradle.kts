@@ -97,5 +97,8 @@ dependencies {
     //for dotenv variable
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 
+    //for splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 
 }
