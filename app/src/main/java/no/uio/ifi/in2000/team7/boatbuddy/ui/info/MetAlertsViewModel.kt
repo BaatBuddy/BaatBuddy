@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -25,14 +26,13 @@ class MetAlertsViewModel : ViewModel() {
     val metalertsUIState: StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
 
     private var initialized = false
-    private var lastPos = ""
+    private var lastPos = "initialize filler :)"
 
     @MainThread
     fun initialize(lat: String = "", lon: String = "") {
         initialized = lastPos == lat + lon
 
         if (initialized) return
-
         initialized = true
         lastPos = lat + lon
         loadMetalerts(lat, lon)
@@ -43,7 +43,7 @@ class MetAlertsViewModel : ViewModel() {
     private fun loadMetalerts(lat: String = "", lon: String = "") {
 
         viewModelScope.launch(Dispatchers.IO) {
-
+            
             val metalerts = repository.getMetAlertsData(lat, lon)
             _metalertsUIState.update { it.copy(metalerts = metalerts) }
 

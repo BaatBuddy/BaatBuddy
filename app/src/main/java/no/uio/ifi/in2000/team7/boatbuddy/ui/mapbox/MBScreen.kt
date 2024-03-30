@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -43,9 +48,12 @@ import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
@@ -54,6 +62,7 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListene
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
 @JvmOverloads
@@ -64,18 +73,31 @@ fun loadStyle(style: String, onStyleLoaded: Style.OnStyleLoaded? = null) {
 
 @OptIn(MapboxExperimental::class)
 @Composable
-fun MBScreen(locationViewModel: UserLocationViewModel = viewModel()) {
+fun MBScreen(
+    locationViewModel: UserLocationViewModel = viewModel(),
+    metAlertsViewModel: MetAlertsViewModel
+) {
+    Log.i("ASDASD", "ASD1")
+    // fetches all alerts (no arguments)
+    metAlertsViewModel.initialize()
+    val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
+
     MapboxOptions.accessToken =
-        "pk.eyJ1IjoiYWFudW5kaiIsImEiOiJjbHR5Y2FpdnEwY2xsMmtwanFxb3k1Yjk0In0.6jHYW1-ZRQE1EYwM2aQj1A"
+        "pk.eyJ1IjoibWFmcmVkcmkiLCJhIjoiY2x1MWIxZ3Q2MGtlZDJrbnhmdTZ0NHZtaSJ9.B6Iawg2wbjSnGqMEOEtxvQ"
+
     val context = LocalContext.current
 
     val mapView = MapView(context)
 
+    // initialize all annotation managers
     val annotationApi = mapView.annotations
     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
+    val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
 
     val points = remember { mutableListOf<Point>() }
+
+    var alertVisible by remember { mutableStateOf(false) }
 
     with(mapView) {
 
@@ -88,49 +110,30 @@ fun MBScreen(locationViewModel: UserLocationViewModel = viewModel()) {
                 .build()
         )
 
-        mapboxMap.loadStyle(
-            Style.DARK
-        ) {
-            addAnnotationToMap(
-                context,
-                Point.fromLngLat(10.20449, 59.74389),
-                pointAnnotationManager,
-                points,
-                polylineAnnotationManager
-            )
+        mapboxMap.loadStyle("mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg") {
+
         }
 
         mapboxMap.addOnMapClickListener { point ->
-            addAnnotationToMap(
-                context,
-                point,
-                pointAnnotationManager,
-                points,
-                polylineAnnotationManager
+            addPinToMap(
+                context = context,
+                point = point,
+                pointAnnotationManager = pointAnnotationManager
             )
+            points.add(point)
             true
         }
 
     }
 
 
-
+    // creates a on click event that deletes existing pins on the map
     LaunchedEffect(pointAnnotationManager) {
         pointAnnotationManager.addClickListener { clickedAnnotation ->
             pointAnnotationManager.delete(clickedAnnotation)
             points.remove(clickedAnnotation.point)
-            points.sortBy { it.latitude() + it.longitude() }
 
-            val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
-                .withPoints(points)
-                .withLineColor("#219EBC")
-                .withLineWidth(4.0)
-                .withLineBorderColor("#023047")
-                .withLineBorderWidth(1.0)
-
-            polylineAnnotationManager.create(polylineAnnotationOptions)
-
-            true
+            true // filler??
         }
     }
 
@@ -165,6 +168,45 @@ fun MBScreen(locationViewModel: UserLocationViewModel = viewModel()) {
             ) {
                 Text(text = "Change Style")
             }
+            Button(
+                onClick = {
+                    alertVisible = !alertVisible
+                    val polygons = polygonAnnotationManager.annotations
+
+                    if (alertVisible) {
+                        // consider if it's valid to have this logic in UI layer
+
+                        if (polygons.isNotEmpty()) {
+                            polygons.forEach { it.fillOpacity = 0.4 }
+                            polygonAnnotationManager.update(polygons)
+                        }
+
+                        metAlertsUIState.metalerts?.features?.forEach { featureData ->
+                            featureData.affected_area.forEach { area ->
+
+                                val alertArea = area.map { polygon ->
+                                    polygon.map { coordinate ->
+                                        Point.fromLngLat(coordinate[0], coordinate[1])
+                                    }
+                                }
+                                if (alertArea !in polygons.map { it.points }) {
+                                    addPolygonToMap(
+                                        polygonAnnotationManager = polygonAnnotationManager,
+                                        points = alertArea,
+                                        fColor = featureData.riskMatrixColor
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        polygons.forEach { it.fillOpacity = 0.0 }
+                        polygonAnnotationManager.update(polygons)
+                    }
+
+                }
+            ) {
+                Text(text = "${if (alertVisible) "Hide" else "Show"} Alerts")
+            }
 
         }
 
@@ -177,37 +219,97 @@ fun MBScreen(locationViewModel: UserLocationViewModel = viewModel()) {
  * https://docs.mapbox.com/android/maps/examples/default-point-annotation/
  */
 
-private fun addAnnotationToMap(
+
+// function to add a point to the map and to the mutable points list
+private fun addPinToMap(
     context: Context,
     point: Point,
-    pointAnnotationManager: PointAnnotationManager?,
-    points: MutableList<Point>,
-    polylineAnnotationManager: PolylineAnnotationManager?
+    pointAnnotationManager: PointAnnotationManager
 ) {
     bitmapFromDrawableRes(
         context,
         R.drawable.ic_map_pin
-    )?.let {
+    )?.let { bitmap -> // map-pin icon
 
         val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
             .withPoint(point)
-            .withIconImage(it)
+            .withIconImage(bitmap)
             .withIconAnchor(IconAnchor.BOTTOM)
 
-        pointAnnotationManager?.create(pointAnnotationOptions)
-        points.add(point)
+        pointAnnotationManager.create(pointAnnotationOptions)
 
-        val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
-            .withPoints(points)
-            .withLineColor("#219EBC")
-            .withLineWidth(4.0)
-            .withLineBorderColor("#023047")
-            .withLineBorderWidth(1.0)
-
-        polylineAnnotationManager?.create(polylineAnnotationOptions)
     }
 }
 
+// function to create a polyline on the map based on a list of points, creates lines based on the order of points
+private fun addLineToMap(
+    polylineAnnotationManager: PolylineAnnotationManager,
+    points: List<Point>,
+) {
+
+    val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
+        .withPoints(points)
+        .withLineColor("#219EBC")
+        .withLineWidth(4.0)
+        .withLineBorderColor("#023047")
+        .withLineBorderWidth(1.0)
+
+    polylineAnnotationManager.create(polylineAnnotationOptions)
+
+}
+
+private fun addPolygonToMap(
+    polygonAnnotationManager: PolygonAnnotationManager,
+    points: List<List<Point>>,
+    fColor: String = "",
+    olColor: String = ""
+) {
+    // string in hex value format
+    val fillColor: String
+    val outlineColor: String
+
+    // when block to handle input from metalerts risk matrix colors
+    when (fColor) {
+        "Yellow" -> {
+            fillColor = "#ffd500"
+            outlineColor = "#8f7700"
+        }
+
+        "Orange" -> {
+            fillColor = "#ff9100"
+            outlineColor = "#8c4f00"
+        }
+
+        "Red" -> {
+            fillColor = "#ff0d00"
+            outlineColor = "#870700"
+        }
+
+        // default color green
+        "" -> {
+            fillColor = "#80ff00"
+            outlineColor = "#478f00"
+        }
+
+        // if other color is supplied
+        else -> {
+            // make a test for a valid color format
+            fillColor = fColor
+            outlineColor = olColor
+        }
+    }
+
+    val polygonAnnotationOptions: PolygonAnnotationOptions = PolygonAnnotationOptions()
+        .withPoints(points)
+        .withFillColor(fillColor)
+        .withFillOpacity(0.4)
+        .withFillOutlineColor(outlineColor)
+
+    polygonAnnotationManager.create(polygonAnnotationOptions)
+}
+
+
+// functions to convert a xml vector to a bitmap object
 private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
     convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
 
@@ -218,7 +320,6 @@ private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
     return if (sourceDrawable is BitmapDrawable) {
         sourceDrawable.bitmap
     } else {
-// copying drawable object to not manipulate on the same reference
         val constantState = sourceDrawable.constantState ?: return null
         val drawable = constantState.newDrawable().mutate()
         val bitmap: Bitmap = Bitmap.createBitmap(

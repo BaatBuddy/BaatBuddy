@@ -7,12 +7,18 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.GetUserLocation
 import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MBScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    metAlertsViewModel: MetAlertsViewModel = viewModel()
+) {
+
+
     val snackBarHostState = remember { SnackbarHostState() }
 
     Scaffold(
@@ -26,7 +32,7 @@ fun HomeScreen() {
         }
     ) {
 
-        MBScreen()
+        MBScreen(metAlertsViewModel = metAlertsViewModel)
         GetUserLocation()
     }
 

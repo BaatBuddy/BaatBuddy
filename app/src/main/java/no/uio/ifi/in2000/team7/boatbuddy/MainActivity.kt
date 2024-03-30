@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team7.boatbuddy
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
@@ -17,11 +16,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.i("ASDASD", "ASDASDASD")
         // requests user location to a object
         UserLocation.initialize(this)
         //UserLocation.checkPermissions()
-        Log.i("ASDASD", "ASDASDASD")
 
         setContent {
 

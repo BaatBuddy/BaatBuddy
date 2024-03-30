@@ -22,8 +22,8 @@ data class FeatureData(
     val instruction: String,
     val riskMatrixColor: String,
     val severity: String,
-    val type: String,
-    val affected_area: List<List<List<Any>>>
+    val type: String, // consider removing (always "Feature")
+    val affected_area: List<List<List<List<Double>>>>
 
 )
 
