@@ -45,6 +45,7 @@ import com.mapbox.maps.extension.style.style
 import com.mapbox.maps.extension.style.utils.transition
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.PuckBearing
+import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
@@ -207,7 +208,77 @@ fun MBScreen(
             ) {
                 Text(text = "${if (alertVisible) "Hide" else "Show"} Alerts")
             }
+            Button(
+                onClick = {
+                    addLineToMap(
+                        polylineAnnotationManager = polylineAnnotationManager,
+                        points =
+                        listOf(
+                            Point.fromLngLat(10.668749999999989, 59.89375000000001),
+                            Point.fromLngLat(10.668749999999989, 59.87291666666667),
+                            Point.fromLngLat(10.647916666666674, 59.852083333333326),
+                            Point.fromLngLat(10.627083333333331, 59.83125000000001),
+                            Point.fromLngLat(10.606249999999989, 59.81041666666667),
+                            Point.fromLngLat(10.585416666666674, 59.789583333333326),
+                            Point.fromLngLat(10.585416666666674, 59.76875000000001),
+                            Point.fromLngLat(10.564583333333331, 59.74791666666667),
+                            Point.fromLngLat(10.564583333333331, 59.727083333333326),
+                            Point.fromLngLat(10.585416666666674, 59.70625000000001),
+                            Point.fromLngLat(10.606249999999989, 59.68541666666667),
+                            Point.fromLngLat(10.606249999999989, 59.664583333333326),
+                            Point.fromLngLat(10.606249999999989, 59.64375000000001),
+                            Point.fromLngLat(10.627083333333331, 59.62291666666667),
+                            Point.fromLngLat(10.627083333333331, 59.602083333333326),
+                            Point.fromLngLat(10.627083333333331, 59.58125000000001),
+                            Point.fromLngLat(10.606249999999989, 59.56041666666667),
+                            Point.fromLngLat(10.585416666666674, 59.539583333333326),
+                            Point.fromLngLat(10.564583333333331, 59.539583333333326),
+                            Point.fromLngLat(10.543749999999989, 59.51875000000001),
+                            Point.fromLngLat(10.522916666666674, 59.51875000000001),
+                            Point.fromLngLat(10.502083333333331, 59.51875000000001),
+                            Point.fromLngLat(10.481249999999989, 59.51875000000001),
+                            Point.fromLngLat(10.460416666666674, 59.51875000000001),
+                            Point.fromLngLat(10.439583333333331, 59.51875000000001),
+                            Point.fromLngLat(10.418749999999989, 59.51875000000001),
+                            Point.fromLngLat(10.397916666666674, 59.539583333333326),
+                            Point.fromLngLat(10.418749999999989, 59.56041666666667),
+                            Point.fromLngLat(10.418749999999989, 59.58125000000001),
+                            Point.fromLngLat(10.418749999999989, 59.602083333333326),
+                            Point.fromLngLat(10.418749999999989, 59.62291666666667),
+                            Point.fromLngLat(10.418749999999989, 59.64375000000001),
+                            Point.fromLngLat(10.397916666666674, 59.664583333333326),
+                            Point.fromLngLat(10.377083333333331, 59.68541666666667),
+                            Point.fromLngLat(10.356249999999989, 59.70625000000001),
+                            Point.fromLngLat(10.335416666666674, 59.70625000000001),
+                            Point.fromLngLat(10.314583333333331, 59.70625000000001),
+                            Point.fromLngLat(10.293749999999989, 59.70625000000001),
+                            Point.fromLngLat(10.272916666666674, 59.727083333333326),
+                            Point.fromLngLat(10.252083333333331, 59.727083333333326),
+                        )
+                    )
+                }
+            ) {
+                Text(text = "Add path")
+            }
 
+
+        }
+        Button(
+            onClick = {
+                val location = locationViewModel.fetchUserLocation(context)
+                if (location != null) {
+                    mapView.mapboxMap.flyTo(
+                        CameraOptions.Builder()
+                            .center(Point.fromLngLat(location.longitude, location.latitude))
+                            .zoom(18.0)
+                            .bearing(location.bearing.toDouble())
+                            .pitch(45.0)
+                            .build()
+                    )
+                }
+            }
+        ) {
+            Text(text = "Fly to user")
         }
 
     }

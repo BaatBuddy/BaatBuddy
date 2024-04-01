@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
 import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,7 +59,6 @@ class UserLocationViewModel : ViewModel() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         val task: Task<LocationSettingsResponse> =
             settingsClient.checkLocationSettings(locationSettingsRequest)
-
         task.addOnCompleteListener {
             if (task.isSuccessful) {
                 getLocation()
@@ -91,6 +91,14 @@ class UserLocationViewModel : ViewModel() {
     fun fetchLocation(context: Context, permissionGranted: String) {
         createLocationRequest(context, permissionGranted)
         createLocationCallback()
+    }
+
+
+    fun fetchUserLocation(context: Context): Location? {
+        if (permissionsGranted) {
+            return locationState?.lastLocation
+        }
+        return null
     }
 
 
