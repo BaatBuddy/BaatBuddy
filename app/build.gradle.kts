@@ -101,9 +101,14 @@ dependencies {
     //for dotenv variable
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 
+
     //location permission
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
+
+    //for splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 
 
 }
