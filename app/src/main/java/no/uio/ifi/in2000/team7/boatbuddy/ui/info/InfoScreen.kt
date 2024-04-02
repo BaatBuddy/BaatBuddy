@@ -50,8 +50,8 @@ fun InfoScreen(
     val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
     val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
 
-    val lat = "58.2" // må hente posisjon fra bruker
-    val lon = "6.3025"
+    val lat = "59.9" // må hente posisjon fra bruker
+    val lon = "10.7"
     metAlertsViewModel.initialize(lat = lat, lon = lon)
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)

@@ -49,6 +49,7 @@ import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
@@ -63,6 +64,8 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListene
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
+import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -78,7 +81,6 @@ fun MBScreen(
     locationViewModel: UserLocationViewModel = viewModel(),
     metAlertsViewModel: MetAlertsViewModel
 ) {
-    Log.i("ASDASD", "ASD1")
     // fetches all alerts (no arguments)
     metAlertsViewModel.initialize()
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
@@ -97,6 +99,7 @@ fun MBScreen(
     val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
 
     val points = remember { mutableListOf<Point>() }
+    val metalertPolygon = remember { mutableListOf<MetalertPolygon>() }
 
     var alertVisible by remember { mutableStateOf(false) }
 
@@ -129,12 +132,25 @@ fun MBScreen(
 
 
     // creates a on click event that deletes existing pins on the map
-    LaunchedEffect(pointAnnotationManager) {
-        pointAnnotationManager.addClickListener { clickedAnnotation ->
-            pointAnnotationManager.delete(clickedAnnotation)
-            points.remove(clickedAnnotation.point)
+    LaunchedEffect(pointAnnotationManager, polygonAnnotationManager) {
+        
+        pointAnnotationManager.addClickListener { clickedPoint ->
+            pointAnnotationManager.delete(clickedPoint)
+            points.remove(clickedPoint.point)
 
             true // filler??
+        }
+
+        polygonAnnotationManager.addClickListener { clickedPolygon ->
+            Log.i("ASDASD", clickedPolygon.points.toString())
+            val centroid = Point.fromLngLat(
+                points.sumOf { it.longitude() } / points.size, //lon
+                points.sumOf { it.latitude() } / points.size // lat
+            )
+
+            addPinToMap(context, centroid, pointAnnotationManager)
+
+            true
         }
     }
 
@@ -191,10 +207,15 @@ fun MBScreen(
                                     }
                                 }
                                 if (alertArea !in polygons.map { it.points }) {
-                                    addPolygonToMap(
+                                    val polygon = addPolygonToMap(
                                         polygonAnnotationManager = polygonAnnotationManager,
                                         points = alertArea,
                                         fColor = featureData.riskMatrixColor
+                                    )
+
+                                    MetalertPolygon(
+                                        polygon = polygon,
+                                        featureData = featureData
                                     )
                                 }
                             }
@@ -329,12 +350,17 @@ private fun addLineToMap(
 
 }
 
+data class MetalertPolygon(
+    val polygon: PolygonAnnotation,
+    val featureData: FeatureData
+)
+
 private fun addPolygonToMap(
     polygonAnnotationManager: PolygonAnnotationManager,
     points: List<List<Point>>,
     fColor: String = "",
     olColor: String = ""
-) {
+): PolygonAnnotation {
     // string in hex value format
     val fillColor: String
     val outlineColor: String
@@ -376,7 +402,8 @@ private fun addPolygonToMap(
         .withFillOpacity(0.4)
         .withFillOutlineColor(outlineColor)
 
-    polygonAnnotationManager.create(polygonAnnotationOptions)
+
+    return polygonAnnotationManager.create(polygonAnnotationOptions)
 }
 
 
