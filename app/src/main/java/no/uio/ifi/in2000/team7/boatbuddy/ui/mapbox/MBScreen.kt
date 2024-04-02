@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -35,10 +34,13 @@ import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
+import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.interpolate
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.style
@@ -47,6 +49,7 @@ import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
@@ -59,13 +62,14 @@ import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManage
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.viewannotation.geometry
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -73,7 +77,6 @@ import java.lang.ref.WeakReference
 fun loadStyle(style: String, onStyleLoaded: Style.OnStyleLoaded? = null) {
 
 }
-
 
 @OptIn(MapboxExperimental::class)
 @Composable
@@ -97,8 +100,9 @@ fun MBScreen(
     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
     val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
+    val viewAnnotationManager = mapView.viewAnnotationManager
 
-    val points = remember { mutableListOf<Point>() }
+    val selectedPoint = remember { mutableListOf<PointAnnotation>() }
     val metalertPolygon = remember { mutableListOf<MetalertPolygon>() }
 
     var alertVisible by remember { mutableStateOf(false) }
@@ -119,40 +123,88 @@ fun MBScreen(
         }
 
         mapboxMap.addOnMapClickListener { point ->
-            addPinToMap(
+            if (selectedPoint.isNotEmpty()) {
+                pointAnnotationManager.annotations.firstOrNull { it.point == selectedPoint.first().point }
+                    ?.let { pointAnnotationManager.delete(it) }
+                selectedPoint.removeAll { true }
+            }
+
+            val pointAnnotation = addPinToMap(
                 context = context,
                 point = point,
                 pointAnnotationManager = pointAnnotationManager
             )
-            points.add(point)
+
+            if (pointAnnotation != null) {
+                selectedPoint.add(pointAnnotation)
+                mapboxMap.flyTo(
+                    cameraOptions = CameraOptions.Builder()
+                        .center(pointAnnotation.point)
+                        .build()
+                ) // consider removing flyto
+            }
             true
         }
+
+        mapboxMap.addOnMoveListener(
+            object : OnMoveListener {
+                override fun onMoveBegin(detector: MoveGestureDetector) {
+
+                    if (viewAnnotationManager.annotations.isNotEmpty()) {
+                        viewAnnotationManager.removeAllViewAnnotations()
+                    }
+                }
+
+                override fun onMove(detector: MoveGestureDetector): Boolean {
+                    return false
+                }
+
+                override fun onMoveEnd(detector: MoveGestureDetector) {
+
+                }
+            }
+        )
+
 
     }
 
 
     // creates a on click event that deletes existing pins on the map
-    LaunchedEffect(pointAnnotationManager, polygonAnnotationManager) {
-        
-        pointAnnotationManager.addClickListener { clickedPoint ->
-            pointAnnotationManager.delete(clickedPoint)
-            points.remove(clickedPoint.point)
+    LaunchedEffect(polygonAnnotationManager) {
 
-            true // filler??
-        }
+        polygonAnnotationManager.addClickListener { clickedPolygons ->
+            clickedPolygons.points.forEach { polygon ->
+                val centroid = Point.fromLngLat(
+                    polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
+                    polygon.sumOf { point -> point.latitude() } / polygon.size // lat
+                )
 
-        polygonAnnotationManager.addClickListener { clickedPolygon ->
-            Log.i("ASDASD", clickedPolygon.points.toString())
-            val centroid = Point.fromLngLat(
-                points.sumOf { it.longitude() } / points.size, //lon
-                points.sumOf { it.latitude() } / points.size // lat
-            )
+                if (viewAnnotationManager.annotations.isNotEmpty()) {
+                    viewAnnotationManager.removeAllViewAnnotations()
+                }
 
-            addPinToMap(context, centroid, pointAnnotationManager)
+
+                val viewAnnotation = viewAnnotationManager.addViewAnnotation(
+                    resId = R.layout.metalert_view_card,
+                    ViewAnnotationOptions.Builder()
+                        .geometry(centroid)
+                        .build()
+                )
+
+                mapView.mapboxMap.flyTo(
+                    cameraOptions = mapView.mapboxMap.cameraForGeometry(
+                        geometry = Polygon.fromLngLats(clickedPolygons.points),
+                        geometryPadding = EdgeInsets(10.0, 3.0, 3.0, 3.0)
+                    )
+                )
+
+            }
+
 
             true
         }
     }
+
 
     Column {
         Box(
@@ -229,6 +281,7 @@ fun MBScreen(
             ) {
                 Text(text = "${if (alertVisible) "Hide" else "Show"} Alerts")
             }
+
             Button(
                 onClick = {
                     addLineToMap(
@@ -317,7 +370,7 @@ private fun addPinToMap(
     context: Context,
     point: Point,
     pointAnnotationManager: PointAnnotationManager
-) {
+): PointAnnotation? {
     bitmapFromDrawableRes(
         context,
         R.drawable.ic_map_pin
@@ -328,9 +381,10 @@ private fun addPinToMap(
             .withIconImage(bitmap)
             .withIconAnchor(IconAnchor.BOTTOM)
 
-        pointAnnotationManager.create(pointAnnotationOptions)
+        return pointAnnotationManager.create(pointAnnotationOptions)
 
     }
+    return null
 }
 
 // function to create a polyline on the map based on a list of points, creates lines based on the order of points
