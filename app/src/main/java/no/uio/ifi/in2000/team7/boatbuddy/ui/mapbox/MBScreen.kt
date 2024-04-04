@@ -3,13 +3,11 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -196,7 +194,7 @@ fun MBScreen(
                     setBackgroundResource(R.drawable.card_shape)
                     setPadding(10, 10, 10, 10)
                     layoutParams = LinearLayout.LayoutParams(
-                        dpToPx(100),
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
                 }
@@ -235,13 +233,13 @@ fun MBScreen(
                 cardHeader.addView(cardName)
                 cardHeader.addView(cardAlertIcon)
 
-                val cardConsequences = TextView(context).apply {
-                    text = featureData.consequences
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    )
-                }
+//                val cardConsequences = TextView(context).apply {
+//                    text = featureData.consequences
+//                    layoutParams = LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.WRAP_CONTENT,
+//                        LinearLayout.LayoutParams.WRAP_CONTENT
+//                    )
+//                }
 
 
                 /*val cardDescription = TextView(context).apply {
@@ -254,7 +252,7 @@ fun MBScreen(
                  */
 
                 metalertCardView.addView(cardHeader)
-                metalertCardView.addView(cardConsequences)
+//                metalertCardView.addView(cardConsequences)
                 //metalertCardView.addView(cardDescription)
 
 
@@ -537,27 +535,28 @@ private fun addPolygonToMap(
 }
 
 
+@SuppressLint("DiscouragedApi")
 private fun convertAlertResId(
     event: String,
     riskMatrixColor: String,
     context: Context
 ): Int {
-    Log.i("ASDASD", event)
-    val iconName = when (event.lowercase()) {
+
+    val iconName = when (event) {
         "avalanches" -> "icon_warning_avalanches"
-        "blowingsnow" -> "icon_warning_snow"
-        "drivingconditions" -> "icon_warning_drivingconditions"
+        "blowingSnow" -> "icon_warning_snow"
+        "drivingConditions" -> "icon_warning_drivingconditions"
         "flood" -> "icon_warning_flood"
-        "forestfire" -> "icon_warning_forestfire"
+        "forestFire" -> "icon_warning_forestfire"
         "gale" -> "icon_warning_wind"
         "ice" -> "icon_warning_ice"
         "icing" -> "icon_warning_generic"
-        "landslide" -> "icon_warning_landslide"
-        "polarlow" -> "icon_warning_polarlow"
+        "landSlide" -> "icon_warning_landslide"
+        "polarLow" -> "icon_warning_polarlow"
         "rain" -> "icon_warning_rain"
-        "rainflood" -> "icon_warning_rainflood"
+        "rainFlood" -> "icon_warning_rainflood"
         "snow" -> "icon_warning_snow"
-        "stormsurge" -> "icon_warning_stormsurge"
+        "stormSurge" -> "icon_warning_stormsurge"
         "lightning" -> "icon_warning_lightning"
         "wind" -> "icon_warning_wind"
         else -> "icon_warning_generic" // "unknown"
@@ -590,13 +589,8 @@ private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
     }
 }
 
-fun dpToPx(dp: Int): Int {
-    return (dp * Resources.getSystem().displayMetrics.density).toInt()
-}
-
 
 // hentet fra https://github.com/mapbox/mapbox-maps-android/blob/v11.0.0/app/src/main/java/com/mapbox/maps/testapp/examples/LocationTrackingActivity.kt
-
 
 class LocationTrackingActivity : AppCompatActivity() {
 
