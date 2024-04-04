@@ -104,8 +104,8 @@ fun InfoScreen(
                     var cardHeight = remember { mutableStateOf(75.dp) }
                     if (showMessage) {
                         var card = NotificationCard(
-//                            it.awarenessSeriousness,
-//                            it.consequences,
+                            it.awarenessSeriousness,
+                            it.consequences,
                             it.description,
                             it.instruction,
                             it.riskMatrixColor,
@@ -193,8 +193,8 @@ fun LocationCard(modifier: Modifier, timeLocationData: TimeLocationData) {
 
 @Composable
 fun NotificationCard( // må etterhvert hente inn posisjon
-//    awarenessSeriousness: String,
-//    consequences: String,
+    awarenessSeriousness: String,
+    consequences: String,
     description: String, resourceInstruction: String,
     riskMatrixColor: String, showMessage: Boolean,
     height: Dp, // Accept dynamic height
@@ -240,14 +240,14 @@ fun NotificationCard( // må etterhvert hente inn posisjon
             }
         }
         Text(
-            text = "awarenessSeriousness ", // CHANGED BASED ON METALERT CHANGE
+            text = "$awarenessSeriousness ", // CHANGED BASED ON METALERT CHANGE
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center),
             textAlign = TextAlign.Center,
         )
         Text(
-            text = "consequences",
+            text = "$consequences",
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center),

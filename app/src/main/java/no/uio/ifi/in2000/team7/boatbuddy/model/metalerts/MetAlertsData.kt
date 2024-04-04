@@ -23,6 +23,7 @@ data class FeatureData(
     val riskMatrixColor: String,
     val severity: String,
     val type: String, // consider removing (always "Feature")
+    val event: String,
     val affected_area: List<List<List<List<Double>>>>
 
 )

@@ -49,6 +49,7 @@ class MetAlertsDataSource {
                             affectedArea = it.geometry.coordinates,
                             areaType = it.geometry.type
                         ),
+                        event = properties.event,
                         description = properties.description // LAGT TIL
                     )
                 }

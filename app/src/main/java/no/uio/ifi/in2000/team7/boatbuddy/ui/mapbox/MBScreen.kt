@@ -1,12 +1,19 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -103,7 +110,7 @@ fun MBScreen(
     val viewAnnotationManager = mapView.viewAnnotationManager
 
     val selectedPoint = remember { mutableListOf<PointAnnotation>() }
-    val metalertPolygon = remember { mutableListOf<MetalertPolygon>() }
+    val polygonAlerts = remember { mutableListOf<PolygonAlert>() }
 
     var alertVisible by remember { mutableStateOf(false) }
 
@@ -172,8 +179,8 @@ fun MBScreen(
     // creates a on click event that deletes existing pins on the map
     LaunchedEffect(polygonAnnotationManager) {
 
-        polygonAnnotationManager.addClickListener { clickedPolygons ->
-            clickedPolygons.points.forEach { polygon ->
+        polygonAnnotationManager.addClickListener { clickedPolygon ->
+            clickedPolygon.points.forEach { polygon ->
                 val centroid = Point.fromLngLat(
                     polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
                     polygon.sumOf { point -> point.latitude() } / polygon.size // lat
@@ -183,9 +190,76 @@ fun MBScreen(
                     viewAnnotationManager.removeAllViewAnnotations()
                 }
 
+                val metalertCardView = LinearLayout(context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    setBackgroundResource(R.drawable.card_shape)
+                    setPadding(10, 10, 10, 10)
+                    layoutParams = LinearLayout.LayoutParams(
+                        dpToPx(100),
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val featureData = polygonAlerts.find { polygonAlert ->
+                    polygonAlert.polygonAnnotation == clickedPolygon
+                }?.featureData!!
+
+                val cardHeader = LinearLayout(context).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val cardName = TextView(context).apply {
+                    text = featureData.eventAwarenessName
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val cardAlertIcon = ImageView(context).apply {
+                    setImageResource(
+                        convertAlertResId(
+                            event = featureData.event,
+                            riskMatrixColor = featureData.riskMatrixColor,
+                            context = context
+                        )
+                    )
+                }
+
+                cardHeader.addView(cardName)
+                cardHeader.addView(cardAlertIcon)
+
+                val cardConsequences = TextView(context).apply {
+                    text = featureData.consequences
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+
+                /*val cardDescription = TextView(context).apply {
+                    text = featureData.description
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+                 */
+
+                metalertCardView.addView(cardHeader)
+                metalertCardView.addView(cardConsequences)
+                //metalertCardView.addView(cardDescription)
+
 
                 val viewAnnotation = viewAnnotationManager.addViewAnnotation(
-                    resId = R.layout.metalert_view_card,
+                    metalertCardView,
                     ViewAnnotationOptions.Builder()
                         .geometry(centroid)
                         .build()
@@ -193,7 +267,7 @@ fun MBScreen(
 
                 mapView.mapboxMap.flyTo(
                     cameraOptions = mapView.mapboxMap.cameraForGeometry(
-                        geometry = Polygon.fromLngLats(clickedPolygons.points),
+                        geometry = Polygon.fromLngLats(clickedPolygon.points),
                         geometryPadding = EdgeInsets(10.0, 3.0, 3.0, 3.0)
                     )
                 )
@@ -265,10 +339,12 @@ fun MBScreen(
                                         fColor = featureData.riskMatrixColor
                                     )
 
-                                    MetalertPolygon(
-                                        polygon = polygon,
+                                    val polygonAlert = PolygonAlert(
+                                        polygonAnnotation = polygon,
                                         featureData = featureData
                                     )
+
+                                    polygonAlerts.add(polygonAlert)
                                 }
                             }
                         }
@@ -359,6 +435,11 @@ fun MBScreen(
 
 }
 
+data class PolygonAlert(
+    val polygonAnnotation: PolygonAnnotation,
+    val featureData: FeatureData
+)
+
 /**
  * https://docs.mapbox.com/android/maps/guides/annotations/annotations/
  * https://docs.mapbox.com/android/maps/examples/default-point-annotation/
@@ -403,11 +484,6 @@ private fun addLineToMap(
     polylineAnnotationManager.create(polylineAnnotationOptions)
 
 }
-
-data class MetalertPolygon(
-    val polygon: PolygonAnnotation,
-    val featureData: FeatureData
-)
 
 private fun addPolygonToMap(
     polygonAnnotationManager: PolygonAnnotationManager,
@@ -461,6 +537,35 @@ private fun addPolygonToMap(
 }
 
 
+private fun convertAlertResId(
+    event: String,
+    riskMatrixColor: String,
+    context: Context
+): Int {
+    Log.i("ASDASD", event)
+    val iconName = when (event.lowercase()) {
+        "avalanches" -> "icon_warning_avalanches"
+        "blowingsnow" -> "icon_warning_snow"
+        "drivingconditions" -> "icon_warning_drivingconditions"
+        "flood" -> "icon_warning_flood"
+        "forestfire" -> "icon_warning_forestfire"
+        "gale" -> "icon_warning_wind"
+        "ice" -> "icon_warning_ice"
+        "icing" -> "icon_warning_generic"
+        "landslide" -> "icon_warning_landslide"
+        "polarlow" -> "icon_warning_polarlow"
+        "rain" -> "icon_warning_rain"
+        "rainflood" -> "icon_warning_rainflood"
+        "snow" -> "icon_warning_snow"
+        "stormsurge" -> "icon_warning_stormsurge"
+        "lightning" -> "icon_warning_lightning"
+        "wind" -> "icon_warning_wind"
+        else -> "icon_warning_generic" // "unknown"
+    } + "_" + if (riskMatrixColor.isBlank()) "yellow" else riskMatrixColor.lowercase()
+
+    return context.resources.getIdentifier(iconName, "drawable", context.packageName)
+}
+
 // functions to convert a xml vector to a bitmap object
 private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
     convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
@@ -483,6 +588,10 @@ private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
         drawable.draw(canvas)
         bitmap
     }
+}
+
+fun dpToPx(dp: Int): Int {
+    return (dp * Resources.getSystem().displayMetrics.density).toInt()
 }
 
 
