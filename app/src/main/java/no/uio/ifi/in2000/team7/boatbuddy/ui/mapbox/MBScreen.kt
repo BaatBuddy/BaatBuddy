@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,7 +8,10 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -35,10 +39,13 @@ import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
+import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.style.expressions.generated.Expression.Companion.interpolate
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.extension.style.style
@@ -47,8 +54,10 @@ import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
@@ -58,11 +67,14 @@ import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManage
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.viewannotation.geometry
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -71,14 +83,12 @@ fun loadStyle(style: String, onStyleLoaded: Style.OnStyleLoaded? = null) {
 
 }
 
-
 @OptIn(MapboxExperimental::class)
 @Composable
 fun MBScreen(
     locationViewModel: UserLocationViewModel = viewModel(),
     metAlertsViewModel: MetAlertsViewModel
 ) {
-    Log.i("ASDASD", "ASD1")
     // fetches all alerts (no arguments)
     metAlertsViewModel.initialize()
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
@@ -95,8 +105,10 @@ fun MBScreen(
     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
     val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
+    val viewAnnotationManager = mapView.viewAnnotationManager
 
-    val points = remember { mutableListOf<Point>() }
+    val selectedPoint = remember { mutableListOf<PointAnnotation>() }
+    val polygonAlerts = remember { mutableListOf<PolygonAlert>() }
 
     var alertVisible by remember { mutableStateOf(false) }
 
@@ -116,27 +128,155 @@ fun MBScreen(
         }
 
         mapboxMap.addOnMapClickListener { point ->
-            addPinToMap(
+            if (selectedPoint.isNotEmpty()) {
+                pointAnnotationManager.annotations.firstOrNull { it.point == selectedPoint.first().point }
+                    ?.let { pointAnnotationManager.delete(it) }
+                selectedPoint.removeAll { true }
+            }
+
+            val pointAnnotation = addPinToMap(
                 context = context,
                 point = point,
                 pointAnnotationManager = pointAnnotationManager
             )
-            points.add(point)
+
+            if (pointAnnotation != null) {
+                selectedPoint.add(pointAnnotation)
+                mapboxMap.flyTo(
+                    cameraOptions = CameraOptions.Builder()
+                        .center(pointAnnotation.point)
+                        .build()
+                ) // consider removing flyto
+            }
             true
         }
+
+        mapboxMap.addOnMoveListener(
+            object : OnMoveListener {
+                override fun onMoveBegin(detector: MoveGestureDetector) {
+
+                    if (viewAnnotationManager.annotations.isNotEmpty()) {
+                        viewAnnotationManager.removeAllViewAnnotations()
+                    }
+                }
+
+                override fun onMove(detector: MoveGestureDetector): Boolean {
+                    return false
+                }
+
+                override fun onMoveEnd(detector: MoveGestureDetector) {
+
+                }
+            }
+        )
+
 
     }
 
 
     // creates a on click event that deletes existing pins on the map
-    LaunchedEffect(pointAnnotationManager) {
-        pointAnnotationManager.addClickListener { clickedAnnotation ->
-            pointAnnotationManager.delete(clickedAnnotation)
-            points.remove(clickedAnnotation.point)
+    LaunchedEffect(polygonAnnotationManager) {
 
-            true // filler??
+        polygonAnnotationManager.addClickListener { clickedPolygon ->
+            clickedPolygon.points.forEach { polygon ->
+                val centroid = Point.fromLngLat(
+                    polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
+                    polygon.sumOf { point -> point.latitude() } / polygon.size // lat
+                )
+
+                if (viewAnnotationManager.annotations.isNotEmpty()) {
+                    viewAnnotationManager.removeAllViewAnnotations()
+                }
+
+                val metalertCardView = LinearLayout(context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    setBackgroundResource(R.drawable.card_shape)
+                    setPadding(10, 10, 10, 10)
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val featureData = polygonAlerts.find { polygonAlert ->
+                    polygonAlert.polygonAnnotation == clickedPolygon
+                }?.featureData!!
+
+                val cardHeader = LinearLayout(context).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val cardName = TextView(context).apply {
+                    text = featureData.eventAwarenessName
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                val cardAlertIcon = ImageView(context).apply {
+                    setImageResource(
+                        convertAlertResId(
+                            event = featureData.event,
+                            riskMatrixColor = featureData.riskMatrixColor,
+                            context = context
+                        )
+                    )
+                }
+
+                cardHeader.addView(cardName)
+                cardHeader.addView(cardAlertIcon)
+
+//                val cardConsequences = TextView(context).apply {
+//                    text = featureData.consequences
+//                    layoutParams = LinearLayout.LayoutParams(
+//                        LinearLayout.LayoutParams.WRAP_CONTENT,
+//                        LinearLayout.LayoutParams.WRAP_CONTENT
+//                    )
+//                }
+
+
+                /*val cardDescription = TextView(context).apply {
+                    text = featureData.description
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+                 */
+
+                metalertCardView.addView(cardHeader)
+//                metalertCardView.addView(cardConsequences)
+                //metalertCardView.addView(cardDescription)
+
+
+                val viewAnnotation = viewAnnotationManager.addViewAnnotation(
+                    metalertCardView,
+                    ViewAnnotationOptions.Builder()
+                        .geometry(centroid)
+                        .build()
+                )
+
+                mapView.mapboxMap.flyTo(
+                    cameraOptions = mapView.mapboxMap.cameraForGeometry(
+                        geometry = Polygon.fromLngLats(clickedPolygon.points),
+                        geometryPadding = EdgeInsets(10.0, 3.0, 3.0, 3.0)
+                    )
+                )
+
+            }
+
+
+            true
         }
     }
+
 
     Column {
         Box(
@@ -191,11 +331,18 @@ fun MBScreen(
                                     }
                                 }
                                 if (alertArea !in polygons.map { it.points }) {
-                                    addPolygonToMap(
+                                    val polygon = addPolygonToMap(
                                         polygonAnnotationManager = polygonAnnotationManager,
                                         points = alertArea,
                                         fColor = featureData.riskMatrixColor
                                     )
+
+                                    val polygonAlert = PolygonAlert(
+                                        polygonAnnotation = polygon,
+                                        featureData = featureData
+                                    )
+
+                                    polygonAlerts.add(polygonAlert)
                                 }
                             }
                         }
@@ -208,6 +355,7 @@ fun MBScreen(
             ) {
                 Text(text = "${if (alertVisible) "Hide" else "Show"} Alerts")
             }
+
             Button(
                 onClick = {
                     addLineToMap(
@@ -285,6 +433,11 @@ fun MBScreen(
 
 }
 
+data class PolygonAlert(
+    val polygonAnnotation: PolygonAnnotation,
+    val featureData: FeatureData
+)
+
 /**
  * https://docs.mapbox.com/android/maps/guides/annotations/annotations/
  * https://docs.mapbox.com/android/maps/examples/default-point-annotation/
@@ -296,7 +449,7 @@ private fun addPinToMap(
     context: Context,
     point: Point,
     pointAnnotationManager: PointAnnotationManager
-) {
+): PointAnnotation? {
     bitmapFromDrawableRes(
         context,
         R.drawable.ic_map_pin
@@ -307,9 +460,10 @@ private fun addPinToMap(
             .withIconImage(bitmap)
             .withIconAnchor(IconAnchor.BOTTOM)
 
-        pointAnnotationManager.create(pointAnnotationOptions)
+        return pointAnnotationManager.create(pointAnnotationOptions)
 
     }
+    return null
 }
 
 // function to create a polyline on the map based on a list of points, creates lines based on the order of points
@@ -334,7 +488,7 @@ private fun addPolygonToMap(
     points: List<List<Point>>,
     fColor: String = "",
     olColor: String = ""
-) {
+): PolygonAnnotation {
     // string in hex value format
     val fillColor: String
     val outlineColor: String
@@ -376,9 +530,40 @@ private fun addPolygonToMap(
         .withFillOpacity(0.4)
         .withFillOutlineColor(outlineColor)
 
-    polygonAnnotationManager.create(polygonAnnotationOptions)
+
+    return polygonAnnotationManager.create(polygonAnnotationOptions)
 }
 
+
+@SuppressLint("DiscouragedApi")
+private fun convertAlertResId(
+    event: String,
+    riskMatrixColor: String,
+    context: Context
+): Int {
+
+    val iconName = when (event) {
+        "avalanches" -> "icon_warning_avalanches"
+        "blowingSnow" -> "icon_warning_snow"
+        "drivingConditions" -> "icon_warning_drivingconditions"
+        "flood" -> "icon_warning_flood"
+        "forestFire" -> "icon_warning_forestfire"
+        "gale" -> "icon_warning_wind"
+        "ice" -> "icon_warning_ice"
+        "icing" -> "icon_warning_generic"
+        "landSlide" -> "icon_warning_landslide"
+        "polarLow" -> "icon_warning_polarlow"
+        "rain" -> "icon_warning_rain"
+        "rainFlood" -> "icon_warning_rainflood"
+        "snow" -> "icon_warning_snow"
+        "stormSurge" -> "icon_warning_stormsurge"
+        "lightning" -> "icon_warning_lightning"
+        "wind" -> "icon_warning_wind"
+        else -> "icon_warning_generic" // "unknown"
+    } + "_" + if (riskMatrixColor.isBlank()) "yellow" else riskMatrixColor.lowercase()
+
+    return context.resources.getIdentifier(iconName, "drawable", context.packageName)
+}
 
 // functions to convert a xml vector to a bitmap object
 private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
@@ -406,7 +591,6 @@ private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
 
 
 // hentet fra https://github.com/mapbox/mapbox-maps-android/blob/v11.0.0/app/src/main/java/com/mapbox/maps/testapp/examples/LocationTrackingActivity.kt
-
 
 class LocationTrackingActivity : AppCompatActivity() {
 

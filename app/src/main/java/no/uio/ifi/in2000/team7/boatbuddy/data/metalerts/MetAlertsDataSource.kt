@@ -18,7 +18,6 @@ class MetAlertsDataSource {
                 path += "?lat=%s&lon=%s".format(lat, lon)
             }
 
-
             val results = client.get(path)
 
             //checks if API-call is valid
@@ -35,11 +34,11 @@ class MetAlertsDataSource {
                         start = it.`when`.interval[0],
                         end = it.`when`.interval[1],
                         awarenessResponse = properties.awarenessResponse,
-//                        awarenessSeriousness = properties.awarenessSeriousness, // LAGT TIL
+                        awarenessSeriousness = properties.awarenessSeriousness, // LAGT TIL
                         eventAwarenessName = properties.eventAwarenessName, // LAGT TIL
                         awareness_level = properties.awareness_level,
                         awareness_type = properties.awareness_type,
-//                        consequences = properties.consequences,
+                        consequences = properties.consequences,
                         certainty = properties.certainty,
                         geographicDomain = properties.geographicDomain,
                         instruction = properties.instruction,
@@ -50,6 +49,7 @@ class MetAlertsDataSource {
                             affectedArea = it.geometry.coordinates,
                             areaType = it.geometry.type
                         ),
+                        event = properties.event,
                         description = properties.description // LAGT TIL
                     )
                 }
