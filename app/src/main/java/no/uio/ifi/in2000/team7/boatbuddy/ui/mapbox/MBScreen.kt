@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
@@ -37,7 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
-import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
@@ -75,6 +73,7 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.viewannotation.geometry
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
+import no.uio.ifi.in2000.team7.boatbuddy.ui.AlertIcon.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -87,18 +86,27 @@ fun loadStyle(style: String, onStyleLoaded: Style.OnStyleLoaded? = null) {
 @Composable
 fun MBScreen(
     locationViewModel: UserLocationViewModel = viewModel(),
-    metAlertsViewModel: MetAlertsViewModel
+    metAlertsViewModel: MetAlertsViewModel,
+    mapboxViewModel: MapboxViewModel
 ) {
-    // fetches all alerts (no arguments)
-    metAlertsViewModel.initialize()
-    val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
-
-    MapboxOptions.accessToken =
-        "pk.eyJ1IjoibWFmcmVkcmkiLCJhIjoiY2x1MWIxZ3Q2MGtlZDJrbnhmdTZ0NHZtaSJ9.B6Iawg2wbjSnGqMEOEtxvQ"
-
     val context = LocalContext.current
 
-    val mapView = MapView(context)
+    // fetches all alerts (no arguments)
+    metAlertsViewModel.initialize()
+    mapboxViewModel.initialize(
+        context = context,
+        cameraOptions = CameraOptions.Builder()
+            .center(Point.fromLngLat(10.20449, 59.74389))
+            .zoom(10.0)
+            .bearing(0.0)
+            .pitch(0.0)
+            .build()
+    )
+
+    val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
+    val mapView = mapboxUIState.mapView
 
     // initialize all annotation managers
     val annotationApi = mapView.annotations
@@ -112,15 +120,10 @@ fun MBScreen(
 
     var alertVisible by remember { mutableStateOf(false) }
 
-    with(mapView) {
+    with(mapboxUIState.mapView) {
 
         mapboxMap.setCamera(
-            CameraOptions.Builder()
-                .center(Point.fromLngLat(10.20449, 59.74389))
-                .zoom(10.0)
-                .bearing(0.0)
-                .pitch(0.0)
-                .build()
+            mapboxUIState.cameraOptions
         )
 
         mapboxMap.loadStyle("mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg") {
@@ -534,36 +537,6 @@ private fun addPolygonToMap(
     return polygonAnnotationManager.create(polygonAnnotationOptions)
 }
 
-
-@SuppressLint("DiscouragedApi")
-private fun convertAlertResId(
-    event: String,
-    riskMatrixColor: String,
-    context: Context
-): Int {
-
-    val iconName = when (event) {
-        "avalanches" -> "icon_warning_avalanches"
-        "blowingSnow" -> "icon_warning_snow"
-        "drivingConditions" -> "icon_warning_drivingconditions"
-        "flood" -> "icon_warning_flood"
-        "forestFire" -> "icon_warning_forestfire"
-        "gale" -> "icon_warning_wind"
-        "ice" -> "icon_warning_ice"
-        "icing" -> "icon_warning_generic"
-        "landSlide" -> "icon_warning_landslide"
-        "polarLow" -> "icon_warning_polarlow"
-        "rain" -> "icon_warning_rain"
-        "rainFlood" -> "icon_warning_rainflood"
-        "snow" -> "icon_warning_snow"
-        "stormSurge" -> "icon_warning_stormsurge"
-        "lightning" -> "icon_warning_lightning"
-        "wind" -> "icon_warning_wind"
-        else -> "icon_warning_generic" // "unknown"
-    } + "_" + if (riskMatrixColor.isBlank()) "yellow" else riskMatrixColor.lowercase()
-
-    return context.resources.getIdentifier(iconName, "drawable", context.packageName)
-}
 
 // functions to convert a xml vector to a bitmap object
 private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =

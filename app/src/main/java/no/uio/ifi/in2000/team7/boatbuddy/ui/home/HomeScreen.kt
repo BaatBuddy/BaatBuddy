@@ -11,11 +11,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.GetUserLocation
 import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MBScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MapboxViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    metAlertsViewModel: MetAlertsViewModel = viewModel()
+    metAlertsViewModel: MetAlertsViewModel = viewModel(),
+    mapboxViewModel: MapboxViewModel = viewModel()
 ) {
 
 
@@ -32,7 +34,11 @@ fun HomeScreen(
         }
     ) {
 
-        MBScreen(metAlertsViewModel = metAlertsViewModel)
+        MBScreen(
+            metAlertsViewModel = metAlertsViewModel,
+            mapboxViewModel = mapboxViewModel
+
+        )
         GetUserLocation()
     }
 
