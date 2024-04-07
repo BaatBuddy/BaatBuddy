@@ -23,13 +23,24 @@ fun BottomBar(
         listOf(
             Screen.HomeScreen,
             Screen.InfoScreen
+            // add more screen if needed
         ).forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = selectedIndex == index,
                 onClick = {
                     if (selectedIndex != index) {
                         selectedIndex = index
-                        navController.navigate(item.route)
+
+                        navController.navigate(item.route) {
+
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+
                     }
 
                 },
