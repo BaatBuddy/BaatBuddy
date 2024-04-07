@@ -47,11 +47,12 @@ class AnnotationRepository(
     private val annotationApi = mapView.annotations
     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
-    val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
-    val viewAnnotationManager = mapView.viewAnnotationManager
+    private val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
+    private val viewAnnotationManager = mapView.viewAnnotationManager
+
+    private var isClickable = false
 
     init {
-
 
         // NOTAT --> BRUK CACHE FOR MET ALERT GREIER SÅ MAN IKKE HENTER NY DATA HELE TIDA, KOMBINER MED TID
         runBlocking {
@@ -82,54 +83,8 @@ class AnnotationRepository(
                         alertPolygons.add(polygonAlert)
                     }
                 }
-
             }
-        }
-
-        // click listener for metalert polygon
-        val context = mapView.context
-        polygonAnnotationManager.addClickListener { clickedPolygon ->
-            clickedPolygon.points.forEach { polygon ->
-
-                // consider using another formula to find centroid of a polygon
-                val centroid = Point.fromLngLat(
-                    polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
-                    polygon.sumOf { point -> point.latitude() } / polygon.size // lat
-                )
-
-                this.clearViewAnnoations()
-
-                val alertPolygon = alertPolygons.firstOrNull { alertPolygon ->
-                    alertPolygon.polygonAnnotation.points == clickedPolygon.points
-                }
-
-                alertPolygon?.featureData?.let {
-                    val metalertCardView = this.createCardView(
-                        context = context,
-                        featureData = it
-                    )
-
-                    viewAnnotationManager.addViewAnnotation(
-                        metalertCardView,
-                        ViewAnnotationOptions.Builder()
-                            .geometry(centroid)
-                            .build()
-                    )
-
-                    val geoCamera = mapView.mapboxMap.cameraForGeometry(
-                        geometry = Polygon.fromLngLats(clickedPolygon.points),
-                        geometryPadding = EdgeInsets(100.0, 100.0, 100.0, 100.0)
-                    )
-
-                    mapView.mapboxMap.flyTo(
-                        cameraOptions = geoCamera
-                    )
-
-                }
-
-            }
-
-            true
+            addPolygonClickListener()
         }
     }
 
@@ -253,11 +208,65 @@ class AnnotationRepository(
         polygonAnnotationManager.annotations.forEach {
             if (it.fillOpacity == 0.0) {
                 it.fillOpacity = 0.4
+                isClickable = true
             } else {
                 it.fillOpacity = 0.0
+                isClickable = false
             }
             polygonAnnotationManager.update(it)
         }
+    }
+
+    suspend fun addPolygonClickListener() {
+        // click listener for metalert polygon
+
+        val context = mapView.context
+        polygonAnnotationManager.addClickListener { clickedPolygon ->
+            if (isClickable) {
+                clickedPolygon.points.forEach { polygon ->
+
+                    // consider using another formula to find centroid of a polygon
+                    val centroid = Point.fromLngLat(
+                        polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
+                        polygon.sumOf { point -> point.latitude() } / polygon.size // lat
+                    )
+
+                    this.clearViewAnnoations()
+
+                    val alertPolygon = alertPolygons.firstOrNull { alertPolygon ->
+                        alertPolygon.polygonAnnotation.points == clickedPolygon.points
+                    }
+
+                    alertPolygon?.featureData?.let {
+                        val metalertCardView = this.createCardView(
+                            context = context,
+                            featureData = it
+                        )
+
+                        viewAnnotationManager.addViewAnnotation(
+                            metalertCardView,
+                            ViewAnnotationOptions.Builder()
+                                .geometry(centroid)
+                                .build()
+                        )
+
+                        val geoCamera = mapView.mapboxMap.cameraForGeometry(
+                            geometry = Polygon.fromLngLats(clickedPolygon.points),
+                            geometryPadding = EdgeInsets(100.0, 100.0, 100.0, 100.0)
+                        )
+
+                        mapView.mapboxMap.flyTo(
+                            cameraOptions = geoCamera
+                        )
+
+                    }
+
+                }
+            }
+            true
+
+        }
+
     }
 
     // functions for the view manager
