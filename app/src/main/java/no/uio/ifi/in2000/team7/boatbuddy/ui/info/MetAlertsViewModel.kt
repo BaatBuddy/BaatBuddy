@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.test.metalerts.MetAlertsUIState
 
 data class MetAlertsUIState(
     val metalerts: MetAlertsData?
@@ -43,7 +41,7 @@ class MetAlertsViewModel : ViewModel() {
     private fun loadMetalerts(lat: String = "", lon: String = "") {
 
         viewModelScope.launch(Dispatchers.IO) {
-            
+
             val metalerts = repository.getMetAlertsData(lat, lon)
             _metalertsUIState.update { it.copy(metalerts = metalerts) }
 

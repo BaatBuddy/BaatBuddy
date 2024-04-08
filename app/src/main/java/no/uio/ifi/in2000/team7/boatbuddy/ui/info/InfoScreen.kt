@@ -101,19 +101,23 @@ fun InfoScreen(
                 Text(text = "Dette er farevarsler")
                 var showMessage by remember { mutableStateOf(true) }
                 metalertsUIState.metalerts?.features?.forEach {
-                    var cardHeight = remember { mutableStateOf(75.dp) }
+                    val cardHeight = remember { mutableStateOf(75.dp) }
                     if (showMessage) {
-                        var card = NotificationCard(
-                            it.awarenessSeriousness,
-                            it.consequences,
-                            it.description,
-                            it.instruction,
-                            it.riskMatrixColor,
-                            showMessage = showMessage,
-                            height = cardHeight.value,
-                            onCardClickMax = { cardHeight.value = 250.dp },
-                            onCardClickMin = { cardHeight.value = 75.dp },
-                            onDismissRequested = { showMessage = false })
+                        var card = it.awarenessSeriousness?.let { it1 ->
+                            it.consequences?.let { it2 ->
+                                NotificationCard(
+                                    it1,
+                                    it2,
+                                    it.description,
+                                    it.instruction,
+                                    it.riskMatrixColor,
+                                    showMessage = showMessage,
+                                    height = cardHeight.value,
+                                    onCardClickMax = { cardHeight.value = 250.dp },
+                                    onCardClickMin = { cardHeight.value = 75.dp },
+                                    onDismissRequested = { showMessage = false })
+                            }
+                        }
                     }
                 }
             }
