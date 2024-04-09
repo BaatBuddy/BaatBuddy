@@ -1,10 +1,11 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.autoroute
 
+import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
 
 interface AutorouteRepo {
     suspend fun getAutorouteData(
-        course: String,
+        course: List<Point>,
         safetyDepth: String,
         safetyHeight: String,
         boatSpeed: String
@@ -16,7 +17,7 @@ class AutorouteRepository(
 ) : AutorouteRepo {
 
     override suspend fun getAutorouteData(
-        course: String,
+        course: List<Point>,
         safetyDepth: String,
         safetyHeight: String,
         boatSpeed: String
