@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
@@ -41,7 +42,8 @@ fun InfoScreen(
     metAlertsViewModel: MetAlertsViewModel = viewModel(),
     locationForecastViewModel: LocationForecastViewModel = viewModel(),
     oceanForecastViewModel: OceanForecastViewModel = viewModel(),
-    sunriseViewModel: SunriseViewModel = viewModel()
+    sunriseViewModel: SunriseViewModel = viewModel(),
+    autorouteViewModel: AutoRouteViewModel = viewModel()
 ) {
 
     // val weatherUIState by infoScreenViewModel.weatherUIState.collectAsState()
@@ -49,13 +51,25 @@ fun InfoScreen(
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
     val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
     val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
+    val autorouteUiState by autorouteViewModel.autoRouteUiState.collectAsState()
 
     val lat = "59.9" // må hente posisjon fra bruker
     val lon = "10.7"
+    val boatSpeed = "5"
+    val boatHeight = "5"
+    val safetyDepth = "5"
+    val course = listOf<Point>(
+        Point.fromLngLat(10.607909077722013, 59.856108702935046),
+        Point.fromLngLat(10.607421841197663, 59.860213589239464)
+    )
+
+
     metAlertsViewModel.initialize(lat = lat, lon = lon)
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)
     sunriseViewModel.initialize(lat = lat, lon = lon)
+    autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
+
     Scaffold(
         modifier = Modifier
             .padding(8.dp)
@@ -138,6 +152,13 @@ fun InfoScreen(
                 sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
                 sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
             }
+
+            Text(text = "Dette er autoroute")
+            if (autorouteUiState.autoRoute != null) {
+                autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
+                
+            }
+
         }
         Column(
             modifier = Modifier
