@@ -1,8 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast
 
 data class LocationForecastData(
-    val lat: Double,
     val lon: Double,
+    val lat: Double,
     val timeseries: List<TimeLocationData>
 )
 

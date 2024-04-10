@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
-import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
@@ -41,8 +40,8 @@ class LocationForecastDataSource {
             val timeseries = data.properties.timeseries
 
             LocationForecastData(
-                lat = coordinates[1],
                 lon = coordinates[0],
+                lat = coordinates[1],
                 timeseries = timeseries.map { timesery ->
                     val details = timesery.data.instant.details
                     TimeLocationData(

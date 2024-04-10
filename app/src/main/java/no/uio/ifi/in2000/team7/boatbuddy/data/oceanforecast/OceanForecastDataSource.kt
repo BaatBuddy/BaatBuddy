@@ -27,7 +27,8 @@ class OceanForecastDataSource {
             val properties = data.properties
 
             OceanForecastData(
-                coordinates = data.geometry.coordinates,
+                lat = data.geometry.coordinates[1],
+                lon = data.geometry.coordinates[0],
                 updated_at = properties.meta.updated_at,
                 timeseries = properties.timeseries.map {
                     val details = it.data.instant.details

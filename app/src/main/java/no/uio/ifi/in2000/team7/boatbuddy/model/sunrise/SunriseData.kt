@@ -1,7 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy.model.sunrise
 
 data class SunriseData(
-    val coordinates: List<Double>,
+    val lon: Double,
+    val lat: Double,
     val interval: List<String>, // element 0: start_time, element 1: end_time (Year.Month.Date T Hour.Min.Second)
 
     val sunriseTime: String,
