@@ -59,8 +59,8 @@ fun InfoScreen(
     val boatHeight = "5"
     val safetyDepth = "5"
     val course = listOf<Point>(
-        Point.fromLngLat(10.607909077722013, 59.856108702935046),
-        Point.fromLngLat(10.607421841197663, 59.860213589239464)
+        Point.fromLngLat(10.676412, 59.888526),
+        Point.fromLngLat(10.250544, 59.735175)
     )
 
 
@@ -68,7 +68,7 @@ fun InfoScreen(
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)
     sunriseViewModel.initialize(lat = lat, lon = lon)
-    autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
+    // autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 
     Scaffold(
         modifier = Modifier
@@ -156,9 +156,14 @@ fun InfoScreen(
             Text(text = "Dette er autoroute")
             if (autorouteUiState.autoRoute != null) {
                 autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
-                
+
             }
 
+            FactorSlide(
+                from = 0.0,
+                to = 5.0,
+                unit = "bølgehøyde"
+            )
         }
         Column(
             modifier = Modifier
@@ -166,6 +171,7 @@ fun InfoScreen(
         ) {
 
         }
+
 
     }
 }
