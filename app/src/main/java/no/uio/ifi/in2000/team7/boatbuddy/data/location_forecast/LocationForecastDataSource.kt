@@ -49,7 +49,7 @@ class LocationForecastDataSource {
                         air_pressure_at_sea_level = details.air_pressure_at_sea_level,
                         air_temperature = details.air_temperature,
                         cloud_area_fraction = details.cloud_area_fraction,
-                        fog_area_fraction = details.fog_area_fraction,
+                        fog_area_fraction = details.fog_area_fraction ?: 0.0,
                         ultraviolet_index_clear_sky = details.ultraviolet_index_clear_sky,
                         relative_humidity = details.relative_humidity,
                         wind_from_direction = details.wind_from_direction,

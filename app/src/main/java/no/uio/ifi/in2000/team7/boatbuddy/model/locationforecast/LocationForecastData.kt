@@ -12,7 +12,7 @@ data class TimeLocationData(
     val air_pressure_at_sea_level: Double, // luftrykk i hPa
     val air_temperature: Double, //Lufttemperatur 2m over bakken i celsius
     val cloud_area_fraction: Double, // skydekke i prosent
-    val fog_area_fraction: Double?, // prosent
+    val fog_area_fraction: Double, // prosent
     val ultraviolet_index_clear_sky: Double?,
     val relative_humidity: Double, //Relativ fuktighet 2m over bakken
     val wind_from_direction: Double, //Retningen vinden kommer fra (0° er nord, 90° øst, osv.)

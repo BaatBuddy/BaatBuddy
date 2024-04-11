@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
+import android.preference.Preference
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,8 @@ import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.Preference
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -164,51 +167,37 @@ fun InfoScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 FactorSlide(
-                    from = 0.0,
-                    to = 5.0,
+                    preference = FactorPreference(1.0, 0.0, 5.0),
                     unit = "m",
                     weatherFactor = "Bølgehøyde"
                 )
                 FactorSlide(
-                    from = 0.0,
-                    to = 20.0,
+                    preference = FactorPreference(10.0, 0.0, 20.0),
                     unit = "°C",
                     weatherFactor = "Vanntemperatur"
                 )
                 FactorSlide(
-                    from = 0.0,
-                    to = 12.0,
+                    preference = FactorPreference(4.0, 0.0, 12.0),
                     unit = "m/s",
                     weatherFactor = "Vindhastighet"
                 )
                 FactorSlide(
-                    from = 0.0,
-                    to = 30.0,
+                    preference = FactorPreference(20.0, 0.0, 30.0),
                     unit = "°C",
                     weatherFactor = "Lufttemperatur"
                 )
                 FactorSlide(
-                    from = 0.0,
-                    to = 100.0,
+                    preference = FactorPreference(20.0, 0.0, 100.0),
                     unit = "%",
                     weatherFactor = "Skydekke"
                 )
                 FactorSlide(
-                    from = 0.0,
-                    to = 100.0,
+                    preference = FactorPreference(30.0, 0.0, 100.0),
                     unit = "%",
                     weatherFactor = "Relativ fuktighet"
                 )
             }
         }
-        Column(
-            modifier = Modifier
-                .padding(10.dp)
-        ) {
-
-        }
-
-
     }
 }
 

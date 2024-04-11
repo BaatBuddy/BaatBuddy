@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
+import android.util.Half.toFloat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.Preference
 import java.lang.Math.floorDiv
 import kotlin.math.roundToInt
 
@@ -20,17 +22,16 @@ import kotlin.math.roundToInt
 // retrieved from https://developer.android.com/develop/ui/compose/components/slider
 @Composable
 fun FactorSlide(
-    from: Double,
-    to: Double,
+    preference: Preference,
     unit: String,
     weatherFactor: String
 ) {
-    val from = from.toFloat()
-    val to = (to + if (unit != "%") 1 else 0).toFloat()
+    val from = preference.from.toFloat()
+    val to = (preference.to + if (unit != "%") 1 else 0).toFloat()
 
     var sliderPosition by remember {
         mutableFloatStateOf(
-            ((from + to - 1) / 2).roundToInt().toFloat()
+            preference.value.toFloat()
         )
     }
 
