@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -213,6 +214,7 @@ class AnnotationRepository(
             } else {
                 it.fillOpacity = 0.0
                 isClickable = false
+                clearViewAnnoations()
             }
             polygonAnnotationManager.update(it)
         }
@@ -225,7 +227,7 @@ class AnnotationRepository(
         polygonAnnotationManager.addClickListener { clickedPolygon ->
             if (isClickable) {
                 clickedPolygon.points.forEach { polygon ->
-
+                    Log.i("ASDASD", "ASDWQEGYBHWEYUFIUWKEOGIL")
                     // consider using another formula to find centroid of a polygon
                     val centroid = Point.fromLngLat(
                         polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
