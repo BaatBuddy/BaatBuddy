@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
-import android.preference.Preference
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -35,7 +34,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.Preference
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
