@@ -158,12 +158,48 @@ fun InfoScreen(
                 autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
 
             }
-
-            FactorSlide(
-                from = 0.0,
-                to = 5.0,
-                unit = "bølgehøyde"
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                FactorSlide(
+                    from = 0.0,
+                    to = 5.0,
+                    unit = "m",
+                    weatherFactor = "Bølgehøyde"
+                )
+                FactorSlide(
+                    from = 0.0,
+                    to = 20.0,
+                    unit = "°C",
+                    weatherFactor = "Vanntemperatur"
+                )
+                FactorSlide(
+                    from = 0.0,
+                    to = 12.0,
+                    unit = "m/s",
+                    weatherFactor = "Vindhastighet"
+                )
+                FactorSlide(
+                    from = 0.0,
+                    to = 30.0,
+                    unit = "°C",
+                    weatherFactor = "Lufttemperatur"
+                )
+                FactorSlide(
+                    from = 0.0,
+                    to = 100.0,
+                    unit = "%",
+                    weatherFactor = "Skydekke"
+                )
+                FactorSlide(
+                    from = 0.0,
+                    to = 100.0,
+                    unit = "%",
+                    weatherFactor = "Relativ fuktighet"
+                )
+            }
         }
         Column(
             modifier = Modifier

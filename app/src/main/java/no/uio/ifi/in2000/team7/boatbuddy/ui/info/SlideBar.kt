@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -10,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import java.lang.Math.floorDiv
 import kotlin.math.roundToInt
 
@@ -19,12 +22,31 @@ import kotlin.math.roundToInt
 fun FactorSlide(
     from: Double,
     to: Double,
-    unit: String
+    unit: String,
+    weatherFactor: String
 ) {
     val from = from.toFloat()
-    val to = to.toFloat()
-    var sliderPosition by remember { mutableFloatStateOf(((from + to) / 2).roundToInt().toFloat()) }
-    Column {
+    val to = (to + if (unit != "%") 1 else 0).toFloat()
+
+    var sliderPosition by remember {
+        mutableFloatStateOf(
+            ((from + to - 1) / 2).roundToInt().toFloat()
+        )
+    }
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(0.75f),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = weatherFactor)
+        Text(
+            text = "${
+                if (sliderPosition == to && unit != "%") (to.toInt() - 1).toString() + "+" else sliderPosition.roundToInt()
+            } $unit"
+        )
+
         Slider(
             value = sliderPosition,
             onValueChange = { sliderPosition = it },
@@ -33,9 +55,8 @@ fun FactorSlide(
                 activeTrackColor = MaterialTheme.colorScheme.secondary,
                 inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
-            steps = 4,
+            steps = to.toInt() - 1,
             valueRange = from..to
         )
-        Text(text = sliderPosition.toString())
     }
 }
