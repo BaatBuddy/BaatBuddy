@@ -58,7 +58,7 @@ fun MBScreen(
             .bearing(0.0)
             .pitch(0.0)
             .build(),
-        style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg"
+        style = "mapbox://styles/mafredri/cluwbjt8q000q01quhopi4g0m"
     )
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
