@@ -34,6 +34,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
+import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.FactorSlide
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -158,42 +159,6 @@ fun InfoScreen(
             if (autorouteUiState.autoRoute != null) {
                 autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
 
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                FactorSlide(
-                    preference = FactorPreference(1.0, 0.0, 5.0),
-                    unit = "m",
-                    weatherFactor = "Bølgehøyde"
-                )
-                FactorSlide(
-                    preference = FactorPreference(10.0, 0.0, 20.0),
-                    unit = "°C",
-                    weatherFactor = "Vanntemperatur"
-                )
-                FactorSlide(
-                    preference = FactorPreference(4.0, 0.0, 12.0),
-                    unit = "m/s",
-                    weatherFactor = "Vindhastighet"
-                )
-                FactorSlide(
-                    preference = FactorPreference(20.0, 0.0, 30.0),
-                    unit = "°C",
-                    weatherFactor = "Lufttemperatur"
-                )
-                FactorSlide(
-                    preference = FactorPreference(20.0, 0.0, 100.0),
-                    unit = "%",
-                    weatherFactor = "Skydekke"
-                )
-                FactorSlide(
-                    preference = FactorPreference(30.0, 0.0, 100.0),
-                    unit = "%",
-                    weatherFactor = "Relativ fuktighet"
-                )
             }
         }
     }

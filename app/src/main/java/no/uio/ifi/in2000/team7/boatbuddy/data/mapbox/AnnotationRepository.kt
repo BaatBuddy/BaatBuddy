@@ -55,14 +55,20 @@ class AnnotationRepository(
     private var isClickable = false
 
     init {
-
-        // NOTAT --> BRUK CACHE FOR MET ALERT GREIER SÅ MAN IKKE HENTER NY DATA HELE TIDA, KOMBINER MED TID
         runBlocking {
             val polygons = polygonAnnotationManager.annotations
             metAlertsRepository.getMetAlertsData(
                 lat = "",
                 lon = ""
-            )?.features?.forEach { featureData ->
+            )?.features?.sortedBy { featureData ->
+                when (featureData.riskMatrixColor) {
+                    "Green" -> "1"
+                    "Yellow" -> "2"
+                    "Orange" -> "3"
+                    "Red" -> "4"
+                    else -> "0"
+                }
+            }?.forEach { featureData ->
                 featureData.affected_area.forEach { area ->
 
                     val alertArea = area.map { polygon ->
