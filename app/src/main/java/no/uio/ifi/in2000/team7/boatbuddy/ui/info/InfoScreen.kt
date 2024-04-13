@@ -33,8 +33,6 @@ import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
-import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.FactorSlide
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -61,8 +59,8 @@ fun InfoScreen(
     val boatHeight = "5"
     val safetyDepth = "5"
     val course = listOf<Point>(
-        Point.fromLngLat(10.676412, 59.888526),
-        Point.fromLngLat(10.250544, 59.735175)
+        Point.fromLngLat(10.707517, 59.879888),
+        Point.fromLngLat(10.251066, 59.736283)
     )
 
 

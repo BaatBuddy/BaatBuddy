@@ -69,12 +69,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     //ktor
-    val ktor_version = "2.3.8"
+    val ktor_version = "2.3.10"
     implementation("io.ktor:ktor-client-core:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-logging:$ktor_version")
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")

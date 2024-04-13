@@ -35,6 +35,8 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.AutoRouteViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -44,7 +46,8 @@ import java.lang.ref.WeakReference
 fun MBScreen(
     locationViewModel: UserLocationViewModel = viewModel(),
     metAlertsViewModel: MetAlertsViewModel,
-    mapboxViewModel: MapboxViewModel
+    mapboxViewModel: MapboxViewModel,
+    autorouteViewModel: AutoRouteViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
@@ -61,8 +64,19 @@ fun MBScreen(
         style = "mapbox://styles/mafredri/cluwbjt8q000q01quhopi4g0m"
     )
 
+
+    val boatSpeed = "5" // knop
+    val boatHeight = "5"
+    val safetyDepth = "5"
+    val course = listOf<Point>(
+        Point.fromLngLat(10.707517, 59.879888),
+        Point.fromLngLat(10.251066, 59.736283)
+    )
+    autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
+
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val autorouteUIState by autorouteViewModel.autoRouteUiState.collectAsState()
 
     Column {
         Box(
@@ -113,6 +127,21 @@ fun MBScreen(
             }
         ) {
             Text(text = "Fly to user")
+        }
+
+        Button(
+            onClick = {
+                autorouteUIState.autoRoute?.geometry?.coordinates?.map {
+                    Point.fromLngLat(it[0], it[1])
+                }?.let {
+                    mapboxViewModel.createLinePath(it)
+                    mapboxViewModel.createLinePath(WeatherScore.selectPointsFromPath(it))
+                    mapboxViewModel.calculateWeather(WeatherScore.selectPointsFromPath(it))
+                }
+
+            }
+        ) {
+            Text(text = "Create path")
         }
 
     }

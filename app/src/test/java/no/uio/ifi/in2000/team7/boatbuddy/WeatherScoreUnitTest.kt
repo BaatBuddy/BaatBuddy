@@ -1,9 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherScore.calculatePoint
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
-import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateHour
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import org.junit.Test
 
@@ -11,26 +10,16 @@ class WeatherScoreUnitTest {
     @Test
     fun calculatingScore_isPrefect() {
         // arrange, create
-        val oceanData = TimeOceanData(
+        val timeWeatherData = TimeWeatherData(
             time = "",
-            sea_surface_wave_from_direction = 0.0,
-            sea_surface_wave_height = 1.0,
-            sea_water_speed = 0.0,
-            sea_water_temperature = 20.0,
-            sea_water_to_direction = 0.0
-        )
+            waveHeight = 1.0,
+            waterTemperature = 20.0,
+            windSpeed = 4.0,
+            airTemperature = 20.0,
+            cloudAreaFraction = 20.0,
+            fogAreaFraction = 0.0,
+            relativeHumidity = 30.0
 
-        val forecastData = TimeLocationData(
-            time = "",
-            air_pressure_at_sea_level = 0.0,
-            air_temperature = 20.0,
-            cloud_area_fraction = 20.0,
-            fog_area_fraction = 0.0,
-            ultraviolet_index_clear_sky = null,
-            relative_humidity = 30.0,
-            wind_from_direction = 0.0,
-            wind_speed = 4.0,
-            wind_speed_of_gust = 0.0
         )
 
         val weatherPreferences = WeatherPreferences(
@@ -66,9 +55,8 @@ class WeatherScoreUnitTest {
         )
 
         // act
-        val result = calculatePoint(
-            oceanData = oceanData,
-            forecastData = forecastData,
+        val result = calculateHour(
+            timeWeatherData = timeWeatherData,
             weatherPreferences = weatherPreferences
         )
 

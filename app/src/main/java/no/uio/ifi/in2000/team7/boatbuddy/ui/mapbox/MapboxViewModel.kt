@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
+import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 
 
 data class MapboxUIState(
@@ -26,6 +31,8 @@ data class MapboxUIState(
 
 class MapboxViewModel : ViewModel() {
     private val repository: MapboxRepository = MapboxRepository()
+    private val weatherCalculatorRepository: WeatherCalculatorRepository =
+        WeatherCalculatorRepository()
 
     private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
     lateinit var mapboxUIState: StateFlow<MapboxUIState>
@@ -102,6 +109,59 @@ class MapboxViewModel : ViewModel() {
                     style = style
                 )
             }
+        }
+    }
+
+    fun createLinePath(
+        points: List<Point>
+    ) {
+        viewModelScope.launch {
+            repository.createLinePath(points = points)
+        }
+    }
+
+    fun calculateWeather(points: List<Point>) {
+        viewModelScope.launch {
+            val weatherPreferences = WeatherPreferences(
+                waveHeight = FactorPreference(
+                    value = 1.0,
+                    from = 0.0,
+                    to = 5.0
+                ), waterTemperature = FactorPreference(
+                    value = 20.0,
+                    from = 0.0,
+                    to = 20.0
+                ), windSpeed = FactorPreference(
+                    value = 4.0,
+                    from = 0.0,
+                    to = 12.0
+                ), airTemperature = FactorPreference(
+                    value = 20.0,
+                    from = 0.0,
+                    to = 30.0
+                ), cloudAreaFraction = FactorPreference(
+                    value = 20.0,
+                    from = 0.0,
+                    to = 100.0
+                ), fogAreaFraction = FactorPreference(
+                    value = 0.0,
+                    from = 0.0,
+                    to = 100.0
+                ), relativeHumidity = FactorPreference(
+                    value = 30.0,
+                    from = 0.0,
+                    to = 100.0
+                )
+            )
+
+            val pathWeatherData =
+                weatherCalculatorRepository.fetchPathWeather(points).filterNotNull()
+            Log.i(
+                "ASDASD", WeatherScore.calculatePath(
+                    pathWeatherData = pathWeatherData,
+                    weatherPreferences = weatherPreferences
+                ).toString()
+            )
         }
     }
 

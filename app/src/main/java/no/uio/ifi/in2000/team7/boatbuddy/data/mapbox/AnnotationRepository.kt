@@ -21,12 +21,9 @@ import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
@@ -78,7 +75,6 @@ class AnnotationRepository(
                     }
                     if (alertArea !in polygons.map { it.points }) {
                         val polygon = addPolygonToMap(
-                            polygonAnnotationManager = polygonAnnotationManager,
                             points = alertArea,
                             fColor = featureData.riskMatrixColor
                         )
@@ -99,8 +95,7 @@ class AnnotationRepository(
 
     // functions for point manager
     private fun addPinToMap(
-        point: Point,
-        pointAnnotationManager: PointAnnotationManager
+        point: Point
     ): PointAnnotation? {
         bitmapFromDrawableRes(
             mapView.context,
@@ -120,10 +115,15 @@ class AnnotationRepository(
 
 
     // functions for the polyline manager
-    private fun addLineToMap(
-        polylineAnnotationManager: PolylineAnnotationManager,
+    suspend fun addLineToMap(
         points: List<Point>, // order of point matter
     ) {
+
+        points.forEach {
+            addPinToMap(
+                it
+            )
+        }
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(points)
@@ -163,7 +163,6 @@ class AnnotationRepository(
 
     // functions for the polygon manager
     private fun addPolygonToMap(
-        polygonAnnotationManager: PolygonAnnotationManager,
         points: List<List<Point>>,
         fColor: String = "",
         olColor: String = ""
