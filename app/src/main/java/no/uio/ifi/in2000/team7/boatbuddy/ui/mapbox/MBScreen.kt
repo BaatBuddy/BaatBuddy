@@ -70,7 +70,7 @@ fun MBScreen(
     val safetyDepth = "5"
     val course = listOf<Point>(
         Point.fromLngLat(10.707517, 59.879888),
-        Point.fromLngLat(10.251066, 59.736283)
+        Point.fromLngLat(8.788321, 58.431549)
     )
     autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 

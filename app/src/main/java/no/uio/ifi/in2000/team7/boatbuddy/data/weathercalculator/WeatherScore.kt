@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
 import android.util.Log
 import com.mapbox.geojson.Point
+import com.mapbox.maps.extension.style.expressions.dsl.generated.indexOf
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
@@ -125,14 +126,16 @@ object WeatherScore {
 
         val outPoints = mutableListOf(points.first())
         var pointer = points.first()
-        for (i in 1..<nBetweenPoints) {
-            val newPoint = points.first {
-                distanceBetweenPoints(pointer, it) > distanceBetweenPoints && it !in outPoints
+        points.fold(0.0) { total, point ->
+            val addedDistance = total + distanceBetweenPoints(pointer, point)
+            if (addedDistance >= distanceBetweenPoints) {
+                outPoints.add(point)
+                pointer = point
+                0.0
+            } else {
+                addedDistance
             }
-            outPoints.add(newPoint)
-            pointer = newPoint
         }
-        outPoints.add(points.last())
         Log.i("ASDASD", outPoints.toString())
         return outPoints.toList()
 

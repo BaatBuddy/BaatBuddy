@@ -6,10 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 
 @Composable
-fun WeatherPreferences() {
+fun PreferenceSliders() {
     Column(
         modifier = Modifier
             .fillMaxWidth(),
