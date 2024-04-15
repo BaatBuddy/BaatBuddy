@@ -1,6 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy.model.preference
 
 data class TimeWeatherData(
+    val lat: Double,
+    val lon: Double,
     val time: String,
     val waveHeight: Double,
     val waterTemperature: Double,

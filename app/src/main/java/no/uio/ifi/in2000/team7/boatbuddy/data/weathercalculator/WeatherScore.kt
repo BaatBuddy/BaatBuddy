@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
 import android.util.Log
 import com.mapbox.geojson.Point
-import com.mapbox.maps.extension.style.expressions.dsl.generated.indexOf
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
@@ -11,6 +10,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -45,7 +45,7 @@ object WeatherScore {
 
     // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
     private fun calculateFactor(value: Double, preference: FactorPreference): Double {
-        val difference = kotlin.math.abs(preference.value - value)
+        val difference = kotlin.math.abs(preference.value - min(value, preference.to + 1))
 
         return mapValue(difference, preference.from, preference.to, 100.0, 0.0)
 
@@ -107,10 +107,15 @@ object WeatherScore {
         pathWeatherData: List<PathWeatherData>,
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
-        return pathWeatherData.flatMap { it.timeWeatherData }.groupBy {
-            it.time.substring(0, 10)
-        }.map {
-            DateScore(it.key, calculateDate(it.value, weatherPreferences))
+        return pathWeatherData.map {
+            DateScore(
+                date = it.date,
+                score = calculateDate(
+                    timeWeatherData = it.timeWeatherData,
+                    weatherPreferences = weatherPreferences
+                ),
+                isDoneBeforeSunset = false // TODO check if the journey is done before sunset
+            )
         }
     }
 

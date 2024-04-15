@@ -3,18 +3,20 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 
 class WeatherCalculatorRepository {
     val oceanForecastRepository = OceanForecastRepository()
     val locationForecastRepository = LocationForecastRepository()
+    val sunriseRepository = SunriseRepository()
 
 
-    suspend fun fetchPathWeather(points: List<Point>): List<PathWeatherData?> {
-        return points.map {
-            val lat = it.latitude().toString()
-            val lon = it.longitude().toString()
+    suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
+        return points.mapNotNull { point ->
+            val lat = point.latitude().toString()
+            val lon = point.longitude().toString()
 
             val oceanData = oceanForecastRepository.getOceanForecastData(
                 lat = lat,
@@ -22,7 +24,7 @@ class WeatherCalculatorRepository {
             )
             val locationData = locationForecastRepository.getLocationForecastData(
                 lat = lat,
-                lon = lon
+                lon = lon,
             )
 
             locationData?.timeseries?.mapNotNull { ld ->
@@ -33,6 +35,8 @@ class WeatherCalculatorRepository {
 
                 if (od != null) {
                     TimeWeatherData(
+                        lat = lat.toDouble(),
+                        lon = lon.toDouble(),
                         time = ld.time,
                         waveHeight = od.sea_surface_wave_height,
                         waterTemperature = od.sea_water_temperature,
@@ -45,15 +49,18 @@ class WeatherCalculatorRepository {
                 } else {
                     null
                 }
-            }?.let { it1 ->
-                PathWeatherData(
-                    lat = lat.toDouble(),
-                    lon = lon.toDouble(),
-                    timeWeatherData =
-                    it1
-                )
             }
+        }.flatten().groupBy { twd ->
+            twd.time.substring(0, 10)
+        }.map {
+            val lastPoint = points.last()
+            PathWeatherData(
+                date = it.key,
+                sunsetAtLastPoint = sunriseRepository.getSunriseData(
+                    lastPoint.latitude().toString(), lastPoint.longitude().toString(), it.key
+                )?.sunsetTime,
+                timeWeatherData = it.value
+            )
         }
     }
-
 }
