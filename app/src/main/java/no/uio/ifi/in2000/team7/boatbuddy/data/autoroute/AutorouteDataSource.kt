@@ -25,9 +25,9 @@ class AutorouteDataSource {
 
         if (course.isNotEmpty() && safetyDepth.isNotBlank() && safetyHeight.isNotBlank() && boatSpeed.isNotBlank()) {
 
-            var base: String = "https://webapp-no.skippo.io/api/autoroute?usehydrographica=false&"
+            val base: String = "https://webapp-no.skippo.io/api/autoroute?usehydrographica=false&"
             var middle: String = "course="
-            var end: String = "&safetydepth=5" +
+            val end: String = "&safetydepth=5" +
                     "&safetyheight=5" +
                     "&boatspeed=5"
 

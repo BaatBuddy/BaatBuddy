@@ -45,12 +45,8 @@ object WeatherScore {
 
     // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
     private fun calculateFactor(value: Double, preference: FactorPreference): Double {
-        val difference = kotlin.math.abs(
-            preference.value - min(
-                value,
-                preference.to
-            )
-        ) // everything above max is adjusted to max
+        val difference = kotlin.math.abs(preference.value - min(value, preference.to + 1))
+
 
         return mapValue(difference, preference.from, preference.to, 100.0, 0.0)
 
@@ -112,10 +108,15 @@ object WeatherScore {
         pathWeatherData: List<PathWeatherData>,
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
-        return pathWeatherData.flatMap { it.timeWeatherData }.groupBy {
-            it.time.substring(0, 10)
-        }.map {
-            DateScore(it.key, calculateDate(it.value, weatherPreferences))
+        return pathWeatherData.map {
+            DateScore(
+                date = it.date,
+                score = calculateDate(
+                    timeWeatherData = it.timeWeatherData,
+                    weatherPreferences = weatherPreferences
+                ),
+                isDoneBeforeSunset = false // TODO check if the journey is done before sunset
+            )
         }
     }
 

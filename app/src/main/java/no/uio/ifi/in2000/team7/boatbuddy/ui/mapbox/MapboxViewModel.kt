@@ -155,7 +155,7 @@ class MapboxViewModel : ViewModel() {
             )
 
             val pathWeatherData =
-                weatherCalculatorRepository.fetchPathWeather(points).filterNotNull()
+                weatherCalculatorRepository.fetchPathWeatherData(points)
             Log.i(
                 "ASDASD", WeatherScore.calculatePath(
                     pathWeatherData = pathWeatherData,
