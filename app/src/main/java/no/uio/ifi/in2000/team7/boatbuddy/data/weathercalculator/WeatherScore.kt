@@ -16,29 +16,6 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 object WeatherScore {
-
-
-    /*
-    Things to include in the algorithm:
-
-        - wave_height                   - negativ (0 - 5+)
-        - sea_water_temperature         - positiv (0 - 20+)
-
-        - wind_speed                    - negativ (0 - 12+)
-        - wind_speed_of_gust            - negativ (the less the better?)
-        - temperature                   - positiv (0 - 30+)
-        - cloud_area_fraction           - negativ (0 - 100%)
-        - fog_area_fraction             - negativ (0 - 100%)
-        - ultraviolet_index_clear_sky   - negativ (0 - 100%)
-        - relative_humidity             - negativ (0 - 100%)
-
-    - sunrise
-        - sunrise
-        - sunset
-
-
-     */
-
     // from A - B to a - b with value v
     private fun mapValue(value: Double, fromA: Double, fromB: Double, toA: Double, toB: Double) =
         toA + (value - fromA) * (toB - toA) / (fromB - fromA)
@@ -46,16 +23,14 @@ object WeatherScore {
     // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
     private fun calculateFactor(value: Double, preference: FactorPreference): Double {
         val difference = kotlin.math.abs(preference.value - min(value, preference.to + 1))
-
-
         return mapValue(difference, preference.from, preference.to, 100.0, 0.0)
 
     }
 
 
-    // discuss if the end point should weigh the most
-
-    // creates a score from 0 - 100
+    // TODO adjust the function to handle null values and add rain. null values means that user doesn't care about the following weather
+    
+    // creates a score from 0 - 100 based on preference and real data
     fun calculateHour(
         timeWeatherData: TimeWeatherData,
         weatherPreferences: WeatherPreferences,
@@ -120,15 +95,14 @@ object WeatherScore {
         }
     }
 
-
     // pick out points based on the length of the path and distance between each point
     fun selectPointsFromPath(points: List<Point>): List<Point> {
         val distance = distanceInPath(points)
         val nBetweenPoints =
             max(distance.div(40).toInt(), 2) // at least 1 point between start and end
         val distanceBetweenPoints = distance / nBetweenPoints
-
         val outPoints = mutableListOf(points.first())
+
         var pointer = points.first()
         points.fold(0.0) { total, point ->
             val distanceFromLast = distanceBetweenPoints(pointer, point)
@@ -141,23 +115,21 @@ object WeatherScore {
                 val intermediatePoint = intermediatePoint(
                     first = pointer,
                     second = point,
-                    nKmFromFirst = addedDistance - distanceBetweenPoints
+                    nKmFromFirst = distanceFromLast - (addedDistance - distanceBetweenPoints)
                 )
                 outPoints.add(intermediatePoint)
                 pointer = point
-                distanceBetweenPoints(
-                    first = intermediatePoint,
-                    second = point
-                )
+                addedDistance - distanceBetweenPoints
             } else {
                 pointer = point
                 addedDistance
             }
         }
+        outPoints.add(points.last())
+
         return outPoints.toList()
 
     }
-
 
     // converts distance between two geopoints to km (gpt / website)
     private fun distanceBetweenPoints(first: Point, second: Point): Double {
@@ -183,7 +155,6 @@ object WeatherScore {
             distanceBetweenPoints(current, next)
         }
     }
-
 
     // function to return point based on distance from first of two points in km (gpt)
     private fun intermediatePoint(first: Point, second: Point, nKmFromFirst: Double): Point {
