@@ -1,16 +1,16 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
-import android.util.Log
 import com.mapbox.geojson.Point
-import com.mapbox.maps.extension.style.expressions.dsl.generated.indexOf
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
+import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -45,7 +45,12 @@ object WeatherScore {
 
     // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
     private fun calculateFactor(value: Double, preference: FactorPreference): Double {
-        val difference = kotlin.math.abs(preference.value - value)
+        val difference = kotlin.math.abs(
+            preference.value - min(
+                value,
+                preference.to
+            )
+        ) // everything above max is adjusted to max
 
         return mapValue(difference, preference.from, preference.to, 100.0, 0.0)
 
@@ -57,29 +62,28 @@ object WeatherScore {
     // creates a score from 0 - 100
     fun calculateHour(
         timeWeatherData: TimeWeatherData,
-        weatherPreferences: WeatherPreferences
+        weatherPreferences: WeatherPreferences,
+        isEndpoint: Boolean,
     ): Double {
-        val waveHeight: Double = timeWeatherData.waveHeight
-        val waterTemperature: Double = timeWeatherData.waterTemperature
-        val windSpeed: Double = timeWeatherData.windSpeed
-        // val windSpeedOfGust: Double = timeWeatherData.winSpeedGust
-        val airTemperature: Double = timeWeatherData.airTemperature
-        val cloudAreaFraction: Double = timeWeatherData.cloudAreaFraction
-        val fogAreaFraction: Double = timeWeatherData.fogAreaFraction
-        // val ultravioletIndexClearSky: Double? = timeWeatherData.ultravioletIndexClearSky
-        val relativeHumidity: Double = timeWeatherData.relativeHumidity
-
-        val dataPreference = listOf(
-            Pair(waveHeight, weatherPreferences.waveHeight),
-            Pair(waterTemperature, weatherPreferences.waterTemperature),
-            Pair(windSpeed, weatherPreferences.windSpeed),
-            // Pair(windSpeedOfGust, weatherPreferences.windSpeedOfGust),
-            Pair(airTemperature, weatherPreferences.airTemperature),
-            Pair(cloudAreaFraction, weatherPreferences.cloudAreaFraction),
-            Pair(fogAreaFraction, weatherPreferences.fogAreaFraction),
-            // Pair(ultravioletIndexClearSky, weatherPreferences.ultravioletIndexClearSky),
-            Pair(relativeHumidity, weatherPreferences.relativeHumidity),
+        val dataPreference = mutableListOf(
+            Pair(timeWeatherData.waveHeight, weatherPreferences.waveHeight),
+            Pair(timeWeatherData.windSpeed, weatherPreferences.windSpeed),
+            // Pair(timeWeatherData.winSpeedGust, weatherPreferences.windSpeedOfGust),
+            Pair(timeWeatherData.airTemperature, weatherPreferences.airTemperature),
+            Pair(timeWeatherData.cloudAreaFraction, weatherPreferences.cloudAreaFraction),
+            Pair(timeWeatherData.fogAreaFraction, weatherPreferences.fogAreaFraction),
+            // Pair(timeWeatherData.ultravioletIndexClearSky, weatherPreferences.ultravioletIndexClearSky),
+            Pair(timeWeatherData.relativeHumidity, weatherPreferences.relativeHumidity),
         )
+
+        if (isEndpoint) {
+            dataPreference.add(
+                Pair(
+                    timeWeatherData.waterTemperature,
+                    weatherPreferences.waterTemperature
+                ),
+            )
+        }
 
         val averageScore = dataPreference.sumOf { pair ->
             val value = pair.first
@@ -90,20 +94,21 @@ object WeatherScore {
         return averageScore
     }
 
-    fun calculateDate(
+    private fun calculateDate(
         timeWeatherData: List<TimeWeatherData>,
         weatherPreferences: WeatherPreferences
     ): Double {
         return timeWeatherData.sumOf {
             calculateHour(
                 it,
-                weatherPreferences
+                weatherPreferences,
+                it == timeWeatherData.last()
             )
         } / timeWeatherData.size
     }
 
     // calculates the amount of points based on the length in km
-    fun calculatePath(
+    suspend fun calculatePath(
         pathWeatherData: List<PathWeatherData>,
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
@@ -117,39 +122,50 @@ object WeatherScore {
 
     // pick out points based on the length of the path and distance between each point
     fun selectPointsFromPath(points: List<Point>): List<Point> {
-        Log.i("ASDASD", "Distance of path in km: ${distanceInPath(points)}")
         val distance = distanceInPath(points)
         val nBetweenPoints =
             max(distance.div(40).toInt(), 2) // at least 1 point between start and end
-        Log.i("ASDASD", nBetweenPoints.toString())
         val distanceBetweenPoints = distance / nBetweenPoints
 
         val outPoints = mutableListOf(points.first())
         var pointer = points.first()
         points.fold(0.0) { total, point ->
-            val addedDistance = total + distanceBetweenPoints(pointer, point)
-            if (addedDistance >= distanceBetweenPoints) {
+            val distanceFromLast = distanceBetweenPoints(pointer, point)
+            val addedDistance = total + distanceFromLast
+            if (addedDistance == distanceBetweenPoints) {
                 outPoints.add(point)
                 pointer = point
                 0.0
+            } else if (addedDistance > distanceBetweenPoints) {
+                val intermediatePoint = intermediatePoint(
+                    first = pointer,
+                    second = point,
+                    nKmFromFirst = addedDistance - distanceBetweenPoints
+                )
+                outPoints.add(intermediatePoint)
+                pointer = point
+                distanceBetweenPoints(
+                    first = intermediatePoint,
+                    second = point
+                )
             } else {
+                pointer = point
                 addedDistance
             }
         }
-        Log.i("ASDASD", outPoints.toString())
         return outPoints.toList()
 
     }
 
 
-    // converts distance between two geopoints to km
-    private fun distanceBetweenPoints(start: Point, end: Point): Double {
+    // converts distance between two geopoints to km (gpt / website)
+    private fun distanceBetweenPoints(first: Point, second: Point): Double {
         val R = 6371.0 // Radius of the Earth in kilometers
 
-        val lat1Rad = Math.toRadians(start.latitude())
-        val lon1Rad = Math.toRadians(start.longitude())
-        val lat2Rad = Math.toRadians(end.latitude())
-        val lon2Rad = Math.toRadians(end.longitude())
+        val lat1Rad = Math.toRadians(first.latitude())
+        val lon1Rad = Math.toRadians(first.longitude())
+        val lat2Rad = Math.toRadians(second.latitude())
+        val lon2Rad = Math.toRadians(second.longitude())
 
         val dLat = lat2Rad - lat1Rad
         val dLon = lon2Rad - lon1Rad
@@ -165,6 +181,39 @@ object WeatherScore {
         return points.zipWithNext().sumOf { (current, next) ->
             distanceBetweenPoints(current, next)
         }
+    }
+
+
+    // function to return point based on distance from first of two points in km (gpt)
+    private fun intermediatePoint(first: Point, second: Point, nKmFromFirst: Double): Point {
+
+        val radius = 6371.0 // Earth's Radius in Kms
+
+        // Convert latitudes from degrees to radians
+        val lat1 = first.latitude() * PI / 180.0
+        val lon1 = first.longitude() * PI / 180.0
+        val lat2 = second.latitude() * PI / 180.0
+        val lon2 = second.longitude() * PI / 180.0
+
+        // Computing the total distance between two geo points using Haversine law
+        val a =
+            sin((lat2 - lat1) / 2).pow(2.0) + cos(lat1) * cos(lat2) * sin((lon2 - lon1) / 2).pow(2.0)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val totalDistance = radius * c
+
+        // Calculate the ratio
+        val A = sin((1 - (nKmFromFirst / totalDistance)) * c) / sin(c)
+        val B = sin((nKmFromFirst / totalDistance) * c) / sin(c)
+
+        // Calculating intermediary point's coordinates
+        val x = A * cos(lat1) * cos(lon1) + B * cos(lat2) * cos(lon2)
+        val y = A * cos(lat1) * sin(lon1) + B * cos(lat2) * sin(lon2)
+        val z = A * sin(lat1) + B * sin(lat2)
+
+        val lat3 = atan2(z, sqrt(x * x + y * y)) * 180 / PI
+        val lon3 = atan2(y, x) * 180 / PI
+
+        return Point.fromLngLat(lon3, lat3)
     }
 
 

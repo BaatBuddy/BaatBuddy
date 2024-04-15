@@ -134,7 +134,7 @@ fun MBScreen(
                 autorouteUIState.autoRoute?.geometry?.coordinates?.map {
                     Point.fromLngLat(it[0], it[1])
                 }?.let {
-                    mapboxViewModel.createLinePath(it)
+//                    mapboxViewModel.createLinePath(it)
                     mapboxViewModel.createLinePath(WeatherScore.selectPointsFromPath(it))
                     mapboxViewModel.calculateWeather(WeatherScore.selectPointsFromPath(it))
                 }
