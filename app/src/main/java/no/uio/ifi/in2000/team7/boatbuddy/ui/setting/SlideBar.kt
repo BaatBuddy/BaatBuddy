@@ -42,7 +42,9 @@ fun FactorSlide(
         Text(text = weatherFactor)
         Text(
             text = "${
-                if (sliderPosition == to && unit != "%") (to.toInt() - 1).toString() + "+" else sliderPosition.roundToInt()
+                if (sliderPosition == to && unit != "%") (to.toInt() - 1).toString() + "+"
+                else if (unit == "mm") "%.1f".format(sliderPosition)
+                else sliderPosition.roundToInt()
             } $unit"
         )
 
@@ -54,7 +56,7 @@ fun FactorSlide(
                 activeTrackColor = MaterialTheme.colorScheme.secondary,
                 inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
             ),
-            steps = to.toInt() - 1,
+            steps = to.toInt() - if (unit == "mm") -3 else 1,
             valueRange = from..to
         )
     }

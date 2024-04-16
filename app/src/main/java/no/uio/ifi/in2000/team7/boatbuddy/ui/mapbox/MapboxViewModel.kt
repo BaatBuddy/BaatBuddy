@@ -127,30 +127,40 @@ class MapboxViewModel : ViewModel() {
                     value = 1.0,
                     from = 0.0,
                     to = 5.0
-                ), waterTemperature = FactorPreference(
+                ),
+                waterTemperature = FactorPreference(
                     value = 20.0,
                     from = 0.0,
                     to = 20.0
-                ), windSpeed = FactorPreference(
+                ),
+                windSpeed = FactorPreference(
                     value = 4.0,
                     from = 0.0,
                     to = 12.0
-                ), airTemperature = FactorPreference(
+                ),
+                airTemperature = FactorPreference(
                     value = 20.0,
                     from = 0.0,
                     to = 30.0
-                ), cloudAreaFraction = FactorPreference(
+                ),
+                cloudAreaFraction = FactorPreference(
                     value = 20.0,
                     from = 0.0,
                     to = 100.0
-                ), fogAreaFraction = FactorPreference(
+                ),
+                fogAreaFraction = FactorPreference(
                     value = 0.0,
                     from = 0.0,
                     to = 100.0
-                ), relativeHumidity = FactorPreference(
+                ),
+                relativeHumidity = FactorPreference(
                     value = 30.0,
                     from = 0.0,
                     to = 100.0
+                ), precipitationAmount = FactorPreference(
+                    value = 0.0,
+                    from = 0.0,
+                    to = 3.0 // 3mm per 6h => 0.5mm per hour which is "maximum"
                 )
             )
 

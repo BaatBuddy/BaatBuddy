@@ -17,5 +17,6 @@ data class TimeLocationData(
     val relative_humidity: Double, //Relativ fuktighet 2m over bakken
     val wind_from_direction: Double, //Retningen vinden kommer fra (0° er nord, 90° øst, osv.)
     val wind_speed: Double, //Vindhastighet 10m over bakken (10 min gjennomsnitt)
-    val wind_speed_of_gust: Double //
+    val wind_speed_of_gust: Double, //
+    val precipitation_amount: Double // next 6 hours
 )

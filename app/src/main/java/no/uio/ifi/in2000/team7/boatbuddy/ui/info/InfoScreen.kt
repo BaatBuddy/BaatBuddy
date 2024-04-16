@@ -33,6 +33,7 @@ import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
+import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingScreen
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -158,6 +159,7 @@ fun InfoScreen(
                 autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
 
             }
+            SettingScreen()
         }
     }
 }

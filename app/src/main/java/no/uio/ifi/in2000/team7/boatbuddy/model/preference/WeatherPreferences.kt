@@ -10,4 +10,5 @@ data class WeatherPreferences(
     val fogAreaFraction: FactorPreference,
     // val ultravioletIndexClearSky: FactorPreference,
     val relativeHumidity: FactorPreference,
+    val precipitationAmount: FactorPreference
 )

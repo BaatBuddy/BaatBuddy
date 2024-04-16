@@ -8,7 +8,7 @@ import org.junit.Test
 
 class WeatherScoreUnitTest {
     @Test
-    fun calculatingScore_isPrefect() {
+    fun calculatingScoreAtEndpoint_isPrefect() {
         // arrange, create
         val timeWeatherData = TimeWeatherData(
             time = "",
@@ -53,13 +53,18 @@ class WeatherScoreUnitTest {
                 value = 30.0,
                 from = 0.0,
                 to = 100.0
+            ), precipitationAmount = FactorPreference(
+                value = 0.0,
+                from = 0.0,
+                to = 3.0
             )
         )
 
         // act
         val result = calculateHour(
             timeWeatherData = timeWeatherData,
-            weatherPreferences = weatherPreferences
+            weatherPreferences = weatherPreferences,
+            isEndpoint = true
         )
 
 
@@ -69,7 +74,7 @@ class WeatherScoreUnitTest {
     }
 
     @Test
-    fun calculatingScoreWithAbovePreferenceRange_isPerfect() {
+    fun calculatingScoreWithAbovePreferenceRangeAtEndpoint_isPerfect() {
         // arrange, create
         val timeWeatherData = TimeWeatherData(
             time = "",
@@ -114,13 +119,18 @@ class WeatherScoreUnitTest {
                 value = 30.0,
                 from = 0.0,
                 to = 100.0
+            ), precipitationAmount = FactorPreference(
+                value = 0.0,
+                from = 0.0,
+                to = 3.0
             )
         )
 
         // act
         val result = calculateHour(
             timeWeatherData = timeWeatherData,
-            weatherPreferences = weatherPreferences
+            weatherPreferences = weatherPreferences,
+            isEndpoint = true
         )
 
         // assert

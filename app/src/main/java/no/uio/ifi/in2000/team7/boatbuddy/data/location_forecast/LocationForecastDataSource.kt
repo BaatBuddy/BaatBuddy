@@ -42,20 +42,25 @@ class LocationForecastDataSource {
             LocationForecastData(
                 lon = coordinates[0],
                 lat = coordinates[1],
-                timeseries = timeseries.map { timesery ->
-                    val details = timesery.data.instant.details
-                    TimeLocationData(
-                        time = timesery.time,
-                        air_pressure_at_sea_level = details.air_pressure_at_sea_level,
-                        air_temperature = details.air_temperature,
-                        cloud_area_fraction = details.cloud_area_fraction,
-                        fog_area_fraction = details.fog_area_fraction ?: 0.0,
-                        ultraviolet_index_clear_sky = details.ultraviolet_index_clear_sky,
-                        relative_humidity = details.relative_humidity,
-                        wind_from_direction = details.wind_from_direction,
-                        wind_speed = details.wind_speed,
-                        wind_speed_of_gust = details.wind_speed_of_gust
-                    )
+                timeseries = timeseries.mapNotNull { timesery ->
+                    if (timesery.data.next_6_hours != null) {
+                        val details = timesery.data.instant.details
+                        TimeLocationData(
+                            time = timesery.time,
+                            air_pressure_at_sea_level = details.air_pressure_at_sea_level,
+                            air_temperature = details.air_temperature,
+                            cloud_area_fraction = details.cloud_area_fraction,
+                            fog_area_fraction = details.fog_area_fraction ?: 0.0,
+                            ultraviolet_index_clear_sky = details.ultraviolet_index_clear_sky,
+                            relative_humidity = details.relative_humidity,
+                            wind_from_direction = details.wind_from_direction,
+                            wind_speed = details.wind_speed,
+                            wind_speed_of_gust = details.wind_speed_of_gust,
+                            precipitation_amount = timesery.data.next_6_hours.details.precipitation_amount
+                        )
+                    } else {
+                        null
+                    }
                 }
             )
 

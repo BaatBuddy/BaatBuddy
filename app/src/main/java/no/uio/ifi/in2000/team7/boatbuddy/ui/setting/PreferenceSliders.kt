@@ -44,5 +44,15 @@ fun PreferenceSliders() {
             unit = "%",
             weatherFactor = "Relativ fuktighet"
         )
+        FactorSlide(
+            preference = FactorPreference(0.0, 0.0, 3.0),
+            unit = "mm",
+            weatherFactor = "Mengde nedbør neste 6 timer"
+        )
+        FactorSlide(
+            preference = FactorPreference(0.0, 0.0, 3.0),
+            unit = "mm",
+            weatherFactor = "FILLER"
+        )
     }
 }
