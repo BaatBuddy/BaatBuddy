@@ -58,11 +58,11 @@ class AnnotationRepository(
                 lat = "",
                 lon = ""
             )?.features?.sortedBy { featureData ->
-                when (featureData.riskMatrixColor) {
-                    "Green" -> "1"
-                    "Yellow" -> "2"
-                    "Orange" -> "3"
-                    "Red" -> "4"
+                when (featureData.riskMatrixColor.lowercase()) {
+                    "green" -> "1"
+                    "yellow" -> "2"
+                    "orange" -> "3"
+                    "red" -> "4"
                     else -> "0"
                 }
             }?.forEach { featureData ->

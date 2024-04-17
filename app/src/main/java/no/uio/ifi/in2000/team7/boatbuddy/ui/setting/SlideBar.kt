@@ -25,7 +25,7 @@ fun FactorSlide(
     weatherFactor: String
 ) {
     val from = preference.from.toFloat()
-    val to = (preference.to + if (unit != "%") 1 else 0).toFloat()
+    val to = (preference.to + if (unit == "%") 0 else 1).toFloat()
 
     var sliderPosition by remember {
         mutableFloatStateOf(
@@ -42,7 +42,7 @@ fun FactorSlide(
         Text(text = weatherFactor)
         Text(
             text = "${
-                if (sliderPosition == to && unit != "%") (to.toInt() - 1).toString() + "+"
+                if (sliderPosition > to - 1 && unit != "%") (to.toInt() - 1).toString() + "+"
                 else if (unit == "mm") "%.1f".format(sliderPosition)
                 else sliderPosition.roundToInt()
             } $unit"

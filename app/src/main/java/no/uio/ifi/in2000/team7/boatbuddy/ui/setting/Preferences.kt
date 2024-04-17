@@ -2,18 +2,53 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.setting
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PreferenceSliders() {
+fun Preferences() {
+    TopAppBar(title = { Text(text = "Preferanse innstillinger") })
+    val showCheckBoxes = remember { mutableStateOf(false) }
+    val isChecked1 = remember { mutableStateOf(false) }
+    val isChecked2 = remember { mutableStateOf(false) }
+    FactorCheckBox(
+        check = showCheckBoxes,
+        factorName = "Vær faktorer"
+    )
+
+    val subBoxModifier = Modifier
+        .padding(start = 16.dp)
+
+    if (showCheckBoxes.value) {
+        FactorCheckBox(
+            check = isChecked1,
+            factorName = "Bølgehøyde",
+            modifier = subBoxModifier
+        )
+        FactorCheckBox(
+            check = isChecked2,
+            factorName = "Vanntemperatur",
+            modifier = subBoxModifier
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+
         FactorSlide(
             preference = FactorPreference(1.0, 0.0, 5.0),
             unit = "m",
