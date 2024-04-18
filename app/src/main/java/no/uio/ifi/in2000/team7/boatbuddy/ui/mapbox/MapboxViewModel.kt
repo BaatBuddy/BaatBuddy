@@ -16,7 +16,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 
 

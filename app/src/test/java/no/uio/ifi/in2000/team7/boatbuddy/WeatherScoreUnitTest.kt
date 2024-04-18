@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateHour
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import org.junit.Test

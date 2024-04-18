@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
-import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
@@ -12,7 +10,6 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
