@@ -39,14 +39,14 @@ class MainActivity : ComponentActivity() {
         }
 
         //Location Background
-        ActivityCompat.requestPermissions(
+        /*ActivityCompat.requestPermissions(
             this,
             arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 ),
             0
-        )
+        )*/
 
 
         setContent {
@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
             BoatbuddyTheme {
 
-                Column (
+                /*Column (
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Button(onClick = {
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                     }) {
                         Text(text = "stop")
                     }
-                }
+                }*/
 
                 navController = rememberNavController()
                 NavGraph(navController = navController)

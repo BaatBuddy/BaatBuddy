@@ -14,6 +14,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import no.uio.ifi.in2000.team7.boatbuddy.R
 
 class LocationService: Service() {
 
@@ -44,7 +45,7 @@ class LocationService: Service() {
         val notification = NotificationCompat.Builder(this, "location")
             .setContentTitle("Tracking location...")
             .setContentText("Location: null")
-            .setSmallIcon(androidx.appcompat.R.drawable.abc_ab_share_pack_mtrl_alpha) //Usikker
+            .setSmallIcon(R.drawable.icon_warning_avalanches_orange) //Usikker
             .setOngoing(true)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
