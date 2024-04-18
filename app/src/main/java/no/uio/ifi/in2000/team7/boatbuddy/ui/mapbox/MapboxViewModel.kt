@@ -123,45 +123,14 @@ class MapboxViewModel : ViewModel() {
     fun calculateWeather(points: List<Point>) {
         viewModelScope.launch {
             val weatherPreferences = WeatherPreferences(
-                waveHeight = FactorPreference(
-                    value = 1.0,
-                    from = 0.0,
-                    to = 5.0
-                ),
-                waterTemperature = FactorPreference(
-                    value = 20.0,
-                    from = 0.0,
-                    to = 20.0
-                ),
-                windSpeed = FactorPreference(
-                    value = 4.0,
-                    from = 0.0,
-                    to = 12.0
-                ),
-                airTemperature = FactorPreference(
-                    value = 20.0,
-                    from = 0.0,
-                    to = 30.0
-                ),
-                cloudAreaFraction = FactorPreference(
-                    value = 20.0,
-                    from = 0.0,
-                    to = 100.0
-                ),
-                fogAreaFraction = FactorPreference(
-                    value = 0.0,
-                    from = 0.0,
-                    to = 100.0
-                ),
-                relativeHumidity = FactorPreference(
-                    value = 30.0,
-                    from = 0.0,
-                    to = 100.0
-                ), precipitationAmount = FactorPreference(
-                    value = 0.0,
-                    from = 0.0,
-                    to = 3.0 // 3mm per 6h => 0.5mm per hour which is "maximum"
-                )
+                waveHeight = 0.5,
+                windSpeed = 4.0,
+                airTemperature = 20.0,
+                cloudAreaFraction = 20.0,
+                waterTemperature = 20.0,
+                relativeHumidity = 30.0,
+                precipitationAmount = 0.0,
+                fogAreaFraction = 0.0
             )
 
             val pathWeatherData =

@@ -13,4 +13,5 @@ data class TimeWeatherData(
     val fogAreaFraction: Double,
     // val ultravioletIndexClearSky: Double?,
     val relativeHumidity: Double,
+    val precipitationAmount: Double
 )

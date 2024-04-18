@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.FactorPreference
@@ -7,6 +8,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
@@ -16,8 +18,9 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 object WeatherScore {
+
     // from A - B to a - b with value v
-    private fun mapValue(value: Double, fromA: Double, fromB: Double, toA: Double, toB: Double) =
+    /*private fun mapValue(value: Double, fromA: Double, fromB: Double, toA: Double, toB: Double) =
         toA + (value - fromA) * (toB - toA) / (fromB - fromA)
 
     // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
@@ -25,44 +28,45 @@ object WeatherScore {
         val difference = kotlin.math.abs(preference.value - min(value, preference.to + 1))
         return mapValue(difference, preference.from, preference.to, 100.0, 0.0)
 
-    }
-
+    }*/
 
     // TODO adjust the function to handle null values and add rain. null values means that user doesn't care about the following weather
-    
+
+    // creates a score based on how far away from preferred weather data is
+    fun calculateInstance(realData: Double, preferredData: Double): Double {
+        return (1 - abs(realData - preferredData) / max(realData, preferredData)) * 100
+    }
+
     // creates a score from 0 - 100 based on preference and real data
     fun calculateHour(
         timeWeatherData: TimeWeatherData,
         weatherPreferences: WeatherPreferences,
-        isEndpoint: Boolean,
+        // isEndpoint: Boolean,
     ): Double {
-        val dataPreference = mutableListOf(
-            Pair(timeWeatherData.waveHeight, weatherPreferences.waveHeight),
+        val wantedData = mutableListOf(
             Pair(timeWeatherData.windSpeed, weatherPreferences.windSpeed),
-            // Pair(timeWeatherData.winSpeedGust, weatherPreferences.windSpeedOfGust),
             Pair(timeWeatherData.airTemperature, weatherPreferences.airTemperature),
             Pair(timeWeatherData.cloudAreaFraction, weatherPreferences.cloudAreaFraction),
-            Pair(timeWeatherData.fogAreaFraction, weatherPreferences.fogAreaFraction),
-            // Pair(timeWeatherData.ultravioletIndexClearSky, weatherPreferences.ultravioletIndexClearSky),
-            Pair(timeWeatherData.relativeHumidity, weatherPreferences.relativeHumidity),
+            Pair(timeWeatherData.waveHeight, 0.5)
         )
 
-        if (isEndpoint) {
-            dataPreference.add(
-                Pair(
-                    timeWeatherData.waterTemperature,
-                    weatherPreferences.waterTemperature
-                ),
+        if (weatherPreferences.waterTemperature != null) {
+            wantedData.add(
+                Pair(timeWeatherData.waterTemperature, weatherPreferences.waterTemperature)
+            )
+        }
+        if (weatherPreferences.relativeHumidity != null) {
+            wantedData.add(
+                Pair(timeWeatherData.relativeHumidity, weatherPreferences.relativeHumidity)
             )
         }
 
-        val averageScore = dataPreference.sumOf { pair ->
-            val value = pair.first
-            val preference = pair.second
-            calculateFactor(value, preference)
-        } / dataPreference.size
-
-        return averageScore
+        return wantedData.sumOf {
+            calculateInstance(it.first, it.second)
+        } / (wantedData.size + listOf(
+            timeWeatherData.precipitationAmount,
+            timeWeatherData.fogAreaFraction
+        ).count { it != 0.0 })
     }
 
     private fun calculateDate(
@@ -73,7 +77,7 @@ object WeatherScore {
             calculateHour(
                 it,
                 weatherPreferences,
-                it == timeWeatherData.last()
+                // it == timeWeatherData.last()
             )
         } / timeWeatherData.size
     }
@@ -89,8 +93,7 @@ object WeatherScore {
                 score = calculateDate(
                     timeWeatherData = it.timeWeatherData,
                     weatherPreferences = weatherPreferences
-                ),
-                isDoneBeforeSunset = false // TODO check if the journey is done before sunset
+                )
             )
         }
     }

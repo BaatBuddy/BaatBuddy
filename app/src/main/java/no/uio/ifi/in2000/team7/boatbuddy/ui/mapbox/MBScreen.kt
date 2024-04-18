@@ -72,7 +72,7 @@ fun MBScreen(
         Point.fromLngLat(10.707517, 59.879888),
         Point.fromLngLat(8.788321, 58.431549)
     )
-    autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
+    // autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()

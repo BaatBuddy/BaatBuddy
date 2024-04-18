@@ -27,7 +27,7 @@ fun Preferences() {
     )
 
     val subBoxModifier = Modifier
-        .padding(start = 16.dp)
+        .padding(start = 24.dp)
 
     if (showCheckBoxes.value) {
         FactorCheckBox(
@@ -47,45 +47,43 @@ fun Preferences() {
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-
         FactorSlide(
-            preference = FactorPreference(1.0, 0.0, 5.0),
+            preference = FactorPreference(1.0, 0.0, 5.0, true),
             unit = "m",
-            weatherFactor = "Bølgehøyde"
+            weatherFactor = "Bølgehøyde",
         )
         FactorSlide(
-            preference = FactorPreference(10.0, 0.0, 20.0),
+            preference = FactorPreference(10.0, 0.0, 20.0, true),
             unit = "°C",
-            weatherFactor = "Vanntemperatur"
+            weatherFactor = "Vanntemperatur",
         )
         FactorSlide(
-            preference = FactorPreference(4.0, 0.0, 12.0),
+            preference = FactorPreference(4.0, 0.0, 12.0, true),
             unit = "m/s",
             weatherFactor = "Vindhastighet"
         )
         FactorSlide(
-            preference = FactorPreference(20.0, 0.0, 30.0),
+            preference = FactorPreference(20.0, 0.0, 30.0, true),
             unit = "°C",
             weatherFactor = "Lufttemperatur"
         )
         FactorSlide(
-            preference = FactorPreference(20.0, 0.0, 100.0),
+            preference = FactorPreference(20.0, 0.0, 100.0, true),
             unit = "%",
             weatherFactor = "Skydekke"
         )
         FactorSlide(
-            preference = FactorPreference(30.0, 0.0, 100.0),
+            preference = FactorPreference(30.0, 0.0, 100.0, true),
             unit = "%",
             weatherFactor = "Relativ fuktighet"
         )
         FactorSlide(
-            preference = FactorPreference(0.0, 0.0, 3.0),
+            preference = FactorPreference(0.0, 0.0, 3.0, true),
             unit = "mm",
             weatherFactor = "Mengde nedbør neste 6 timer"
         )
         FactorSlide(
-            preference = FactorPreference(0.0, 0.0, 3.0),
+            preference = FactorPreference(0.0, 0.0, 3.0, true),
             unit = "mm",
             weatherFactor = "FILLER"
         )

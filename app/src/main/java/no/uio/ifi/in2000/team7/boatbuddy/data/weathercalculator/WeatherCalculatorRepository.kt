@@ -10,7 +10,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 class WeatherCalculatorRepository {
     val oceanForecastRepository = OceanForecastRepository()
     val locationForecastRepository = LocationForecastRepository()
-    val sunriseRepository = SunriseRepository()
+    // val sunriseRepository = SunriseRepository()
 
 
     suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
@@ -44,7 +44,8 @@ class WeatherCalculatorRepository {
                         airTemperature = ld.air_temperature,
                         cloudAreaFraction = ld.cloud_area_fraction,
                         fogAreaFraction = ld.fog_area_fraction,
-                        relativeHumidity = ld.relative_humidity
+                        relativeHumidity = ld.relative_humidity,
+                        precipitationAmount = ld.precipitation_amount
                     )
                 } else {
                     null
@@ -56,9 +57,9 @@ class WeatherCalculatorRepository {
             val lastPoint = points.last()
             PathWeatherData(
                 date = it.key,
-                sunsetAtLastPoint = sunriseRepository.getSunriseData(
-                    lastPoint.latitude().toString(), lastPoint.longitude().toString(), it.key
-                )?.sunsetTime,
+                //sunsetAtLastPoint = sunriseRepository.getSunriseData(
+                //    lastPoint.latitude().toString(), lastPoint.longitude().toString(), it.key
+                //)?.sunsetTime,
                 timeWeatherData = it.value
             )
         }
