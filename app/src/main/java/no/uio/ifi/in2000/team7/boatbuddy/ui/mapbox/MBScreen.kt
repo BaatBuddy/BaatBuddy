@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -37,6 +38,7 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.location
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.AutoRouteViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -113,21 +115,43 @@ fun MBScreen(
                 Text(text = "${if (mapboxUIState.alertVisible) "Hide" else "Show"} Alerts")
             }
         }
-        Button(
-            onClick = {
-                val location = locationViewModel.fetchUserLocation(context)
-                if (location != null) {
-                    mapboxViewModel.panToPoint(
-                        cameraOptions = CameraOptions.Builder()
-                            .center(Point.fromLngLat(location.longitude, location.latitude))
-                            .bearing(location.bearing.toDouble())
-                            .build()
-                    )
+        Row{
+            Button(
+                onClick = {
+                    val location = locationViewModel.fetchUserLocation(context)
+                    if (location != null) {
+                        mapboxViewModel.panToPoint(
+                            cameraOptions = CameraOptions.Builder()
+                                .center(Point.fromLngLat(location.longitude, location.latitude))
+                                .bearing(location.bearing.toDouble())
+                                .build()
+                        )
+                    }
                 }
+            ) {
+                Text(text = "Fly to user")
             }
-        ) {
-            Text(text = "Fly to user")
+            Button(onClick = {
+                Intent(context, LocationService::class.java).apply {
+                    action = LocationService.ACTION_START
+                    context.startService(this)
+                }
+
+                }){
+                Text(text = "Start")
+            }
+            Button(onClick = {
+                Intent(context, LocationService::class.java).apply {
+                    action = LocationService.ACTION_STOP
+                    context.startService(this)
+                }
+
+            }){
+                Text(text = "Stop")
+            }
+
         }
+
 
         Button(
             onClick = {
@@ -143,7 +167,6 @@ fun MBScreen(
         ) {
             Text(text = "Create path")
         }
-
     }
 
 }

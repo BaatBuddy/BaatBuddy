@@ -24,7 +24,7 @@ class UserLocationViewModel : ViewModel() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    var locationState by mutableStateOf<LocationResult?>(null)
+    var locationState by mutableStateOf<LocationResult?>(null) // User Location
     var permissionsGranted by mutableStateOf(false)
 
     @SuppressLint("MissingPermission")
