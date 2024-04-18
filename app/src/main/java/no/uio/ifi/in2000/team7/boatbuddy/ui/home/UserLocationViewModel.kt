@@ -1,6 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
-
-import android.Manifest.permission
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
@@ -31,7 +29,7 @@ class UserLocationViewModel : ViewModel() {
     private fun createLocationRequest(context: Context, permissionGranted: String) {
 
         // If fine location is granted
-        if (permissionGranted == permission.ACCESS_FINE_LOCATION) {
+        if (permissionGranted == Manifest.permission.ACCESS_FINE_LOCATION) {
             permissionsGranted = true
             locationRequest = LocationRequest.Builder(5000)
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
@@ -39,7 +37,7 @@ class UserLocationViewModel : ViewModel() {
                 .build()
         }
         // If coarse location is granted
-        else if (permissionGranted == permission.ACCESS_COARSE_LOCATION) {
+        else if (permissionGranted == Manifest.permission.ACCESS_COARSE_LOCATION) {
             permissionsGranted = true
             locationRequest = LocationRequest.Builder(10000) //10000
                 .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)

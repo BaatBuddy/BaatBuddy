@@ -1,22 +1,19 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
+import UserLocationViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,6 +34,7 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListene
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
@@ -67,19 +65,12 @@ fun MBScreen(
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
     Column {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.75f)
-        ) {
-            if (mapboxUIState != null) {
-                AndroidView(
-                    factory = { ctx ->
-                        mapboxUIState.mapView
-                    }
-                )
+
+        AndroidView(
+            factory = { ctx ->
+                mapboxUIState.mapView
             }
-        }
+        )
         Row() {
             Button(
                 onClick = {
@@ -101,7 +92,7 @@ fun MBScreen(
                 Text(text = "${if (mapboxUIState.alertVisible) "Hide" else "Show"} Alerts")
             }
         }
-        Row{
+        Row {
             Button(
                 onClick = {
                     val location = locationViewModel.fetchUserLocation(context)
@@ -123,7 +114,7 @@ fun MBScreen(
                     context.startService(this)
                 }
 
-                }){
+            }) {
                 Text(text = "Start")
             }
             Button(onClick = {
@@ -132,7 +123,7 @@ fun MBScreen(
                     context.startService(this)
                 }
 
-            }){
+            }) {
                 Text(text = "Stop")
             }
 
