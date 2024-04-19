@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 import android.annotation.SuppressLint
 import android.content.Context
 
-object AlertConverter {
+object IconConverter {
     @SuppressLint("DiscouragedApi")
     fun convertAlertResId(
         event: String,
@@ -54,5 +54,13 @@ object AlertConverter {
             "wind" -> "Vindkast"
             else -> "Generisk"
         }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    fun convertWeatherResId(
+        symbolCode: String,
+        context: Context
+    ): Int {
+        return context.resources.getIdentifier(symbolCode, "drawable", context.packageName)
     }
 }

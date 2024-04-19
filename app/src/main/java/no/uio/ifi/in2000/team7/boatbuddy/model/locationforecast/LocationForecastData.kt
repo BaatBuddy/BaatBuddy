@@ -18,5 +18,7 @@ data class TimeLocationData(
     val wind_from_direction: Double, //Retningen vinden kommer fra (0° er nord, 90° øst, osv.)
     val wind_speed: Double, //Vindhastighet 10m over bakken (10 min gjennomsnitt)
     val wind_speed_of_gust: Double, //
-    val precipitation_amount: Double // next 6 hours
-)
+    val precipitation_amount: Double, // next 6 hours
+    val symbol_code: String,
+
+    )
