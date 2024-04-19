@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 import android.annotation.SuppressLint
 import android.content.Context
 
-object AlertIcon {
+object IconConverter {
     @SuppressLint("DiscouragedApi")
     fun convertAlertResId(
         event: String,
@@ -32,5 +32,35 @@ object AlertIcon {
         } + "_" + if (riskMatrixColor.isBlank()) "yellow" else riskMatrixColor.lowercase()
 
         return context.resources.getIdentifier(iconName, "drawable", context.packageName)
+    }
+
+    fun convertLanguage(alertEvent: String): String {
+        return when (alertEvent) {
+            "avalanches" -> "Jordskred"
+            "blowingSnow" -> "Snøfokk"
+            "drivingConditions" -> "Kjøreforhold"
+            "flood" -> "Flom"
+            "forestFire" -> "Skogbrannfare"
+            "gale" -> "Kuling"
+            "ice" -> "Is"
+            "icing" -> "Ising"
+            "landSlide" -> "Ras"
+            "polarLow" -> "Polart lavtrykk"
+            "rain" -> "Regn"
+            "rainFlood" -> "Styrtregn"
+            "snow" -> "Snø"
+            "stormSurge" -> "Stormflo"
+            "lightning" -> "Mye lyn"
+            "wind" -> "Vindkast"
+            else -> "Generisk"
+        }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    fun convertWeatherResId(
+        symbolCode: String,
+        context: Context
+    ): Int {
+        return context.resources.getIdentifier(symbolCode, "drawable", context.packageName)
     }
 }

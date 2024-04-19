@@ -3,10 +3,12 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 import android.content.Context
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
+import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.gestures.OnMoveListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
 
 interface MapboxRepo {
@@ -63,6 +65,13 @@ class MapboxRepository(
         }
     }
 
+    suspend fun addClickListener(action: Unit) {
+        mapView.mapboxMap.addOnMapClickListener {
+            run { action }
+            true
+        }
+    }
+
     suspend fun panToPoint(cameraOptions: CameraOptions) {
         mapView.mapboxMap.flyTo(cameraOptions = cameraOptions)
     }
@@ -75,6 +84,12 @@ class MapboxRepository(
 
     suspend fun toggleAlertVisibility() {
         annotationRepository.toggleAlertVisibility()
+    }
+
+    suspend fun createLinePath(
+        points: List<Point>
+    ) {
+        annotationRepository.addLineToMap(points = points)
     }
 
 }

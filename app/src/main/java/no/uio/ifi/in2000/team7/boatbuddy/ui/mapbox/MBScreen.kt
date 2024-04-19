@@ -1,22 +1,19 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
+import UserLocationViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,6 +33,8 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.AutoRouteViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
@@ -46,7 +45,8 @@ import java.lang.ref.WeakReference
 fun MBScreen(
     locationViewModel: UserLocationViewModel = viewModel(),
     metAlertsViewModel: MetAlertsViewModel,
-    mapboxViewModel: MapboxViewModel
+    mapboxViewModel: MapboxViewModel,
+    autorouteViewModel: AutoRouteViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
@@ -60,26 +60,30 @@ fun MBScreen(
             .bearing(0.0)
             .pitch(0.0)
             .build(),
-        style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg"
+        style = "mapbox://styles/mafredri/cluwbjt8q000q01quhopi4g0m"
     )
+
+
+    val boatSpeed = "5" // knop
+    val boatHeight = "5"
+    val safetyDepth = "5"
+    val course = listOf<Point>(
+        Point.fromLngLat(10.707517, 59.879888),
+        Point.fromLngLat(8.788321, 58.431549)
+    )
+    // autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val autorouteUIState by autorouteViewModel.autoRouteUiState.collectAsState()
 
     Column {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.75f)
-        ) {
-            if (mapboxUIState != null) {
-                AndroidView(
-                    factory = { ctx ->
-                        mapboxUIState.mapView
-                    }
-                )
+
+        AndroidView(
+            factory = { ctx ->
+                mapboxUIState.mapView
             }
-        }
+        )
         Row() {
             Button(
                 onClick = {
@@ -101,7 +105,7 @@ fun MBScreen(
                 Text(text = "${if (mapboxUIState.alertVisible) "Hide" else "Show"} Alerts")
             }
         }
-        Row{
+        Row {
             Button(
                 onClick = {
                     val location = locationViewModel.fetchUserLocation(context)
@@ -123,7 +127,7 @@ fun MBScreen(
                     context.startService(this)
                 }
 
-                }){
+            }) {
                 Text(text = "Start")
             }
             Button(onClick = {
@@ -132,13 +136,27 @@ fun MBScreen(
                     context.startService(this)
                 }
 
-            }){
+            }) {
                 Text(text = "Stop")
             }
 
         }
 
 
+        Button(
+            onClick = {
+                autorouteUIState.autoRoute?.geometry?.coordinates?.map {
+                    Point.fromLngLat(it[0], it[1])
+                }?.let {
+//                    mapboxViewModel.createLinePath(it)
+                    mapboxViewModel.createLinePath(WeatherScore.selectPointsFromPath(it))
+                    mapboxViewModel.calculateWeather(WeatherScore.selectPointsFromPath(it))
+                }
+
+            }
+        ) {
+            Text(text = "Create path")
+        }
     }
 
 }
