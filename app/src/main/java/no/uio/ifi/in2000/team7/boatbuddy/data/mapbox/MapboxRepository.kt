@@ -8,6 +8,7 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.gestures.OnMoveListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
 
 interface MapboxRepo {
@@ -61,6 +62,13 @@ class MapboxRepository(
             }
 
 
+        }
+    }
+
+    suspend fun addClickListener(action: Unit) {
+        mapView.mapboxMap.addOnMapClickListener {
+            run { action }
+            true
         }
     }
 

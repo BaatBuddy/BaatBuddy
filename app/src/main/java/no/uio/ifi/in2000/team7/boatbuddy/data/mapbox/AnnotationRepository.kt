@@ -34,8 +34,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.AlertConverter
-import no.uio.ifi.in2000.team7.boatbuddy.ui.AlertConverter.convertLanguage
+import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter
+import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertLanguage
 
 class AnnotationRepository(
     val mapView: MapView
@@ -318,7 +318,7 @@ class AnnotationRepository(
 
         val cardAlertIcon = ImageView(context).apply {
             setImageResource(
-                AlertConverter.convertAlertResId(
+                IconConverter.convertAlertResId(
                     event = featureData.event,
                     riskMatrixColor = featureData.riskMatrixColor,
                     context = context

@@ -43,7 +43,8 @@ class LocationForecastDataSource {
                 lon = coordinates[0],
                 lat = coordinates[1],
                 timeseries = timeseries.mapNotNull { timesery ->
-                    if (timesery.data.next_6_hours != null) {
+                    val nextHours = timesery.data
+                    if (nextHours.next_6_hours != null) {
                         val details = timesery.data.instant.details
                         TimeLocationData(
                             time = timesery.time,
@@ -56,7 +57,10 @@ class LocationForecastDataSource {
                             wind_from_direction = details.wind_from_direction,
                             wind_speed = details.wind_speed,
                             wind_speed_of_gust = details.wind_speed_of_gust,
-                            precipitation_amount = timesery.data.next_6_hours.details.precipitation_amount
+                            precipitation_amount = nextHours.next_6_hours.details.precipitation_amount,
+                            symbol_code =
+                            if (nextHours.next_1_hours != null) nextHours.next_1_hours.summary.symbol_code
+                            else nextHours.next_6_hours.summary.symbol_code
                         )
                     } else {
                         null
