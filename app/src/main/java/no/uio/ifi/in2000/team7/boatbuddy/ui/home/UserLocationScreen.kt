@@ -2,12 +2,15 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import UserLocationViewModel
 import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.LocationResult
 
@@ -22,37 +25,47 @@ fun GetUserLocation() {
     )
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(
-                Manifest.permission.ACCESS_FINE_LOCATION, false
-            ) -> {
-                // Precise location access granted
-                viewModel.fetchLocation(context, Manifest.permission.ACCESS_FINE_LOCATION)
-            }
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissionResults ->
+        permissionResults.entries.forEach {
+            when (it.key) {
+                Manifest.permission.ACCESS_FINE_LOCATION -> {
+                    if (it.value) {
+                        // Precise location access granted
+                        viewModel.fetchLocation(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                    } else {
+                        // Permission denied. Possibly you can explain to the user why you need the permission.
+                    }
+                }
 
-            permissions.getOrDefault(
-                Manifest.permission.ACCESS_COARSE_LOCATION, false
-            ) -> {
-                // Only approximate location access granted
-                viewModel.fetchLocation(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-            }
-
-            else -> {
-                // No location access granted
+                Manifest.permission.ACCESS_COARSE_LOCATION -> {
+                    if (it.value) {
+                        // Only approximate location access granted
+                        viewModel.fetchLocation(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    } else {
+                        // Permission denied. Possibly you can explain to the user why you need the permission.
+                    }
+                }
             }
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (!viewModel.permissionsGranted) {
+    LaunchedEffect(true) {
+        if (context.checkPermission(permissionsList)) {
+            viewModel.fetchLocation(context, Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
             locationPermissionLauncher.launch(permissionsList)
         }
     }
 
     displayLocation(viewModel.locationState)
 
+}
+
+fun Context.checkPermission(permissions: Array<String>): Boolean {
+    return permissions.all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+    }
 }
 
 fun displayLocation(locationState: LocationResult?) {
