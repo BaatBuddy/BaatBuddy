@@ -1,7 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast
 
 data class OceanForecastData(
-    val coordinates: List<Double>,
+    val lat: Double,
+    val lon: Double,
 
     val updated_at: String,
 

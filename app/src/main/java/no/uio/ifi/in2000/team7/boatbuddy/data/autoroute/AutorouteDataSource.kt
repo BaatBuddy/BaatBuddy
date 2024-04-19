@@ -25,9 +25,9 @@ class AutorouteDataSource {
 
         if (course.isNotEmpty() && safetyDepth.isNotBlank() && safetyHeight.isNotBlank() && boatSpeed.isNotBlank()) {
 
-            var base: String = "https://webapp-no.skippo.io/api/autoroute?usehydrographica=false&"
+            val base: String = "https://webapp-no.skippo.io/api/autoroute?usehydrographica=false&"
             var middle: String = "course="
-            var end: String = "&safetydepth=5" +
+            val end: String = "&safetydepth=5" +
                     "&safetyheight=5" +
                     "&boatspeed=5"
 
@@ -37,8 +37,8 @@ class AutorouteDataSource {
 
             //temp hardcoded points to be replaced by course parameter
             val liste = listOf<Point>(
-                Point.fromLngLat(10.607909077722013, 59.856108702935046),
-                Point.fromLngLat(10.607421841197663, 59.860213589239464)
+                Point.fromLngLat(10.707517, 59.879888),
+                Point.fromLngLat(10.251066, 59.736283)
             )
 
             course.forEach {

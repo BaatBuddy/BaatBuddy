@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.sunrise
 
-import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
@@ -54,7 +53,8 @@ class SunriseDataSource {
             val properties = data.properties
 
             SunriseData(
-                coordinates = data.geometry.coordinates,
+                lon = data.geometry.coordinates[0],
+                lat = data.geometry.coordinates[1],
                 interval = data.`when`.interval,
 
                 sunriseTime = properties.sunrise.time,

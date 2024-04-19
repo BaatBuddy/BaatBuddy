@@ -26,6 +26,7 @@ import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MapboxViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
