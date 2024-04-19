@@ -1,14 +1,15 @@
 package no.uio.ifi.in2000.team7.boatbuddy.model.sunrise
 
 data class SunriseData(
-    val coordinates: List<Double>,
+    val lon: Double,
+    val lat: Double,
     val interval: List<String>, // element 0: start_time, element 1: end_time (Year.Month.Date T Hour.Min.Second)
 
-    val sunriseTime: String,
-    val sunriseAzimuth: Double, // which direction the sun rises up from (0degree being north, 90degree being east, etc.)
+    val sunriseTime: String?,
+    val sunriseAzimuth: Double?, // which direction the sun rises up from (0degree being north, 90degree being east, etc.)
 
-    val sunsetTime: String,
-    val sunsetAzimuth: Double,
+    val sunsetTime: String?,
+    val sunsetAzimuth: Double?,
 
     val solarnoonTime: String,
     val solarnoonElevation: Double, // which angle the sun is at its peak from the coordinates

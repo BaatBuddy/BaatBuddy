@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -20,12 +21,9 @@ import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
@@ -36,7 +34,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.AlertIcon
+import no.uio.ifi.in2000.team7.boatbuddy.ui.AlertConverter
+import no.uio.ifi.in2000.team7.boatbuddy.ui.AlertConverter.convertLanguage
 
 class AnnotationRepository(
     val mapView: MapView
@@ -53,14 +52,20 @@ class AnnotationRepository(
     private var isClickable = false
 
     init {
-
-        // NOTAT --> BRUK CACHE FOR MET ALERT GREIER SÅ MAN IKKE HENTER NY DATA HELE TIDA, KOMBINER MED TID
         runBlocking {
             val polygons = polygonAnnotationManager.annotations
             metAlertsRepository.getMetAlertsData(
                 lat = "",
                 lon = ""
-            )?.features?.forEach { featureData ->
+            )?.features?.sortedBy { featureData ->
+                when (featureData.riskMatrixColor.lowercase()) {
+                    "green" -> "1"
+                    "yellow" -> "2"
+                    "orange" -> "3"
+                    "red" -> "4"
+                    else -> "0"
+                }
+            }?.forEach { featureData ->
                 featureData.affected_area.forEach { area ->
 
                     val alertArea = area.map { polygon ->
@@ -70,7 +75,6 @@ class AnnotationRepository(
                     }
                     if (alertArea !in polygons.map { it.points }) {
                         val polygon = addPolygonToMap(
-                            polygonAnnotationManager = polygonAnnotationManager,
                             points = alertArea,
                             fColor = featureData.riskMatrixColor
                         )
@@ -91,8 +95,7 @@ class AnnotationRepository(
 
     // functions for point manager
     private fun addPinToMap(
-        point: Point,
-        pointAnnotationManager: PointAnnotationManager
+        point: Point
     ): PointAnnotation? {
         bitmapFromDrawableRes(
             mapView.context,
@@ -112,10 +115,15 @@ class AnnotationRepository(
 
 
     // functions for the polyline manager
-    private fun addLineToMap(
-        polylineAnnotationManager: PolylineAnnotationManager,
+    suspend fun addLineToMap(
         points: List<Point>, // order of point matter
     ) {
+
+        points.forEach {
+            addPinToMap(
+                it
+            )
+        }
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(points)
@@ -155,7 +163,6 @@ class AnnotationRepository(
 
     // functions for the polygon manager
     private fun addPolygonToMap(
-        polygonAnnotationManager: PolygonAnnotationManager,
         points: List<List<Point>>,
         fColor: String = "",
         olColor: String = ""
@@ -212,6 +219,7 @@ class AnnotationRepository(
             } else {
                 it.fillOpacity = 0.0
                 isClickable = false
+                clearViewAnnoations()
             }
             polygonAnnotationManager.update(it)
         }
@@ -224,7 +232,7 @@ class AnnotationRepository(
         polygonAnnotationManager.addClickListener { clickedPolygon ->
             if (isClickable) {
                 clickedPolygon.points.forEach { polygon ->
-
+                    Log.i("ASDASD", "ASDWQEGYBHWEYUFIUWKEOGIL")
                     // consider using another formula to find centroid of a polygon
                     val centroid = Point.fromLngLat(
                         polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
@@ -301,7 +309,7 @@ class AnnotationRepository(
         }
 
         val cardName = TextView(context).apply {
-            text = featureData.event
+            text = convertLanguage(featureData.event)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -310,7 +318,7 @@ class AnnotationRepository(
 
         val cardAlertIcon = ImageView(context).apply {
             setImageResource(
-                AlertIcon.convertAlertResId(
+                AlertConverter.convertAlertResId(
                     event = featureData.event,
                     riskMatrixColor = featureData.riskMatrixColor,
                     context = context

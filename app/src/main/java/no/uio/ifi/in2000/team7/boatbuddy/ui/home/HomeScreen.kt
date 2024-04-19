@@ -34,12 +34,12 @@ fun HomeScreen(
         }
     ) {
 
+        GetUserLocation()
         MBScreen(
             metAlertsViewModel = metAlertsViewModel,
             mapboxViewModel = mapboxViewModel
 
         )
-        GetUserLocation()
     }
 
 }

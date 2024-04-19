@@ -33,6 +33,7 @@ import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
+import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingScreen
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -59,8 +60,8 @@ fun InfoScreen(
     val boatHeight = "5"
     val safetyDepth = "5"
     val course = listOf<Point>(
-        Point.fromLngLat(10.607909077722013, 59.856108702935046),
-        Point.fromLngLat(10.607421841197663, 59.860213589239464)
+        Point.fromLngLat(10.707517, 59.879888),
+        Point.fromLngLat(10.251066, 59.736283)
     )
 
 
@@ -68,7 +69,7 @@ fun InfoScreen(
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)
     sunriseViewModel.initialize(lat = lat, lon = lon)
-    autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
+    // autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 
     Scaffold(
         modifier = Modifier
@@ -156,17 +157,10 @@ fun InfoScreen(
             Text(text = "Dette er autoroute")
             if (autorouteUiState.autoRoute != null) {
                 autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
-                
+
             }
-
+            SettingScreen()
         }
-        Column(
-            modifier = Modifier
-                .padding(10.dp)
-        ) {
-
-        }
-
     }
 }
 

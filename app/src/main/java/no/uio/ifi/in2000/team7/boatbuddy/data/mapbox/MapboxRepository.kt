@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 import android.content.Context
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
+import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.flyTo
@@ -75,6 +76,12 @@ class MapboxRepository(
 
     suspend fun toggleAlertVisibility() {
         annotationRepository.toggleAlertVisibility()
+    }
+
+    suspend fun createLinePath(
+        points: List<Point>
+    ) {
+        annotationRepository.addLineToMap(points = points)
     }
 
 }
