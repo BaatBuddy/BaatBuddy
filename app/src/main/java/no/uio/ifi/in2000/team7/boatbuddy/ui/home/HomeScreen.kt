@@ -66,7 +66,9 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-
+    
+    val locationService = LocationService()
+    metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
 
 
     Scaffold(
@@ -96,21 +98,27 @@ fun HomeScreen(
             ) {
                 // Sheet content
                 // Hide bottom sheet
-                Button(onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                }) {
-                    Text("Hide bottom sheet")
-                }
                 // Start and stop tracking
                 Column {
+                    Row {
+
+                        Button(onClick = {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                        }) {
+                            Text("Hide bottom sheet")
+                        }
+                        Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
+                            Text(text = "Toggle alert visibility")
+                        }
+                    }
 
                     Row {
                         Button(onClick = {
-                            Intent(context, LocationService::class.java).apply {
+                            Intent(context, locationService::class.java).apply {
                                 action = LocationService.ACTION_START
                                 context.startService(this)
                             }
@@ -121,7 +129,7 @@ fun HomeScreen(
                         }
 
                         Button(onClick = {
-                            Intent(context, LocationService::class.java).apply {
+                            Intent(context, locationService::class.java).apply {
                                 action = LocationService.ACTION_STOP
                                 context.startService(this)
                             }
