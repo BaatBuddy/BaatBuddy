@@ -10,10 +10,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,7 +27,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
-import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MapboxViewModel
@@ -89,15 +88,7 @@ fun HomeScreen(
                 sheetState = sheetState
             ) {
                 // Sheet content
-                Button(onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                }) {
-                    Text("Hide bottom sheet")
-                }
+                SwipeUpContent()
             }
         }
 
