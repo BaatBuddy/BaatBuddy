@@ -81,6 +81,12 @@ fun HomeScreen(
         }
 
     ) {
+        AndroidView(
+            factory = { ctx ->
+                mapboxUIState.mapView
+            }
+        )
+
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -89,6 +95,7 @@ fun HomeScreen(
                 sheetState = sheetState
             ) {
                 // Sheet content
+                // Hide bottom sheet
                 Button(onClick = {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
@@ -98,40 +105,34 @@ fun HomeScreen(
                 }) {
                     Text("Hide bottom sheet")
                 }
-            }
-        }
+                // Start and stop tracking
+                Column {
 
+                    Row {
+                        Button(onClick = {
+                            Intent(context, LocationService::class.java).apply {
+                                action = LocationService.ACTION_START
+                                context.startService(this)
+                            }
 
-        Column {
+                        }
+                        ) {
+                            Text(text = "Start")
+                        }
 
-            AndroidView(
-                factory = { ctx ->
-                    mapboxUIState.mapView
-                }
-            )
+                        Button(onClick = {
+                            Intent(context, LocationService::class.java).apply {
+                                action = LocationService.ACTION_STOP
+                                context.startService(this)
+                            }
 
-            Row {
-                Button(onClick = {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_START
-                        context.startService(this)
+                        }
+                        ) {
+                            Text(text = "Stop")
+                        }
                     }
-
-                }
-                ) {
-                    Text(text = "Start")
                 }
 
-                Button(onClick = {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_STOP
-                        context.startService(this)
-                    }
-
-                }
-                ) {
-                    Text(text = "Stop")
-                }
             }
         }
     }
