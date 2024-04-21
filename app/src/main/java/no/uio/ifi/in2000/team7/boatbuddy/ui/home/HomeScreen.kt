@@ -66,7 +66,9 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-
+    
+    val locationService = LocationService()
+    metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
 
 
     Scaffold(
@@ -81,6 +83,12 @@ fun HomeScreen(
         }
 
     ) {
+        AndroidView(
+            factory = { ctx ->
+                mapboxUIState.mapView
+            }
+        )
+
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -89,49 +97,50 @@ fun HomeScreen(
                 sheetState = sheetState
             ) {
                 // Sheet content
-                Button(onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
+                // Hide bottom sheet
+                // Start and stop tracking
+                Column {
+                    Row {
+
+                        Button(onClick = {
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showBottomSheet = false
+                                }
+                            }
+                        }) {
+                            Text("Hide bottom sheet")
+                        }
+                        Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
+                            Text(text = "Toggle alert visibility")
                         }
                     }
-                }) {
-                    Text("Hide bottom sheet")
-                }
-            }
-        }
 
+                    Row {
+                        Button(onClick = {
+                            Intent(context, locationService::class.java).apply {
+                                action = LocationService.ACTION_START
+                                context.startService(this)
+                            }
 
-        Column {
+                        }
+                        ) {
+                            Text(text = "Start")
+                        }
 
-            AndroidView(
-                factory = { ctx ->
-                    mapboxUIState.mapView
-                }
-            )
+                        Button(onClick = {
+                            Intent(context, locationService::class.java).apply {
+                                action = LocationService.ACTION_STOP
+                                context.startService(this)
+                            }
 
-            Row {
-                Button(onClick = {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_START
-                        context.startService(this)
+                        }
+                        ) {
+                            Text(text = "Stop")
+                        }
                     }
-
-                }
-                ) {
-                    Text(text = "Start")
                 }
 
-                Button(onClick = {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_STOP
-                        context.startService(this)
-                    }
-
-                }
-                ) {
-                    Text(text = "Stop")
-                }
             }
         }
     }
