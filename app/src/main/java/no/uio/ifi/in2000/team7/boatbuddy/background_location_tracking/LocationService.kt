@@ -1,11 +1,13 @@
 package no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
@@ -15,12 +17,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import no.uio.ifi.in2000.team7.boatbuddy.MainActivity
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.FeatureDataCache.featureData
-import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
+import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.featureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import kotlin.math.max
-import kotlin.math.min
+import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.bitmapFromDrawableRes
+import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertAlertResId
+import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertLanguage
 
 
 class LocationService : Service() {
@@ -54,36 +58,114 @@ class LocationService : Service() {
     }
 
     private fun start() {
-        val notification = NotificationCompat.Builder(this, "location")
-            .setContentTitle("Tracking location...")
-            .setContentText("Location: null")
-            .setSmallIcon(R.drawable.avd_boat)
-            .setOngoing(true)
+        val locationNotificationId = 1
+        val alertNotificationId = 2
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        val pendingIntent = createPendingIntent()
 
-        locationClient
-            .getLocationUpdates(10000L)
+        // Create Notification Channels if Android version is Oreo (API 26) or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val locationChannel = NotificationChannel(
+                "location",
+                "Location Service",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val alertChannel =
+                NotificationChannel("alert", "Alerts", NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(locationChannel)
+            notificationManager.createNotificationChannel(alertChannel)
+        }
+
+        val locationNotificationBuilder = NotificationCompat.Builder(this, "location")
+            .setContentTitle("Sporer lokasjon...")
+            .setContentText("Lokasjon: ")
+            .setSmallIcon(R.drawable.avd_boat)
+            .setOngoing(true)
+            .setContentIntent(pendingIntent)
+
+        startForeground(locationNotificationId, locationNotificationBuilder.build())
+
+        locationClient.getLocationUpdates(10000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
                 val lat = location.latitude
-                val long = location.longitude
-                val alerts = checkUserLocationAlertAreas(lon = 5.012127, lat = 59.323324)
-                val updatedNotification = notification.setContentText(
-                    "Location: ($lat, $long)\n${alerts.map { it.event + " " }}\n${alerts.size}"
-                )
-                notificationManager.notify(1, updatedNotification.build()) // Updates notification
+                val lon = location.longitude
+                val currentAlerts =
+                    checkUserLocationAlertAreas(lon = 13.761885, lat = 75.368244)
+
+                val updatedLocationNotification = locationNotificationBuilder
+                    .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
+                    .build()
+                notificationManager.notify(locationNotificationId, updatedLocationNotification)
+
+                // Identify newly entered alerts
+                val newlyEntered = currentAlerts.map { it.event }.toSet() - enteredAlerts
+                for (alert in newlyEntered.map { event -> currentAlerts.first { it.event == event } }) {
+                    enteredAlerts.add(alert.event)
+                    sendAlertNotification(
+                        alert,
+                        "Ankommet fareområdet",
+                        pendingIntent,
+                        notificationManager
+                    )
+                }
+
+                // Identify exited alerts
+                val exited = enteredAlerts - currentAlerts.map { it.event }.toSet()
+                for (alert in exited.map { event -> currentAlerts.first { it.event == event } }) {
+                    enteredAlerts.remove(alert.event) // Remove the alert from the entered set
+                    sendAlertNotification(
+                        alert,
+                        "Forlatt fareområdet",
+                        pendingIntent,
+                        notificationManager
+                    )
+                }
             }
             .launchIn(serviceScope)
-
-        startForeground(1, notification.build())
-
     }
 
+    private fun sendAlertNotification(
+        alert: FeatureData,
+        enterExitMessage: String,
+        pendingIntent: PendingIntent,
+        notificationManager: NotificationManager
+    ) {
+        val resId = convertAlertResId(alert.event, alert.riskMatrixColor, this)
+        val bitmapIcon =
+            bitmapFromDrawableRes(this, resId)
+        val alertNotification = NotificationCompat.Builder(this, "alert")
+            .setContentTitle("$enterExitMessage: ${convertLanguage(alert.event)}")
+            .setContentText(alert.description + "\n" + alert.consequences + "\n" + alert.instruction)
+            .setSmallIcon(resId)
+            .setLargeIcon(bitmapIcon)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        // Use unique IDs for entry/exit to manage separate notifications.
+        val notificationId = ("${alert.event}-$enterExitMessage").hashCode()
+        notificationManager.notify(notificationId, alertNotification)
+    }
+
+    private fun createPendingIntent(): PendingIntent {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        return PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+
     private fun stop() {
-        stopForeground(true) // Removes notification
+        stopForeground(STOP_FOREGROUND_REMOVE) // Removes notification
         stopSelf() // Stops service
 
     }
@@ -103,7 +185,7 @@ class LocationService : Service() {
     }
 
     fun initisializeAlerts(featureData: List<FeatureData>) {
-        FeatureDataCache.featureData = featureData
+        AlertNotificationCache.featureData = featureData
     }
 
     // checks if a geopoint is inside a alert polygon
@@ -118,7 +200,6 @@ class LocationService : Service() {
                 }
             }
         }
-        Log.i("ASDASD", asd.toString())
         return asd
     }
 
