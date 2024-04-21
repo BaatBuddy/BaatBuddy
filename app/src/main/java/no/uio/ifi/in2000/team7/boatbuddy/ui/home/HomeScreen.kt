@@ -2,7 +2,11 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import UserLocationViewModel
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
@@ -10,10 +14,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +43,7 @@ fun HomeScreen(
     metAlertsViewModel: MetAlertsViewModel = viewModel(),
     mapboxViewModel: MapboxViewModel = viewModel(),
     userLocationViewModel: UserLocationViewModel = viewModel(),
+    homeViewModel: HomeViewModel = viewModel()
 ) {
 
     val context = LocalContext.current
@@ -59,17 +64,34 @@ fun HomeScreen(
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
-
-//    val snackBarHostState = remember { SnackbarHostState() }
-
+    // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    
+    // notification setup
+    val settingsActivityResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // Handle the result if needed
+        }
+    }
+
+    // Show the dialog if required
+    if (homeViewModel.showNotificationDialog.value) {
+        NotificationOptInDialog(
+            navigateToSettings = {
+                homeViewModel.navigateToNotificationSettings()
+                settingsActivityResultLauncher.launch(Intent(Settings.ACTION_SETTINGS))
+            },
+            onDismiss = { homeViewModel.showNotificationDialog.value = false }
+        )
+    }
+
+    // foreground location setup
     val locationService = LocationService()
     metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
-
 
     Scaffold(
         floatingActionButton = {
