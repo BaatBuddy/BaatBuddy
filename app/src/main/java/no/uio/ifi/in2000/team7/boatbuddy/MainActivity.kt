@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.GetUserLocation
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
@@ -33,55 +34,16 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        //Location Background
-        /*ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                ),
-            0
-        )*/
-
-
         setContent {
-
-            // fetch premissions for userlocation
             GetUserLocation()
 
-
             BoatbuddyTheme {
-
-                /*Column (
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Button(onClick = {
-                        Intent(applicationContext, LocationService::class.java).apply {
-                            action = LocationService.ACTION_START
-                            startService(this)
-                        }
-                    }) {
-                        Text(text = "start")
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = {
-                        Intent(applicationContext, LocationService::class.java).apply {
-                            action = LocationService.ACTION_STOP
-                            startService(this)
-                        }
-                    }) {
-                        Text(text = "stop")
-                    }
-                }*/
-
                 navController = rememberNavController()
                 NavGraph(navController = navController)
-
             }
 
         }
     }
-
 }
 
 

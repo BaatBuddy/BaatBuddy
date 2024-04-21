@@ -6,9 +6,14 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.provider.Settings
+import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,9 +62,9 @@ class LocationService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    //
     private fun start() {
         val locationNotificationId = 1
-        val alertNotificationId = 2
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -163,6 +168,44 @@ class LocationService : Service() {
         )
     }
 
+
+    fun areNotificationsEnabled(): Boolean {
+        return NotificationManagerCompat.from(this).areNotificationsEnabled()
+    }
+
+    fun showNotificationEnableDialog() {
+        Log.i("ASDASD", "ASDAEGHWAEUIG")
+
+        AlertDialog.Builder(this)
+            .setTitle("Aktiver varsling")
+            .setMessage("Varsling er viktig for å holde seg oppdatert på værvarsler i nærområdene. Vil du aktivere varsling?")
+            .setPositiveButton("Aktiver") { dialog, _ ->
+                dialog.dismiss()
+                openNotificationSettings()
+            }
+            .setNegativeButton("Ikke nå") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun openNotificationSettings() {
+        val intent = Intent().apply {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                    action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                }
+
+                else -> {
+                    action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    putExtra("app_package", packageName)
+                    putExtra("app_uid", applicationInfo.uid)
+                }
+            }
+        }
+        startActivity(intent)
+    }
 
     private fun stop() {
         stopForeground(STOP_FOREGROUND_REMOVE) // Removes notification
