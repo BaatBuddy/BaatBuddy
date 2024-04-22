@@ -37,13 +37,20 @@ class LocationForecastRepository(
             return WeekForecast(
                 days = locationData.timeseries.groupBy {
                     it.time.substring(0, 10)
-                }.map {
-                    val day = convertDateToDay(it.key)
-                    day to DayForecast(
-                        date = it.key,
-                        day = day,
-                        weatherData = it.value
-                    )
+                }.mapNotNull {
+                    if (it.value.any { tld -> tld.time.substring(11, 13) == "12" }) {
+                        val day = convertDateToDay(it.key)
+                        it.key to DayForecast(
+                            date = it.key,
+                            day = day,
+                            weatherData = it.value,
+                            middayWeatherData = it.value.first { tld ->
+                                tld.time.substring(11, 13) == "12"
+                            }
+                        )
+                    } else {
+                        null
+                    }
                 }.toMap()
             )
         }
@@ -51,18 +58,19 @@ class LocationForecastRepository(
     }
 
     private fun convertDateToDay(date: String): String {
-        val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
+        val parser = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         parser.timeZone = TimeZone.getTimeZone("UTC")
 
         return try {
             val day = parser.parse(date)
 
             val formatter = SimpleDateFormat("EEEE", Locale("no", "NO")) // Norwegian locale
-            formatter.timeZone = TimeZone.getTimeZone("CET") // Central European Time
 
-            day?.let { formatter.format(it) } ?: ""
+            formatter.timeZone = TimeZone.getTimeZone("CET") // Central European Time
+            day?.let { formatter.format(it).replaceFirstChar { char -> char.uppercase() } }
+                ?: "Unknown"
         } catch (e: ParseException) {
-            ""
+            "Unknown"
         }
     }
 
