@@ -38,15 +38,23 @@ class LocationForecastRepository(
                 days = locationData.timeseries.groupBy {
                     it.time.substring(0, 10)
                 }.mapNotNull {
-                    if (it.value.any { tld -> tld.time.substring(11, 13) == "12" }) {
+                    if (it.value.any { tld ->
+                            tld.time.substring(
+                                11,
+                                13
+                            ) == "12" || tld.time.substring(
+                                0,
+                                10
+                            ) == locationData.timeseries.minOf { ld -> ld.time.substring(0, 10) }
+                        }) {
                         val day = convertDateToDay(it.key)
                         it.key to DayForecast(
                             date = it.key,
                             day = day,
                             weatherData = it.value,
-                            middayWeatherData = it.value.first { tld ->
+                            middayWeatherData = it.value.firstOrNull { tld ->
                                 tld.time.substring(11, 13) == "12"
-                            }
+                            } ?: it.value.first()
                         )
                     } else {
                         null
