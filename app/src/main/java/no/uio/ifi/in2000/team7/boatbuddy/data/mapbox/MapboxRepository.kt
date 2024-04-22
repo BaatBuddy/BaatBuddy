@@ -1,12 +1,17 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
+import android.util.Log
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
@@ -19,6 +24,7 @@ class MapboxRepository(
 ) : MapboxRepo {
 
     private lateinit var annotationRepository: AnnotationRepository
+    private lateinit var routeRepository: RouteRepository
     private lateinit var mapView: MapView
 
     override fun createMap(context: Context, cameraOptions: CameraOptions, style: String): MapView {
@@ -29,6 +35,7 @@ class MapboxRepository(
 
         mapView = MapView(context)
         annotationRepository = AnnotationRepository(mapView)
+        routeRepository = RouteRepository(mapView)
         onMapReady(style = style, cameraOptions = cameraOptions)
 
         return mapView
@@ -38,6 +45,31 @@ class MapboxRepository(
 
         with(mapView) {
             mapView.mapboxMap.setCamera(cameraOptions)
+            
+            val annotationApi = this.annotations
+            val pointAnnotationManager = annotationApi?.createPointAnnotationManager()
+            var pointsInRoute: MutableList<Point> = mutableListOf()
+
+            mapboxMap.addOnMapClickListener {
+
+                val pointAnnotationOptions = PointAnnotationOptions()
+                    .withPoint(it)
+                pointAnnotationManager?.create(pointAnnotationOptions)
+
+                // Ruten kan ikke inneholde mer enn 10 punkter
+                if (pointsInRoute.size < 10) {
+                    pointsInRoute.add(it)
+
+                    val coordinatesInRoute =
+                        pointsInRoute.joinToString(separator = " , ") {
+                            "(${it.latitude()}, ${it.longitude()})"
+                        }
+                    Log.d("Points in route", "$coordinatesInRoute")
+                }
+
+                true
+
+            }
 
             mapboxMap.addOnMoveListener(
                 object : OnMoveListener {
