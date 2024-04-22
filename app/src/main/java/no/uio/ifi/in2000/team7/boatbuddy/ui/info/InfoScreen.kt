@@ -135,18 +135,20 @@ fun InfoScreen(
                     }
                 }
             }
-
-
-            //NotificationCard(
-            //    "Alvorlig situasjon",
-            //    "Vær forberedt",
-            //"https://cdn.pixabay.com/photo/2019/06/24/10/42/alpaca-4295702_960_720.jpg",
-            //  "Sterk ising på skip.",
-            // "Fjern is raskt fra båten.",
-            // "#FFA500",
-            // showMessage = showMessage,
-            // onDismissRequested = { showMessage = false }
-            // )
+            var showMessage by remember { mutableStateOf(true) }
+            val cardHeight = remember { mutableStateOf(75.dp) }
+            NotificationCard(
+                "Utfordrende situasjon",
+                "Middels høye bølger. Bølgekammene er ved å brytes opp til sjørokk.",
+            "Nordøst sterk kuling 20 m/s.",
+              "Ikke dra ut i småbåt.",
+             "Yellow",
+                showMessage = showMessage,
+                height = cardHeight.value,
+                onCardClickMax = { cardHeight.value = 250.dp },
+                onCardClickMin = { cardHeight.value = 75.dp },
+                onDismissRequested = { showMessage = false }
+            )
             Text(text = "Dette er soldata")
             if (sunriseUIState.sunriseData != null) {
                 sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
@@ -229,10 +231,10 @@ fun NotificationCard( // må etterhvert hente inn posisjon
 ) {
     //img: String
     val minimerButtonColor = ButtonDefaults.buttonColors(
-        containerColor = Color.Black
+        containerColor = Color.Red
     )
     val xButtonColor = ButtonDefaults.buttonColors(
-        containerColor = Color.Black
+        containerColor = Color.Red
     )
 
     Card(
@@ -264,6 +266,7 @@ fun NotificationCard( // må etterhvert hente inn posisjon
                 Text("-")
             }
         }
+        if (awarenessSeriousness != null) {
         Text(
             text = "$awarenessSeriousness ", // CHANGED BASED ON METALERT CHANGE
             modifier = Modifier
@@ -271,13 +274,16 @@ fun NotificationCard( // må etterhvert hente inn posisjon
                 .wrapContentSize(Alignment.Center),
             textAlign = TextAlign.Center,
         )
-        Text(
-            text = "$consequences",
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center),
-            textAlign = TextAlign.Center,
-        )
+        }
+        if (consequences != null) {
+            Text(
+                text = "$consequences",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center),
+                textAlign = TextAlign.Center,
+            )
+        }
         // Image(
         // painter = painterResource(id = R.drawable.farevarsel),
         //   contentDescription = "Icon",
@@ -286,29 +292,34 @@ fun NotificationCard( // må etterhvert hente inn posisjon
         //    .wrapContentSize(Alignment.Center)
         //    .size(200.dp)
         // )
-        Text(
-            text = description,
-            modifier = Modifier
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-
+        if (description != null) {
+            Text(
+                text = description,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
             )
-        Text(
-            text = resourceInstruction,
-            modifier = Modifier
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
+        }
+        if (resourceInstruction != null) {
+            Text(
+                text = resourceInstruction, // må endres til instruction
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
 
-            )
-        // FARGE UTIFRA HVOR FARLIG, GUL, ORANSJE ELLER RØDT
-        Text(
-            text = "",
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(android.graphics.Color.parseColor(riskMatrixColor)),
                 )
-        )
+        }
+        // FARGE UTIFRA HVOR FARLIG, GUL, ORANSJE ELLER RØDT
+        if (riskMatrixColor != null) {
+            Text(
+                text = "",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(android.graphics.Color.parseColor(riskMatrixColor)),
+                    )
+            )
+        }
     }
 }
 
