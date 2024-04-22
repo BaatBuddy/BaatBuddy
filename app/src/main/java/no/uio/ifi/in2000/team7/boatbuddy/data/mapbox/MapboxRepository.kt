@@ -9,12 +9,12 @@ import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
+
 
 interface MapboxRepo {
     fun createMap(context: Context, cameraOptions: CameraOptions, style: String): MapView
@@ -44,17 +44,46 @@ class MapboxRepository(
     fun onMapReady(style: String, cameraOptions: CameraOptions) {
 
         with(mapView) {
-            mapView.mapboxMap.setCamera(cameraOptions)
-            
+
+            val mapboxMap = this.mapboxMap
+
+            mapboxMap.setCamera(cameraOptions)
+
             val annotationApi = this.annotations
-            val pointAnnotationManager = annotationApi?.createPointAnnotationManager()
+            val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
+            var pointsInRoute: MutableList<Point> = mutableListOf()
+
+            mapboxMap.addOnMapClickListener {
+                val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
+                    .withPoint(it)
+                    .withCircleRadius(8.0)
+                    .withCircleColor("#ee4e8b")
+                    .withCircleStrokeWidth(2.0)
+                    .withCircleStrokeColor("#ffffff")
+                circleAnnotationManager.create(circleAnnotationOptions)
+
+                if (pointsInRoute.size < 10) {
+                    pointsInRoute.add(it)
+
+                    val coordinatesInRoute =
+                        pointsInRoute.joinToString(separator = " , ") {
+                            "(${it.latitude()}, ${it.longitude()})"
+                        }
+                    Log.d("Points in route", "$coordinatesInRoute")
+                }
+
+                true
+            }
+
+            /*val annotationApi = this.annotations
+            val pointAnnotationManager = annotationApi.createPointAnnotationManager()
             var pointsInRoute: MutableList<Point> = mutableListOf()
 
             mapboxMap.addOnMapClickListener {
 
                 val pointAnnotationOptions = PointAnnotationOptions()
                     .withPoint(it)
-                pointAnnotationManager?.create(pointAnnotationOptions)
+                pointAnnotationManager.create(pointAnnotationOptions)
 
                 // Ruten kan ikke inneholde mer enn 10 punkter
                 if (pointsInRoute.size < 10) {
@@ -69,7 +98,7 @@ class MapboxRepository(
 
                 true
 
-            }
+            }*/
 
             mapboxMap.addOnMoveListener(
                 object : OnMoveListener {
