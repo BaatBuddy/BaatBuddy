@@ -1,235 +1,262 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mapbox.geojson.Point
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
-import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.TimeOceanData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertWeatherResId
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    // infoScreenViewModel: InfoScreenViewModel = viewModel(),
     metAlertsViewModel: MetAlertsViewModel = viewModel(),
     locationForecastViewModel: LocationForecastViewModel = viewModel(),
     oceanForecastViewModel: OceanForecastViewModel = viewModel(),
-    sunriseViewModel: SunriseViewModel = viewModel(),
-    autorouteViewModel: AutoRouteViewModel = viewModel()
+    sunriseViewModel: SunriseViewModel = viewModel()
 ) {
 
-    // val weatherUIState by infoScreenViewModel.weatherUIState.collectAsState()
     val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
     val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
     val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
-    val autorouteUiState by autorouteViewModel.autoRouteUiState.collectAsState()
 
     val lat = "59.9" // må hente posisjon fra bruker
     val lon = "10.7"
-    val boatSpeed = "5"
-    val boatHeight = "5"
-    val safetyDepth = "5"
-    val course = listOf<Point>(
-        Point.fromLngLat(10.707517, 59.879888),
-        Point.fromLngLat(10.251066, 59.736283)
-    )
+
 
 
     metAlertsViewModel.initialize(lat = lat, lon = lon)
     locationForecastViewModel.initialize(lat = lat, lon = lon)
     oceanForecastViewModel.initialize(lat = lat, lon = lon)
     sunriseViewModel.initialize(lat = lat, lon = lon)
-    // autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 
     Scaffold(
         modifier = Modifier
             .padding(8.dp)
-    ) {
-        Column(
+    ) { contentPadding ->
+        Box(
             modifier = Modifier
-                .padding(8.dp)
-                .verticalScroll(rememberScrollState())
+                .padding(contentPadding)
         ) {
-            val modifier = Modifier
-                .padding(8.dp)
-            Row(
+            Column {
+                Text(
+                    text = "Været for de neste dagene:",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.W400,
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                ) {
 
-            ) {
-
-                Column {
-                    Text(text = "Dette er havdata")
-                    if (oceanForecastUIState.oceanForecast?.timeseries?.isNotEmpty() == true) {
-                        oceanForecastUIState.oceanForecast?.timeseries?.let { timeOceanData ->
-                            OceanCard(
-                                modifier = modifier,
-                                timeOceanData = timeOceanData[1]
+                    locationForecastUIState.weekdayForecast?.days?.let {
+                        it.toList().sortedBy { pair ->
+                            pair.second.date
+                        }.forEach { tld ->
+                            LocationCard(
+                                dayForecast = tld.second,
+                                selectedDay = locationForecastUIState.selectedDay,
+                                changeDay = { locationForecastViewModel.updateSelectedDay(tld.second) },
                             )
+
                         }
                     }
                 }
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    locationForecastUIState.selectedDay?.let { LocationTable(dayForecast = it) }
+                }
 
-                Column {
-                    Text(text = "Dette er værdata")
-                    locationForecastUIState.locationForecast?.timeseries?.let { timeLocationData ->
-                        LocationCard(
-                            modifier = modifier,
-                            timeLocationData = timeLocationData[1]
+            }
+        }
+    }
+}
+
+
+@Composable
+fun LocationCard(
+    dayForecast: DayForecast,
+    selectedDay: DayForecast?,
+    changeDay: () -> Unit
+) {
+    val timeLocationData = dayForecast.middayWeatherData
+    Card(
+        modifier = Modifier
+            .padding(4.dp),
+        onClick = changeDay,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 3.dp
+        ),
+        colors = CardDefaults.cardColors(
+            if (selectedDay == dayForecast) Color(0xFFCCCCCC) else Color(
+                0xFFE1E2EC
+            )
+        )
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(4.dp)
+        ) {
+            Text(text = dayForecast.day)
+            Text(text = "${timeLocationData.air_temperature}℃")
+            WeatherIcon(
+                symbolCode = timeLocationData.symbol_code,
+                modifier = Modifier
+                    .fillMaxSize(0.15f)
+            )
+
+//            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)
+//            if (showMore) {
+//                Text(text = symbolCode)
+//
+//                Text(text = "vindhastighet: ${timeLocationData.wind_speed}(${timeLocationData.wind_speed_of_gust})")
+//                Text(text = "tåke: ${timeLocationData.fog_area_fraction}")
+//            }
+        }
+
+    }
+
+}
+
+@Composable
+fun LocationTable(dayForecast: DayForecast) {
+    val df = dayForecast
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+    ) {
+        Text(
+            text = df.day,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.W400,
+            modifier = Modifier.padding(bottom = 10.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Absolute.SpaceBetween
+        ) {
+            Text(text = "Tid")
+            Text(text = "Temperatur")
+            Text(text = "Nedbør")
+            Text(text = "Vind(kast)")
+        }
+        LazyColumn {
+            items(df.weatherData) { tld ->
+                val nextItem = df.weatherData.zipWithNext().firstOrNull { pair ->
+                    pair.first == tld
+                }?.second
+                var time = tld.time.substring(11, 13)
+
+                time = if (nextItem != null) {
+                    val nextItemTime = nextItem.time.substring(11, 13)
+                    when {
+                        (time == "00" && nextItemTime != "01") -> "00 - 06"
+                        (time == "06" && nextItemTime != "07") -> "06 - 12"
+                        (time == "12" && nextItemTime != "13") -> "12 - 18"
+                        else -> time
+                    }
+                } else {
+                    if (time != "23") {
+                        when (time) {
+                            "00" -> "00 - 06"
+                            "06" -> "06 - 12"
+                            "12" -> "12 - 18"
+                            "18" -> "18 - 00"
+                            else -> "18 - 00"
+                        }
+                    } else {
+                        time
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                ) {
+                    Text(
+                        text = time
+                    )
+
+                    Row {
+                        WeatherIcon(
+                            symbolCode = tld.symbol_code,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Text(
+                            text = tld.air_temperature.toString() + "°",
+                            modifier = Modifier.padding(start = 8.dp)
                         )
                     }
 
-                }
-
-
-            }
-
-            Column {
-                Text(text = "Dette er farevarsler")
-                var showMessage by remember { mutableStateOf(true) }
-                metalertsUIState.metalerts?.features?.forEach {
-                    val cardHeight = remember { mutableStateOf(75.dp) }
-                    if (showMessage) {
-                        var card = it.awarenessSeriousness?.let { it1 ->
-                            it.consequences?.let { it2 ->
-                                NotificationCard(
-                                    it1,
-                                    it2,
-                                    it.description,
-                                    it.instruction,
-                                    it.riskMatrixColor,
-                                    showMessage = showMessage,
-                                    height = cardHeight.value,
-                                    onCardClickMax = { cardHeight.value = 250.dp },
-                                    onCardClickMin = { cardHeight.value = 75.dp },
-                                    onDismissRequested = { showMessage = false })
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            //NotificationCard(
-            //    "Alvorlig situasjon",
-            //    "Vær forberedt",
-            //"https://cdn.pixabay.com/photo/2019/06/24/10/42/alpaca-4295702_960_720.jpg",
-            //  "Sterk ising på skip.",
-            // "Fjern is raskt fra båten.",
-            // "#FFA500",
-            // showMessage = showMessage,
-            // onDismissRequested = { showMessage = false }
-            // )
-            Text(text = "Dette er soldata")
-            if (sunriseUIState.sunriseData != null) {
-                sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
-                sunriseUIState.sunriseData?.sunriseTime?.let { it1 -> Text(text = it1) }
-            }
-
-            Text(text = "Dette er autoroute")
-            if (autorouteUiState.autoRoute != null) {
-                autorouteUiState.autoRoute?.geometry?.coordinates.let { it1 -> Text(text = it1.toString()) }
-
-            }
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                locationForecastUIState.locationForecast?.timeseries?.forEach {
-                    LocationCard(modifier = Modifier, timeLocationData = it)
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun AlertCard(modifier: Modifier, feature: FeatureData) {
-    Card(
-        modifier = modifier
-    ) {
-        Column(
-            modifier = modifier
-        ) {
-            Text(text = "start: ${feature.start}")
-            Text(text = "slutt: ${feature.end}")
-//            Text(text = "konsekvenser: ${feature.consequences}")
-
-        }
-
-    }
-
-}
-
-@Composable
-fun OceanCard(modifier: Modifier, timeOceanData: TimeOceanData) {
-    Card() {
-        Column() {
-            Text(text = "tid: ${timeOceanData.time}")
-            Text(text = "bølgehøyde: ${timeOceanData.sea_surface_wave_height}")
-            Text(text = "bølgeretning: ${timeOceanData.sea_surface_wave_from_direction}") //wave direction?
-            Text(text = "strømhastighet: ${timeOceanData.sea_water_speed}")
-        }
-    }
-}
-
-@Composable
-fun LocationCard(modifier: Modifier, timeLocationData: TimeLocationData) {
-    Card(
-        modifier = modifier
-            .background(Color.Blue)
-    ) {
-        Column() {
-            Text(text = "tid: ${timeLocationData.time}")
-            Text(text = "lufttemperatur: ${timeLocationData.air_temperature}")
-            Text(text = "vindhastighet: ${timeLocationData.wind_speed}(${timeLocationData.wind_speed_of_gust})") //wave direction?
-            Text(text = "tåke: ${timeLocationData.fog_area_fraction}")
-            Icon(
-                painter = painterResource(
-                    id = convertWeatherResId(
-                        timeLocationData.symbol_code,
-                        context = LocalContext.current
+                    Text(
+                        text = tld.precipitation_amount.toString()
                     )
-                ),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
+
+                    Text(
+                        text = "${tld.wind_speed}${if (tld.wind_speed_of_gust != 0.0) "(${tld.wind_speed_of_gust})" else ""}"
+                    )
+                }
+            }
         }
     }
+}
+
+
+@Composable
+fun WeatherIcon(symbolCode: String, modifier: Modifier) {
+    Icon(
+        painter = painterResource(
+            id = convertWeatherResId(
+                symbolCode,
+                context = LocalContext.current
+            )
+        ),
+        contentDescription = null,
+        tint = Color.Unspecified,
+        modifier = modifier
+
+    )
 }
 
 @Composable

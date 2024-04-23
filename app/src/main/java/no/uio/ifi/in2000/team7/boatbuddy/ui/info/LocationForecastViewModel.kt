@@ -9,16 +9,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 
 data class LocationForecastUiState(
-    val locationForecast: LocationForecastData?
+    val locationForecast: LocationForecastData?,
+    val weekdayForecast: WeekForecast?,
+    val selectedDay: DayForecast?
 )
 
 class LocationForecastViewModel : ViewModel() {
     private val repository: LocationForecastRepository = LocationForecastRepository()
 
-    private val _locationForecastUiState = MutableStateFlow(LocationForecastUiState(null))
+    private val _locationForecastUiState =
+        MutableStateFlow(LocationForecastUiState(null, null, null))
     val locationForecastUiState: StateFlow<LocationForecastUiState> = _locationForecastUiState
 
     private var initialized = false
@@ -33,7 +38,6 @@ class LocationForecastViewModel : ViewModel() {
         initialized = true
         lastPos = lat + lon + altitude
         loadLocationForecast(lat, lon, altitude)
-
     }
 
     // keeping altitude as optional if the function is not going to be private
@@ -45,8 +49,28 @@ class LocationForecastViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 
             val locationForecast = repository.getLocationForecastData(lat, lon, altitude)
-            _locationForecastUiState.update { it.copy(locationForecast = locationForecast) }
+            val weekdayForecast = repository.getWeekdayForecastData(lat, lon, altitude)
+            _locationForecastUiState.update {
+                it.copy(
+                    locationForecast = locationForecast,
+                    weekdayForecast = weekdayForecast,
+                    selectedDay = weekdayForecast?.days?.toList()
+                        ?.minByOrNull { pair -> pair.second.date }!!.second
+                )
+            }
 
+        }
+    }
+
+    fun updateSelectedDay(
+        dayForecast: DayForecast
+    ) {
+        viewModelScope.launch {
+            _locationForecastUiState.update {
+                it.copy(
+                    selectedDay = dayForecast
+                )
+            }
         }
     }
 }

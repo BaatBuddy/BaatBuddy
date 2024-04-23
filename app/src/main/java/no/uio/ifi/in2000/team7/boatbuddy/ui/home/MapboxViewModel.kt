@@ -25,7 +25,9 @@ data class MapboxUIState(
     val style: String,
 
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
-    val alertVisible: Boolean = false
+    val alertVisible: Boolean = false,
+
+    val routePoints: List<Point> = mutableListOf()
 )
 
 class MapboxViewModel : ViewModel() {
@@ -143,4 +145,25 @@ class MapboxViewModel : ViewModel() {
         }
     }
 
+    fun toggleRouteClicking() {
+        viewModelScope.launch {
+            repository.toggleRouteClicking()
+        }
+    }
+
+    fun updateRoute() {
+        viewModelScope.launch {
+            _mapboxUIState.update {
+                it.copy(
+                    routePoints = repository.getRoutePoints()
+                )
+            }
+        }
+    }
+
+    fun generateRoute() {
+        viewModelScope.launch {
+            repository.generateRoute()
+        }
+    }
 }
