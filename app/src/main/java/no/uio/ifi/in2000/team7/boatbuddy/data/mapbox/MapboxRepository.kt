@@ -8,12 +8,9 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.animation.flyTo
-import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
 import com.mapbox.maps.plugin.gestures.OnMoveListener
-import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
+import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
 
 
 interface MapboxRepo {
@@ -24,6 +21,7 @@ class MapboxRepository(
 ) : MapboxRepo {
 
     private lateinit var annotationRepository: AnnotationRepository
+    private val autorouteRepository = AutorouteRepository()
     private lateinit var routeRepository: RouteRepository
     private lateinit var mapView: MapView
 
@@ -35,7 +33,6 @@ class MapboxRepository(
 
         mapView = MapView(context)
         annotationRepository = AnnotationRepository(mapView)
-        routeRepository = RouteRepository(mapView)
         onMapReady(style = style, cameraOptions = cameraOptions)
 
         return mapView
@@ -49,7 +46,7 @@ class MapboxRepository(
 
             mapboxMap.setCamera(cameraOptions)
 
-            val annotationApi = this.annotations
+            /*val annotationApi = this.annotations
             val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
             var pointsInRoute: MutableList<Point> = mutableListOf()
 
@@ -69,11 +66,11 @@ class MapboxRepository(
                         pointsInRoute.joinToString(separator = " , ") {
                             "(${it.latitude()}, ${it.longitude()})"
                         }
-                    Log.d("Points in route", "$coordinatesInRoute")
+                    Log.d("Points in route", coordinatesInRoute)
                 }
 
                 true
-            }
+            }*/
 
             /*val annotationApi = this.annotations
             val pointAnnotationManager = annotationApi.createPointAnnotationManager()
@@ -126,13 +123,6 @@ class MapboxRepository(
         }
     }
 
-    suspend fun addClickListener(action: Unit) {
-        mapView.mapboxMap.addOnMapClickListener {
-            run { action }
-            true
-        }
-    }
-
     suspend fun panToPoint(cameraOptions: CameraOptions) {
         mapView.mapboxMap.flyTo(cameraOptions = cameraOptions)
     }
@@ -151,6 +141,31 @@ class MapboxRepository(
         points: List<Point>
     ) {
         annotationRepository.addLineToMap(points = points)
+    }
+
+    suspend fun toggleRouteClicking() {
+        annotationRepository.toggleRouteClicking()
+    }
+
+    suspend fun getRoutePoints(): List<Point> {
+        return annotationRepository.getRoutePoints()
+    }
+
+    suspend fun generateRoute() {
+        if (annotationRepository.getRoutePoints().size < 2) return
+        val autoroutePoints = autorouteRepository.getAutorouteData(
+            course = annotationRepository.route.toList(),
+            // TODO needs to retrive data from the database (user profile)
+            safetyDepth = "5",
+            safetyHeight = "5",
+            boatSpeed = "5",
+        )
+        
+        if (autoroutePoints != null) {
+            annotationRepository.createRoute(autoroutePoints.geometry.coordinates.map {
+                Point.fromLngLat(it[0], it[1])
+            })
+        }
     }
 
 }

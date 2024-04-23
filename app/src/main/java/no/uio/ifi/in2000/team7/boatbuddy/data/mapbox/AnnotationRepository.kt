@@ -1,17 +1,10 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.EdgeInsets
@@ -48,15 +41,16 @@ class AnnotationRepository(
     private val alertPolygons = mutableListOf<AlertPolygon>()
 
     private val annotationApi = mapView.annotations
-    val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-    val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
+    private val pointAnnotationManager = annotationApi.createPointAnnotationManager()
+    private val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
     private val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
-    val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
+    private val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
     private val viewAnnotationManager = mapView.viewAnnotationManager
 
     private var isClickable = false
 
     private var isSelectingRoute = false
+    val route: MutableList<Point> = mutableListOf()
 
     init {
         runBlocking {
@@ -125,15 +119,9 @@ class AnnotationRepository(
 
 
     // functions for the polyline manager
-    suspend fun addLineToMap(
+    fun addLineToMap(
         points: List<Point>, // order of point matter
     ) {
-
-        points.forEach {
-            addPinToMap(
-                it
-            )
-        }
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(points)
@@ -317,15 +305,41 @@ class AnnotationRepository(
         return metalertCardView
     }
 
+
     // creating route section
-    fun addRouteClickListener() {
-        mapView.mapboxMap.addOnMapClickListener(
-            
-        )
+
+    suspend fun toggleRouteClicking() {
+        isSelectingRoute = !isSelectingRoute
     }
 
-    fun userClick(point: Point) {
-        addCircleToMap(point)
+    private fun addRouteClickListener() {
+        mapView.mapboxMap.addOnMapClickListener { point ->
+            if (isSelectingRoute) {
+                userClick(point = point)
+            }
+            true
+        }
+
+        circleAnnotationManager.addClickListener { clickedCircle ->
+            if (isSelectingRoute) {
+                route.remove(clickedCircle.point)
+                circleAnnotationManager.delete(clickedCircle)
+                polylineAnnotationManager.deleteAll()
+                addLineToMap(route)
+            }
+            true
+        }
+    }
+
+    private fun userClick(point: Point) {
+        if (route.size < 10) {
+            addCircleToMap(point)
+            route.add(point)
+            if (route.size > 1) {
+                polylineAnnotationManager.deleteAll()
+                addLineToMap(route)
+            }
+        }
     }
 
     private fun addCircleToMap(point: Point) {
@@ -335,8 +349,16 @@ class AnnotationRepository(
             .withCircleColor("#ee4e8b")
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
+
         circleAnnotationManager.create(circleAnnotationOptions)
     }
 
+    suspend fun getRoutePoints(): List<Point> {
+        return route
+    }
 
+    fun createRoute(autoroutePoints: List<Point>) {
+        polylineAnnotationManager.deleteAll()
+        addLineToMap(autoroutePoints)
+    }
 }

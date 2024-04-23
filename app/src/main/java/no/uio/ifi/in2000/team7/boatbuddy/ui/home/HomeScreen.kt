@@ -43,7 +43,8 @@ fun HomeScreen(
     metAlertsViewModel: MetAlertsViewModel = viewModel(),
     mapboxViewModel: MapboxViewModel = viewModel(),
     userLocationViewModel: UserLocationViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel(),
+    autoRouteViewModel: AutoRouteViewModel = viewModel(),
 ) {
 
     val context = LocalContext.current
@@ -63,6 +64,7 @@ fun HomeScreen(
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val autoRouteUIState by autoRouteViewModel.autoRouteUiState.collectAsState()
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
@@ -159,6 +161,18 @@ fun HomeScreen(
                         }
                         ) {
                             Text(text = "Stop")
+                        }
+
+                        Button(onClick = {
+                            mapboxViewModel.toggleRouteClicking()
+                        }) {
+                            Text(text = "Toggle route")
+                        }
+
+                        Button(onClick = {
+                            mapboxViewModel.generateRoute()
+                        }) {
+                            Text(text = "Generate route")
                         }
                     }
                 }
