@@ -94,7 +94,7 @@ class LocationService : Service() {
                 val lat = location.latitude
                 val lon = location.longitude
                 val currentAlerts =
-                    checkUserLocationAlertAreas(lon = 13.761885, lat = 75.368244)
+                    checkUserLocationAlertAreas(lon = lon, lat = lat)
 
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
