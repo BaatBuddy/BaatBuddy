@@ -198,6 +198,7 @@ class AnnotationRepository(
         isAlertClickable = !isAlertClickable
         if (!isAlertClickable) {
             polygonAnnotationManager.deleteAll()
+            viewAnnotationManager.removeAllViewAnnotations()
         } else {
             addAlertPolygons()
         }

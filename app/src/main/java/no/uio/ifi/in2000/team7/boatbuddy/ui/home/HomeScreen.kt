@@ -128,7 +128,9 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(top = 16.dp)
                 )
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
                     ExtendedFloatingActionButton(
                         text = { Text("Show bottom sheet") },
                         icon = { Icon(Icons.Filled.Add, contentDescription = "") },
@@ -139,7 +141,7 @@ fun HomeScreen(
                             .padding(4.dp)
                     )
                     ExtendedFloatingActionButton(
-                        text = { Text("Create route") },
+                        text = { Text("Draw route") },
                         icon = { Icon(Icons.Filled.Create, contentDescription = "") },
                         onClick = {
                             mapboxViewModel.toggleRouteClicking()
