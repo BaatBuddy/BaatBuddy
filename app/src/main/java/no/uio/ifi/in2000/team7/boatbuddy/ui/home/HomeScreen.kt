@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -98,13 +99,23 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                text = { Text("Show bottom sheet") },
-                icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                onClick = {
-                    showBottomSheet = true
-                }
-            )
+            Column {
+                ExtendedFloatingActionButton(
+                    text = { Text("Show bottom sheet") },
+                    icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                    onClick = {
+                        showBottomSheet = true
+                    }
+                )
+                ExtendedFloatingActionButton(
+                    text = { Text("Create route") },
+                    icon = { Icon(Icons.Filled.Create, contentDescription = "") },
+                    onClick = {
+                        mapboxViewModel.toggleRouteClicking()
+                    }
+                )
+            }
+
         }
 
     ) {
@@ -162,12 +173,6 @@ fun HomeScreen(
                         }
                         ) {
                             Text(text = "Stop")
-                        }
-
-                        Button(onClick = {
-                            mapboxViewModel.toggleRouteClicking()
-                        }) {
-                            Text(text = "Toggle route")
                         }
 
                         Button(onClick = {
