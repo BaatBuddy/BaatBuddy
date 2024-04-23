@@ -9,7 +9,8 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 
-object IconConverter {
+object WeatherConverter {
+    // fetches drawable from a english alert event
     @SuppressLint("DiscouragedApi")
     fun convertAlertResId(
         event: String,
@@ -40,6 +41,7 @@ object IconConverter {
         return context.resources.getIdentifier(iconName, "drawable", context.packageName)
     }
 
+    // translates english weather alert to norwegian
     fun convertLanguage(alertEvent: String): String {
         return when (alertEvent) {
             "avalanches" -> "Jordskred"
@@ -62,6 +64,7 @@ object IconConverter {
         }
     }
 
+    // fetches drawable based on string
     @SuppressLint("DiscouragedApi")
     fun convertWeatherResId(
         symbolCode: String,
@@ -91,6 +94,54 @@ object IconConverter {
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)
             bitmap
+        }
+    }
+
+    // translates english weather terms to norwegian
+    fun translateSymbolCode(symbolCode: String): String {
+        return when (symbolCode.replace("_", "").replace("night", "").replace("day", "")) {
+            "clearsky" -> "Klarvær"
+            "fair" -> "Lettskyet"
+            "partlycloudy" -> "Delvis skyet"
+            "cloudy" -> "Skyet"
+            "lightrainshowers" -> "Lette regnbyger"
+            "rainshowers" -> "Regnbyger"
+            "heavyrainshowers" -> "Kraftige regnbyger"
+            "lightrainshowersandthunder" -> "Lette regnbyger og torden"
+            "rainshowersandthunder" -> "Regnbyger og torden"
+            "heavyrainshowersandthunder" -> "Kraftige regnbyger og torden"
+            "lightsleetshowers" -> "Lette sluddbyger"
+            "sleetshowers" -> "Sluddbyger"
+            "heavysleetshowers" -> "Kraftige sluddbyger"
+            "lightssleetshowersandthunder" -> "Lette sluddbyger og torden"
+            "sleetshowersandthunder" -> "Sluddbyger og torden"
+            "heavysleetshowersandthunder" -> "Kraftige sluddbyger og torden"
+            "lightsnowshowers" -> "Lette snøbyger"
+            "snowshowers" -> "Snøbyger"
+            "heavysnowshowers" -> "Kraftige snøbyger"
+            "lightssnowshowersandthunder" -> "Lette snøbyger og torden"
+            "snowshowersandthunder" -> "Snøbyger og torden"
+            "heavysnowshowersandthunder" -> "Kraftige snøbyger og torden"
+            "lightrain" -> "Lett regn"
+            "rain" -> "Regn"
+            "heavyrain" -> "Kraftig regn"
+            "lightrainandthunder" -> "Lett regn og torden"
+            "rainandthunder" -> "Regn og torden"
+            "heavyrainandthunder" -> "Kraftig regn og torden"
+            "lightsleet" -> "Lett sludd"
+            "sleet" -> "Sludd"
+            "heavysleet" -> "Kraftig sludd"
+            "lightsleetandthunder" -> "Lett sludd og torden"
+            "sleetandthunder" -> "Sludd og torden"
+            "heavysleetandthunder" -> "Kraftig sludd og torden"
+            "lightsnow" -> "Lett snø"
+            "snow" -> "Snø"
+            "heavysnow" -> "Kraftig snø"
+            "lightsnowandthunder" -> "Lett snø og torden"
+            "snowandthunder" -> "Snø og torden"
+            "heavysnowandthunder" -> "Kraftig snø og torden"
+            "fog" -> "Tåke"
+            else -> ""
         }
     }
 }
