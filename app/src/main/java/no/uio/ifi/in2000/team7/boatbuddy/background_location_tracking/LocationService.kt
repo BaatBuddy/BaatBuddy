@@ -22,9 +22,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.enteredAlerts
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.featureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.bitmapFromDrawableRes
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertAlertResId
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertLanguage
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
 
 
 class LocationService : Service() {
@@ -94,7 +94,7 @@ class LocationService : Service() {
                 val lat = location.latitude
                 val lon = location.longitude
                 val currentAlerts =
-                    checkUserLocationAlertAreas(lon = 13.761885, lat = 75.368244)
+                    checkUserLocationAlertAreas(lon = lon, lat = lat)
 
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")

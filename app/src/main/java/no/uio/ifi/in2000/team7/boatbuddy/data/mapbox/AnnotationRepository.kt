@@ -1,17 +1,11 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.EdgeInsets
@@ -34,9 +28,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.bitmapFromDrawableRes
-import no.uio.ifi.in2000.team7.boatbuddy.ui.IconConverter.convertLanguage
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
+import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
 
 class AnnotationRepository(
     val mapView: MapView
@@ -208,6 +202,7 @@ class AnnotationRepository(
         polygonAnnotationManager.addClickListener { clickedPolygon ->
             if (isClickable) {
                 clickedPolygon.points.forEach { polygon ->
+                    Log.i("ASDASD", "ASDWQEGYBHWEYUFIUWKEOGIL")
                     // consider using another formula to find centroid of a polygon
                     val centroid = Point.fromLngLat(
                         polygon.sumOf { point -> point.longitude() } / polygon.size, //lon
@@ -293,7 +288,7 @@ class AnnotationRepository(
 
         val cardAlertIcon = ImageView(context).apply {
             setImageResource(
-                IconConverter.convertAlertResId(
+                convertAlertResId(
                     event = featureData.event,
                     riskMatrixColor = featureData.riskMatrixColor,
                     context = context

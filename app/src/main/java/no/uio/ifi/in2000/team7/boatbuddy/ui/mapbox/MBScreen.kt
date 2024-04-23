@@ -33,9 +33,9 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.AutoRouteViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.AutoRouteViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 
