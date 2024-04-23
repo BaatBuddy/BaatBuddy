@@ -18,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -122,21 +121,9 @@ fun HomeScreen(
                 },
                 sheetState = sheetState
             ) {
-                // Sheet content
                 SwipeUpContent()
-            }
-        }
 
 
-        Column {
-
-            AndroidView(
-                factory = { ctx ->
-                    mapboxUIState.mapView
-                }
-            )
-                // Hide bottom sheet
-                // Start and stop tracking
                 Column {
                     Row {
 
@@ -154,23 +141,23 @@ fun HomeScreen(
                         }
                     }
 
-            Row {
-                Button(onClick = {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_START
-                        context.startService(this)
-                    }
+                    Row {
+                        Button(onClick = {
+                            Intent(context, LocationService::class.java).apply {
+                                action = LocationService.ACTION_START
+                                context.startService(this)
+                            }
 
-                }
-                ) {
-                    Text(text = "Start")
-                }
+                        }
+                        ) {
+                            Text(text = "Start")
+                        }
 
-                Button(onClick = {
-                    Intent(context, LocationService::class.java).apply {
-                        action = LocationService.ACTION_STOP
-                        context.startService(this)
-                    }
+                        Button(onClick = {
+                            Intent(context, LocationService::class.java).apply {
+                                action = LocationService.ACTION_STOP
+                                context.startService(this)
+                            }
 
                         }
                         ) {
@@ -194,5 +181,4 @@ fun HomeScreen(
             }
         }
     }
-
 }
