@@ -63,6 +63,10 @@ class AutorouteDataSource {
 
         return try {
             val results = client.get(path)
+
+            
+            if (results.status.value in 500..599) return null
+
             val data: AutorouteData = results.body()
             AutorouteData(
                 geometry = data.geometry,

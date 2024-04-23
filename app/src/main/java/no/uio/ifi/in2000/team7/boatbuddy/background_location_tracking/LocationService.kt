@@ -139,7 +139,11 @@ class LocationService : Service() {
             bitmapFromDrawableRes(this, resId)
         val alertNotification = NotificationCompat.Builder(this, "alert")
             .setContentTitle("$enterExitMessage: ${convertLanguage(alert.event)}")
-            .setContentText(alert.description + "\n" + alert.consequences + "\n" + alert.instruction)
+            .setContentText("Du befinner deg nå i et værvarselsområde")
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("Beskrivelse: \n${alert.description}\n\nKonsekvenser:\n${alert.consequences}\n\nInstruksjoner\n${alert.instruction}")
+            )
             .setSmallIcon(resId)
             .setLargeIcon(bitmapIcon)
             .setContentIntent(pendingIntent)
