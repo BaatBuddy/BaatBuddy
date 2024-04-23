@@ -14,21 +14,7 @@ class RouteRepository(
     val annotationApi = mapView.annotations
 
     //val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-    val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
 
-    fun click(point: Point) {
-        addCircleToMap(point)
-    }
-
-    private fun addCircleToMap(point: Point) {
-        val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
-            .withPoint(point)
-            .withCircleRadius(8.0)
-            .withCircleColor("#ee4e8b")
-            .withCircleStrokeWidth(2.0)
-            .withCircleStrokeColor("#ffffff")
-        circleAnnotationManager.create(circleAnnotationOptions)
-    }
 
     /*private fun addAnnotationToMap(
         point: Point

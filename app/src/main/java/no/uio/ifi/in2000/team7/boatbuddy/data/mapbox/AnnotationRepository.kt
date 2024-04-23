@@ -20,14 +20,17 @@ import com.mapbox.maps.ViewAnnotationOptions
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.viewannotation.geometry
 import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.team7.boatbuddy.R
@@ -48,9 +51,12 @@ class AnnotationRepository(
     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
     private val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
+    val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
     private val viewAnnotationManager = mapView.viewAnnotationManager
 
     private var isClickable = false
+
+    private var isSelectingRoute = false
 
     init {
         runBlocking {
@@ -90,7 +96,10 @@ class AnnotationRepository(
                 }
             }
             addPolygonClickListener()
+            addRouteClickListener()
         }
+
+
     }
 
 
@@ -307,4 +316,27 @@ class AnnotationRepository(
 
         return metalertCardView
     }
+
+    // creating route section
+    fun addRouteClickListener() {
+        mapView.mapboxMap.addOnMapClickListener(
+            
+        )
+    }
+
+    fun userClick(point: Point) {
+        addCircleToMap(point)
+    }
+
+    private fun addCircleToMap(point: Point) {
+        val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
+            .withPoint(point)
+            .withCircleRadius(8.0)
+            .withCircleColor("#ee4e8b")
+            .withCircleStrokeWidth(2.0)
+            .withCircleStrokeColor("#ffffff")
+        circleAnnotationManager.create(circleAnnotationOptions)
+    }
+
+
 }
