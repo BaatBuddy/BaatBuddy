@@ -47,48 +47,14 @@ class AnnotationRepository(
     private val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
     private val viewAnnotationManager = mapView.viewAnnotationManager
 
-    private var isClickable = false
+    private var isAlertClickable = false
+    private var alertData: List<FeatureData>? = null
 
     private var isSelectingRoute = false
     val route: MutableList<Point> = mutableListOf()
 
     init {
         runBlocking {
-            val polygons = polygonAnnotationManager.annotations
-            metAlertsRepository.getMetAlertsData(
-                lat = "",
-                lon = ""
-            )?.features?.sortedBy { featureData ->
-                when (featureData.riskMatrixColor.lowercase()) {
-                    "green" -> "1"
-                    "yellow" -> "2"
-                    "orange" -> "3"
-                    "red" -> "4"
-                    else -> "0"
-                }
-            }?.forEach { featureData ->
-                featureData.affected_area.forEach { area ->
-
-                    val alertArea = area.map { polygon ->
-                        polygon.map { coordinate ->
-                            Point.fromLngLat(coordinate[0], coordinate[1])
-                        }
-                    }
-                    if (alertArea !in polygons.map { it.points }) {
-                        val polygon = addPolygonToMap(
-                            points = alertArea,
-                            fColor = featureData.riskMatrixColor
-                        )
-
-                        val polygonAlert = AlertPolygon(
-                            polygonAnnotation = polygon,
-                            featureData = featureData
-                        )
-
-                        alertPolygons.add(polygonAlert)
-                    }
-                }
-            }
             addPolygonClickListener()
             addRouteClickListener()
         }
@@ -176,23 +142,64 @@ class AnnotationRepository(
         val polygonAnnotationOptions: PolygonAnnotationOptions = PolygonAnnotationOptions()
             .withPoints(points)
             .withFillColor(fillColor)
-            .withFillOpacity(0.0)
+            .withFillOpacity(0.4)
             .withFillOutlineColor(outlineColor)
 
         return polygonAnnotationManager.create(polygonAnnotationOptions)
     }
 
-    suspend fun toggleAlertVisibility() {
-        polygonAnnotationManager.annotations.forEach {
-            if (it.fillOpacity == 0.0) {
-                it.fillOpacity = 0.4
-                isClickable = true
-            } else {
-                it.fillOpacity = 0.0
-                isClickable = false
-                clearViewAnnoations()
+    suspend fun addAlertPolygons() {
+        val polygons = polygonAnnotationManager.annotations
+        if (alertData == null) {
+            val fetchedData = metAlertsRepository.getMetAlertsData(
+                lat = "",
+                lon = ""
+            )?.features?.sortedBy { featureData ->
+                when (featureData.riskMatrixColor.lowercase()) {
+                    "green" -> "1"
+                    "yellow" -> "2"
+                    "orange" -> "3"
+                    "red" -> "4"
+                    else -> "0"
+                }
             }
-            polygonAnnotationManager.update(it)
+            alertData = fetchedData
+        } else {
+            alertData
+        }
+
+
+        alertData?.forEach { featureData ->
+            featureData.affected_area.forEach { area ->
+
+                val alertArea = area.map { polygon ->
+                    polygon.map { coordinate ->
+                        Point.fromLngLat(coordinate[0], coordinate[1])
+                    }
+                }
+                if (alertArea !in polygons.map { it.points }) {
+                    val polygon = addPolygonToMap(
+                        points = alertArea,
+                        fColor = featureData.riskMatrixColor
+                    )
+
+                    val polygonAlert = AlertPolygon(
+                        polygonAnnotation = polygon,
+                        featureData = featureData
+                    )
+
+                    alertPolygons.add(polygonAlert)
+                }
+            }
+        }
+    }
+
+    suspend fun toggleAlertVisibility() {
+        isAlertClickable = !isAlertClickable
+        if (!isAlertClickable) {
+            polygonAnnotationManager.deleteAll()
+        } else {
+            addAlertPolygons()
         }
     }
 
@@ -201,7 +208,7 @@ class AnnotationRepository(
 
         val context = mapView.context
         polygonAnnotationManager.addClickListener { clickedPolygon ->
-            if (isClickable) {
+            if (isAlertClickable) {
                 clickedPolygon.points.forEach { polygon ->
                     // consider using another formula to find centroid of a polygon
                     val centroid = Point.fromLngLat(
