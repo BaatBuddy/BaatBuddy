@@ -7,12 +7,17 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -27,7 +32,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mapbox.geojson.Point
@@ -97,23 +105,50 @@ fun HomeScreen(
     metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
 
 
+    var showAlert by remember { mutableStateOf(false) }
+
     Scaffold(
         floatingActionButton = {
-            Column {
-                ExtendedFloatingActionButton(
-                    text = { Text("Show bottom sheet") },
-                    icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                    onClick = {
-                        showBottomSheet = true
-                    }
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                ElevatedFilterChip(
+                    selected = showAlert,
+                    onClick = { mapboxViewModel.toggleAlertVisibility(); showAlert = !showAlert },
+                    label = {
+                        Icon(
+                            imageVector = Icons.Filled.Warning,
+                            contentDescription = ""
+                        )
+                        Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
+                    },
+                    modifier = Modifier
+                        .padding(top = 16.dp)
                 )
-                ExtendedFloatingActionButton(
-                    text = { Text("Create route") },
-                    icon = { Icon(Icons.Filled.Create, contentDescription = "") },
-                    onClick = {
-                        mapboxViewModel.toggleRouteClicking()
-                    }
-                )
+                Column {
+                    ExtendedFloatingActionButton(
+                        text = { Text("Show bottom sheet") },
+                        icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                        onClick = {
+                            showBottomSheet = true
+                        },
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                    ExtendedFloatingActionButton(
+                        text = { Text("Create route") },
+                        icon = { Icon(Icons.Filled.Create, contentDescription = "") },
+                        onClick = {
+                            mapboxViewModel.toggleRouteClicking()
+                        },
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+
+                }
             }
 
         }
@@ -146,9 +181,6 @@ fun HomeScreen(
                             }
                         }) {
                             Text("Hide bottom sheet")
-                        }
-                        Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
-                            Text(text = "Toggle alert visibility")
                         }
                     }
 
