@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.autoroute
+package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute
 
 import android.util.Log
 import com.mapbox.geojson.Point
@@ -63,6 +63,10 @@ class AutorouteDataSource {
 
         return try {
             val results = client.get(path)
+
+            
+            if (results.status.value in 500..599) return null
+
             val data: AutorouteData = results.body()
             AutorouteData(
                 geometry = data.geometry,

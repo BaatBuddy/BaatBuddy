@@ -111,6 +111,7 @@ fun InfoScreen(
     }
 }
 
+
 @Composable
 fun LocationCard(
     dayForecast: DayForecast,
@@ -152,7 +153,6 @@ fun LocationCard(
 //                Text(text = "tåke: ${timeLocationData.fog_area_fraction}")
 //            }
         }
-
 
     }
 
