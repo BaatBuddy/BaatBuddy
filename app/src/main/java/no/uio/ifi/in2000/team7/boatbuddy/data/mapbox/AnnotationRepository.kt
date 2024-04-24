@@ -35,9 +35,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
 
 class AnnotationRepository(
-    val mapView: MapView
+    private val mapView: MapView
 ) {
-    val metAlertsRepository = MetAlertsRepository()
+    private val metAlertsRepository = MetAlertsRepository()
     private val alertPolygons = mutableListOf<AlertPolygon>()
 
     private val annotationApi = mapView.annotations
@@ -198,14 +198,14 @@ class AnnotationRepository(
         isAlertClickable = !isAlertClickable
         if (!isAlertClickable) {
             polygonAnnotationManager.deleteAll()
+            viewAnnotationManager.removeAllViewAnnotations()
         } else {
             addAlertPolygons()
         }
     }
 
+    // click listener for metalert polygon
     suspend fun addPolygonClickListener() {
-        // click listener for metalert polygon
-
         val context = mapView.context
         polygonAnnotationManager.addClickListener { clickedPolygon ->
             if (isAlertClickable) {

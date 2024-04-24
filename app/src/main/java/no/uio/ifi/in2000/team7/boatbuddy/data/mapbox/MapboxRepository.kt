@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
-import android.util.Log
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
@@ -151,8 +150,8 @@ class MapboxRepository(
         return annotationRepository.getRoutePoints()
     }
 
-    suspend fun generateRoute() {
-        if (annotationRepository.getRoutePoints().size < 2) return
+    suspend fun generateRoute(): List<Point>? {
+        if (annotationRepository.getRoutePoints().size < 2) return null
         val autoroutePoints = autorouteRepository.getAutorouteData(
             course = annotationRepository.route.toList(),
             // TODO needs to retrive data from the database (user profile)
@@ -160,12 +159,16 @@ class MapboxRepository(
             safetyHeight = "5",
             boatSpeed = "5",
         )
-        
+
         if (autoroutePoints != null) {
-            annotationRepository.createRoute(autoroutePoints.geometry.coordinates.map {
+            val formattedPoints = autoroutePoints.geometry.coordinates.map {
                 Point.fromLngLat(it[0], it[1])
-            })
+            }
+            annotationRepository.createRoute(formattedPoints)
+            return formattedPoints
         }
+        return null
+
     }
 
 }
