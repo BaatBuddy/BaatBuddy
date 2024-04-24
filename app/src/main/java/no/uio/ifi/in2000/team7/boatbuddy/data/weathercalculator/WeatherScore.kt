@@ -10,6 +10,7 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -17,24 +18,48 @@ import kotlin.math.sqrt
 object WeatherScore {
 
     // from A - B to a - b with value v
-    /*private fun mapValue(value: Double, fromA: Double, fromB: Double, toA: Double, toB: Double) =
-        toA + (value - fromA) * (toB - toA) / (fromB - fromA)
+    private fun mapValue(
+        value: Double,
+        fromA: Double,
+        fromB: Double,
+        toA: Double = 100.0,
+        toB: Double = 0.0
+    ): Double {
+        val mappedValue = (toA + (value - fromA) * (toB - toA) / (fromB - fromA))
+        println(mappedValue)
+        if (mappedValue > 100.0) {
+            return max(0.0, 100 - abs(100 - mappedValue))
+        } else if (mappedValue < 0.0) {
+            return min(0.0, mappedValue * -1)
+        }
+
+        return mappedValue
+    }
 
     // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
-    private fun calculateFactor(value: Double, preference: FactorPreference): Double {
-        val difference = kotlin.math.abs(preference.value - min(value, preference.to + 1))
-        return mapValue(difference, preference.from, preference.to, 100.0, 0.0)
-
-    }*/
+    private fun calculateFactor(
+        value: Double,
+        preferredData: Double,
+        from: Double,
+        to: Double
+    ): Double {
+        // Calculate the difference ratio where 'to' is the largest acceptable difference yielding a score of 0
+        val differenceRatio = abs(value - preferredData) / to
+        // Map this ratio to a score of 0 to 100
+        return mapValue(differenceRatio, from, to, 100.0, 0.0)
+    }
 
     // TODO adjust the function to handle null values and add rain. null values means that user doesn't care about the following weather
 
     // creates a score based on how far away from preferred weather data is (gpt :) )
     fun calculateInstance(realData: Double, preferredData: Double): Double {
-        val safePreferredData = if (preferredData == 0.0) 0.01 else preferredData
-        val differenceRatio = abs(realData - preferredData) / safePreferredData
-        val asd = ((1 - differenceRatio).coerceIn(0.0, 1.0)) * 100
-        println(asd.toString() + "UYHEWRGIUYWEGIUWEIUHG")
+        val asd = calculateFactor(
+            value = realData,
+            preferredData = preferredData,
+            from = preferredData * 0.1,
+            to = min(preferredData * 1.9, 0.01),
+        )
+        println(asd)
         return asd
     }
 
