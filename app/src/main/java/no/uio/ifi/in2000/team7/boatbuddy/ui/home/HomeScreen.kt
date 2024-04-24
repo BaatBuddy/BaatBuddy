@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -42,6 +44,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MapboxViewModel
 
@@ -53,7 +56,7 @@ fun HomeScreen(
     mapboxViewModel: MapboxViewModel = viewModel(),
     userLocationViewModel: UserLocationViewModel = viewModel(),
     homeViewModel: HomeViewModel = viewModel(),
-    autoRouteViewModel: AutoRouteViewModel = viewModel(),
+    locationForecastViewModel: LocationForecastViewModel = viewModel(),
 ) {
 
     val context = LocalContext.current
@@ -73,7 +76,7 @@ fun HomeScreen(
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
-    val autoRouteUIState by autoRouteViewModel.autoRouteUiState.collectAsState()
+    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
@@ -106,6 +109,8 @@ fun HomeScreen(
 
 
     var showAlert by remember { mutableStateOf(false) }
+
+    var isGeneratingRoute by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -140,15 +145,41 @@ fun HomeScreen(
                         modifier = Modifier
                             .padding(4.dp)
                     )
-                    ExtendedFloatingActionButton(
-                        text = { Text("Draw route") },
-                        icon = { Icon(Icons.Filled.Create, contentDescription = "") },
-                        onClick = {
-                            mapboxViewModel.toggleRouteClicking()
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
+                    Row {
+                        if (isGeneratingRoute) {
+                            ExtendedFloatingActionButton(
+                                text = { Text(text = "Generer rute") },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Build,
+                                        contentDescription = ""
+                                    )
+                                },
+                                onClick = {
+                                    isGeneratingRoute = !isGeneratingRoute
+                                    mapboxViewModel.generateRoute()
+
+                                })
+                        }
+                        ExtendedFloatingActionButton(
+                            text = { Text(text = if (!isGeneratingRoute) "Tegn rute" else "Avbryt") },
+                            icon = {
+                                if (!isGeneratingRoute) Icon(
+                                    imageVector = Icons.Filled.Create,
+                                    contentDescription = ""
+                                ) else Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = ""
+                                )
+                            },
+                            onClick = {
+                                mapboxViewModel.toggleRouteClicking()
+                                isGeneratingRoute = !isGeneratingRoute
+                            },
+                            modifier = Modifier
+                                .padding(4.dp)
+                        )
+                    }
 
                 }
             }
@@ -169,7 +200,12 @@ fun HomeScreen(
                 },
                 sheetState = sheetState
             ) {
-                SwipeUpContent()
+                if (mapboxUIState.routePoints.isNotEmpty()) {
+                    locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
+                    showBottomSheet = true
+                }
+
+                SwipeUpContent(locationForecastUIState)
 
 
                 Column {
@@ -207,12 +243,6 @@ fun HomeScreen(
                         }
                         ) {
                             Text(text = "Stop")
-                        }
-
-                        Button(onClick = {
-                            mapboxViewModel.generateRoute()
-                        }) {
-                            Text(text = "Generate route")
                         }
                     }
                 }

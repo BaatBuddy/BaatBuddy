@@ -29,9 +29,13 @@ object WeatherScore {
 
     // TODO adjust the function to handle null values and add rain. null values means that user doesn't care about the following weather
 
-    // creates a score based on how far away from preferred weather data is
+    // creates a score based on how far away from preferred weather data is (gpt :) )
     fun calculateInstance(realData: Double, preferredData: Double): Double {
-        return (1 - abs(realData - preferredData) / max(realData, preferredData)) * 100
+        val safePreferredData = if (preferredData == 0.0) 0.01 else preferredData
+        val differenceRatio = abs(realData - preferredData) / safePreferredData
+        val asd = ((1 - differenceRatio).coerceIn(0.0, 1.0)) * 100
+        println(asd.toString() + "UYHEWRGIUYWEGIUWEIUHG")
+        return asd
     }
 
     // creates a score from 0 - 100 based on preference and real data
@@ -66,17 +70,19 @@ object WeatherScore {
         ).count { it != 0.0 })
     }
 
-    private fun calculateDate(
+    fun calculateDate(
         timeWeatherData: List<TimeWeatherData>,
         weatherPreferences: WeatherPreferences
     ): Double {
-        return timeWeatherData.sumOf {
+        val asd = timeWeatherData.sumOf {
             calculateHour(
                 it,
                 weatherPreferences,
                 // it == timeWeatherData.last()
             )
         } / timeWeatherData.size
+        println(asd.toString() + "asdasd")
+        return asd
     }
 
     // calculates the amount of points based on the length in km
@@ -85,13 +91,15 @@ object WeatherScore {
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
         return pathWeatherData.map {
-            DateScore(
+            val asd = DateScore(
                 date = it.date,
                 score = calculateDate(
                     timeWeatherData = it.timeWeatherData,
                     weatherPreferences = weatherPreferences
                 )
             )
+            println(asd)
+            asd
         }
     }
 

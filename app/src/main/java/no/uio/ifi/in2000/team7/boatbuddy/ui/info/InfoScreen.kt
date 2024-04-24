@@ -138,9 +138,9 @@ fun LocationCard(
                 .padding(4.dp)
         ) {
             Text(text = dayForecast.day)
-            Text(text = "${timeLocationData.air_temperature}℃")
+            Text(text = "${timeLocationData.airTemperature}℃")
             WeatherIcon(
-                symbolCode = timeLocationData.symbol_code,
+                symbolCode = timeLocationData.symbolCode,
                 modifier = Modifier
                     .fillMaxSize(0.15f)
             )
@@ -220,21 +220,21 @@ fun LocationTable(dayForecast: DayForecast) {
 
                     Row {
                         WeatherIcon(
-                            symbolCode = tld.symbol_code,
+                            symbolCode = tld.symbolCode,
                             modifier = Modifier.size(32.dp)
                         )
                         Text(
-                            text = tld.air_temperature.toString() + "°",
+                            text = tld.airTemperature.toString() + "°",
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
 
                     Text(
-                        text = tld.precipitation_amount.toString()
+                        text = tld.precipitationAmount.toString()
                     )
 
                     Text(
-                        text = "${tld.wind_speed}${if (tld.wind_speed_of_gust != 0.0) "(${tld.wind_speed_of_gust})" else ""}"
+                        text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}"
                     )
                 }
             }
