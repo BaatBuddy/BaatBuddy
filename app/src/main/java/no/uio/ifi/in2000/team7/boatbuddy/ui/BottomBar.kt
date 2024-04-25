@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -22,7 +23,8 @@ fun BottomBar(
     NavigationBar {
         listOf(
             Screen.HomeScreen,
-            Screen.InfoScreen
+            Screen.InfoScreen,
+            Screen.SettingScreen
             // add more screen if needed
         ).forEachIndexed { index, item ->
             NavigationBarItem(
@@ -36,7 +38,7 @@ fun BottomBar(
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
-                            
+
                             launchSingleTop = true
                             restoreState = true
                         }
@@ -44,7 +46,9 @@ fun BottomBar(
                     }
 
                 },
-                icon = { Icon(imageVector = item.icon, contentDescription = null) })
+                icon = { Icon(imageVector = item.icon, contentDescription = null) },
+                label = { Text(text = item.label) }
+            )
 
         }
 

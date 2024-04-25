@@ -16,13 +16,19 @@ interface UserProfileDao {
     suspend fun deleteUserProfile(profile: UserProfile)
 
     @Query("SELECT * FROM userprofile ORDER BY firstName")
-    fun getUserProfilesOrderedByFirstName(): Flow<List<UserProfile>>
+    fun getUserProfilesOrderedByFirstName(): List<UserProfile>
 
     @Query("SELECT * FROM userprofile ORDER BY lastName")
-    fun getUserProfilesOrderedByLastName(): Flow<List<UserProfile>>
+    fun getUserProfilesOrderedByLastName(): List<UserProfile>
 
     @Query("SELECT * FROM userprofile ORDER BY username")
-    fun getUserProfilesOrderedByUserProfile(): Flow<List<UserProfile>>
+    fun getUserProfilesOrderedByUserProfile(): List<UserProfile>
+
+    @Query("SELECT * FROM userprofile")
+    fun getAllUsers(): List<UserProfile>
+
+    @Query("SELECT * FROM userprofile WHERE username like :username ")
+    fun getUserByUsername(username: String): UserProfile
 
 
 }

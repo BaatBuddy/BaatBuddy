@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import no.uio.ifi.in2000.team7.boatbuddy.ui.BottomBar
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -29,6 +30,9 @@ fun NavGraph(navController: NavHostController) {
                 }
                 composable(route = Screen.InfoScreen.route) {
                     InfoScreen()
+                }
+                composable(route = Screen.SettingScreen.route) {
+                    SettingScreen()
                 }
             }
         }
