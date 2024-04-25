@@ -2,6 +2,8 @@ package no.uio.ifi.in2000.team7.boatbuddy.data
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,7 +12,6 @@ import dagger.hilt.components.SingletonComponent
 import no.uio.ifi.in2000.team7.boatbuddy.data.setting.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.database.ProfileDatabase
 import javax.inject.Singleton
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,6 +22,7 @@ object AppModule {
     fun fetchDatabase(
         @ApplicationContext app: Context
     ) = Room.databaseBuilder(app, ProfileDatabase::class.java, "users")
+        .fallbackToDestructiveMigration()
         .build()
 
     @Singleton

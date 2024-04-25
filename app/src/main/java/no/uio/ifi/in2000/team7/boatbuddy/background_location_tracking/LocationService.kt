@@ -17,11 +17,11 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import no.uio.ifi.in2000.team7.boatbuddy.MainActivity
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.enteredAlerts
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.featureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage

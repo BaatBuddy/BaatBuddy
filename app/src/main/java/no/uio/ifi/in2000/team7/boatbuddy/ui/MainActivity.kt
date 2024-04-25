@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import no.uio.ifi.in2000.team7.boatbuddy.NavGraph
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.GetUserLocation
 import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme

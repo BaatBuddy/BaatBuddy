@@ -13,13 +13,21 @@ class ProfileRepository @Inject constructor(
         return userDao.getUserByUsername(username = username)
     }
 
-    suspend fun addUserByUsername(username: String) {
+    suspend fun addUserByUsername(username: String, name: String) {
         return userDao.insertUserProfile(
             UserProfile(
-                firstName = "ASDFSD",
-                lastName = "ASDASD",
-                username = username
+                username = username,
+                name = name,
+                isSelected = true
             )
         )
+    }
+
+    suspend fun selectUser(username: String) {
+        userDao.selectUser(username = username)
+    }
+
+    suspend fun getSelectedUser(): UserProfile {
+        return userDao.getSelectedUser()
     }
 }

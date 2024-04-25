@@ -15,11 +15,8 @@ interface UserProfileDao {
     @Delete
     suspend fun deleteUserProfile(profile: UserProfile)
 
-    @Query("SELECT * FROM userprofile ORDER BY firstName")
+    @Query("SELECT * FROM userprofile ORDER BY name")
     fun getUserProfilesOrderedByFirstName(): List<UserProfile>
-
-    @Query("SELECT * FROM userprofile ORDER BY lastName")
-    fun getUserProfilesOrderedByLastName(): List<UserProfile>
 
     @Query("SELECT * FROM userprofile ORDER BY username")
     fun getUserProfilesOrderedByUserProfile(): List<UserProfile>
@@ -27,8 +24,19 @@ interface UserProfileDao {
     @Query("SELECT * FROM userprofile")
     fun getAllUsers(): List<UserProfile>
 
-    @Query("SELECT * FROM userprofile WHERE username like :username ")
+    @Query("SELECT * FROM userprofile WHERE username LIKE :username ")
     fun getUserByUsername(username: String): UserProfile
 
+    @Query("DELETE FROM userprofile WHERE username LIKE :username ")
+    fun deleteUserByUsername(username: String)
+
+    @Query("SELECT * FROM userprofile WHERE isSelected")
+    fun getSelectedUser(): UserProfile
+
+    @Query("UPDATE userprofile SET isSelected = true WHERE username LIKE :username")
+    fun selectUser(username: String)
+
+    @Query("UPDATE userprofile SET isSelected = false WHERE username LIKE :username")
+    fun unselectUser(username: String)
 
 }

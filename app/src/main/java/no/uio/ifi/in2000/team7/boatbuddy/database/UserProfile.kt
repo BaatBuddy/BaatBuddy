@@ -5,11 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class UserProfile(
-    val firstName: String,
-    val lastName: String,
+    @PrimaryKey
     val username: String,
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val name: String,
+    val isSelected: Boolean,
 )
 
 
