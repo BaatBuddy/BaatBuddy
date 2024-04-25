@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.Screen
 
 @Composable
 fun BottomBar(

@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,16 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.Room
-import no.uio.ifi.in2000.team7.boatbuddy.database.ProfileDatabase
-import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfileDao
 
 @Composable
-fun SettingScreen(settingViewModel: SettingViewModel = viewModel()) {
+fun SettingScreen(settingViewModel: SettingViewModel) {
     var username by remember { mutableStateOf("") }
-    settingViewModel.initialize(LocalContext.current)
-    
+
+    val settingUIState by settingViewModel.settingUIState.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -36,10 +34,18 @@ fun SettingScreen(settingViewModel: SettingViewModel = viewModel()) {
         ) {
             TextField(value = username, onValueChange = { username = it })
             Button(onClick = {
-                Log.i("ASDASD", settingViewModel.getUser(username = username).toString())
+                settingViewModel.getUser(username)
             }) {
                 Text(text = "Log user")
             }
+            Button(onClick = {
+                settingViewModel.addUser(username)
+            }) {
+                Text(text = "Add")
+            }
+            Text(
+                text = "User full name: ${settingUIState.selectedUser?.username} ${settingUIState.selectedUser?.firstName} ${settingUIState.selectedUser?.lastName}"
+            )
         }
     }
 }

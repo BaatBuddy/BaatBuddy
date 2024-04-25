@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy
+package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +17,6 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             delay(1500L)
             _isReady.value = true
-            delay(1500L)
         }
     }
 }

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy
+package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

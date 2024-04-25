@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
-import UserLocationViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -36,6 +35,8 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.AutoRouteViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import java.lang.ref.WeakReference
 

@@ -1,7 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -61,6 +63,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("com.google.firebase:firebase-components:18.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -106,13 +109,26 @@ dependencies {
 
     // Room
     val room_version = "2.6.1"
-    implementation ("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
     //implementation ("androidx.room:room-runtime:$room_version")
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
 
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-android-compiler:2.46")
+
+    // For instrumentation tests
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.46")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.46")
+
+    // For local unit tests
+    testImplementation("com.google.dagger:hilt-android-testing:2.46")
+    kaptTest("com.google.dagger:hilt-compiler:2.46")
 
 
+}
 
-
+kapt {
+    correctErrorTypes = true
 }
