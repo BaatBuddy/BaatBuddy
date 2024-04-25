@@ -25,10 +25,8 @@ data class LocationForecastUIState(
 
 @HiltViewModel
 class LocationForecastViewModel @Inject constructor(
-    private val locationForecastRepository: LocationForecastRepository =
-        LocationForecastRepository(),
-    private val weatherCalculatorRepository: WeatherCalculatorRepository =
-        WeatherCalculatorRepository()
+    private val locationForecastRepository: LocationForecastRepository,
+    private val weatherCalculatorRepository: WeatherCalculatorRepository,
 ) : ViewModel() {
 
     private val _locationForecastUIState =

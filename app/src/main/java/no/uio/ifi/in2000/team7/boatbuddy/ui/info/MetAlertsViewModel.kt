@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,10 +18,11 @@ data class MetAlertsUIState(
     val metalerts: MetAlertsData?
 )
 
+@HiltViewModel
 class MetAlertsViewModel @Inject constructor(
-    private val repository: MetAlertsRepository = MetAlertsRepository()
+    private val repository: MetAlertsRepository
 ) : ViewModel() {
-    
+
     private val _metalertsUIState = MutableStateFlow(MetAlertsUIState(null))
     val metalertsUIState: StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
 

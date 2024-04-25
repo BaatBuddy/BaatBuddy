@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserProfileDao {
@@ -31,12 +30,12 @@ interface UserProfileDao {
     fun deleteUserByUsername(username: String)
 
     @Query("SELECT * FROM userprofile WHERE isSelected")
-    fun getSelectedUser(): UserProfile
+    fun getSelectedUser(): UserProfile?
 
     @Query("UPDATE userprofile SET isSelected = true WHERE username LIKE :username")
     fun selectUser(username: String)
 
-    @Query("UPDATE userprofile SET isSelected = false WHERE username LIKE :username")
-    fun unselectUser(username: String)
+    @Query("UPDATE userprofile SET isSelected = false")
+    fun unselectUser()
 
 }

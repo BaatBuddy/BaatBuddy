@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.setting
 
-import android.util.Log
-import no.uio.ifi.in2000.team7.boatbuddy.database.ProfileDatabase
 import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfileDao
 import javax.inject.Inject
@@ -27,7 +25,12 @@ class ProfileRepository @Inject constructor(
         userDao.selectUser(username = username)
     }
 
-    suspend fun getSelectedUser(): UserProfile {
+    suspend fun unselectUser() {
+        userDao.unselectUser()
+    }
+
+    suspend fun getSelectedUser(): UserProfile? {
         return userDao.getSelectedUser()
     }
+
 }

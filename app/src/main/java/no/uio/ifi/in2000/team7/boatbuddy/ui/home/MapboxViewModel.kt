@@ -35,9 +35,8 @@ data class MapboxUIState(
 
 @HiltViewModel
 class MapboxViewModel @Inject constructor(
-    private val repository: MapboxRepository = MapboxRepository(),
-    private val weatherCalculatorRepository: WeatherCalculatorRepository =
-        WeatherCalculatorRepository()
+    private val repository: MapboxRepository,
+    private val weatherCalculatorRepository: WeatherCalculatorRepository
 ) : ViewModel() {
 
 

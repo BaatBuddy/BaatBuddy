@@ -49,7 +49,7 @@ fun NavGraph(
                         metalertsViewModel = metalertsViewModel,
                         mapboxViewModel = mapboxViewModel,
                         userLocationViewModel = userLocationViewModel,
-                        locationForecastViewModel = locationForecastViewModel,,
+                        locationForecastViewModel = locationForecastViewModel,
                         homeViewModel = homeViewModel,
                     )
                 }

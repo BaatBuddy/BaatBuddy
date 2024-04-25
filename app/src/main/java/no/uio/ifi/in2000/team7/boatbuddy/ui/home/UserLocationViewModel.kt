@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Task
 
+
 class UserLocationViewModel : ViewModel() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient

@@ -20,9 +20,9 @@ data class SunriseUIState(
 
 @HiltViewModel
 class SunriseViewModel @Inject constructor(
-    private val repository: SunriseRepository = SunriseRepository()
+    private val repository: SunriseRepository
 ) : ViewModel() {
-    
+
     private val _sunriseUIState = MutableStateFlow(SunriseUIState(null))
     val sunriseUIState: StateFlow<SunriseUIState> = _sunriseUIState.asStateFlow()
 

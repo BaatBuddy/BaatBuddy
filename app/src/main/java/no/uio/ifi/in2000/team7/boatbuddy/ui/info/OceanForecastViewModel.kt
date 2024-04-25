@@ -20,7 +20,7 @@ data class OceanForecastUIState(
 
 @HiltViewModel
 class OceanForecastViewModel @Inject constructor(
-    private val repository: OceanForecastRepository = OceanForecastRepository()
+    private val repository: OceanForecastRepository
 ) : ViewModel() {
 
     private val _oceanForecastUIState = MutableStateFlow(OceanForecastUIState(null))

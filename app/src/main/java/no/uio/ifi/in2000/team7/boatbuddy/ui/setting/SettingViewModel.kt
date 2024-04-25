@@ -80,11 +80,26 @@ class SettingViewModel @Inject constructor(
     fun updateSelectedUser() {
         viewModelScope.launch(Dispatchers.IO) {
             val user = profileRepository.getSelectedUser()
+            if (user != null) {
+                _settingUIState.update {
+                    it.copy(
+                        selectedUser = user,
+                        username = user.username,
+                        name = user.name
+                    )
+                }
+            }
+        }
+    }
+
+    fun unselectUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            profileRepository.unselectUser()
             _settingUIState.update {
                 it.copy(
-                    selectedUser = user,
-                    username = user.username,
-                    name = user.name
+                    selectedUser = null,
+                    username = "",
+                    name = "",
                 )
             }
         }
