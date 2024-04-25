@@ -174,7 +174,15 @@ class MapboxViewModel : ViewModel() {
         }
     }
 
-    fun refresh() {
-        repository.refresh()
+    fun refreshRoute() {
+        repository.refreshRoute()
+    }
+
+    fun undoClick() {
+        repository.undoClick()
+    }
+
+    fun redoClick() {
+        repository.redoClick()
     }
 }

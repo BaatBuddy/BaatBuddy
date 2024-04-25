@@ -98,10 +98,6 @@ class MapboxRepository(
         return annotationRepository.getRoutePoints()
     }
 
-    fun refresh() {
-        annotationRepository.refresh()
-    }
-
     suspend fun generateRoute(): List<Point>? {
         if (annotationRepository.getRoutePoints().size < 2) return null
         val autoroutePoints = autorouteRepository.getAutorouteData(
@@ -121,6 +117,18 @@ class MapboxRepository(
         }
         return null
 
+    }
+
+    fun refreshRoute() {
+        annotationRepository.refreshRoute()
+    }
+
+    fun undoClick() {
+        annotationRepository.undoClick()
+    }
+
+    fun redoClick() {
+        annotationRepository.redoClick()
     }
 
 }

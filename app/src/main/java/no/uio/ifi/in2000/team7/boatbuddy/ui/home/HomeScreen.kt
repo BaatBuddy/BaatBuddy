@@ -86,6 +86,8 @@ fun HomeScreen(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheetButton by remember { mutableStateOf(true) }
+    var drawRoute by remember { mutableStateOf(true) }
 
     // notification setup
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
@@ -111,10 +113,9 @@ fun HomeScreen(
     val locationService = LocationService()
     metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
 
-
     var showAlert by remember { mutableStateOf(false) }
-    var isGeneratingRoute by remember { mutableStateOf(false) }
-    var refresh by remember { mutableStateOf(false) }
+    var generateRoute by remember { mutableStateOf(false) }
+    var createdRoute by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -140,17 +141,21 @@ fun HomeScreen(
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
-                    ExtendedFloatingActionButton(
-                        text = { Text("Show bottom sheet") },
-                        icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                        onClick = {
-                            showBottomSheet = true
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
+                    if (showBottomSheetButton) {
+                        ExtendedFloatingActionButton(
+                            text = { Text("Show bottom sheet") },
+                            icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                            onClick = {
+                                showBottomSheet = true
+                                showBottomSheetButton = !showBottomSheetButton
+                            },
+                            modifier = Modifier
+                                .padding(4.dp)
+                        )
+                    }
                     Row {
-                        if (isGeneratingRoute) {
+                        if (generateRoute) {
+                            showBottomSheetButton = false
                             ExtendedFloatingActionButton(
                                 text = { Text(text = "Generer rute") },
                                 icon = {
@@ -160,41 +165,41 @@ fun HomeScreen(
                                     )
                                 },
                                 onClick = {
-                                    isGeneratingRoute = !isGeneratingRoute
+                                    generateRoute = false
+                                    createdRoute = true
                                     mapboxViewModel.generateRoute()
-
+                                    mapboxViewModel.toggleRouteClicking()
                                 })
+
                             //Back-knapp
                             SmallFloatingActionButton(
                                 onClick = {
+                                    mapboxViewModel.undoClick()
                                 }
                             ) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
                             }
                             // Refresh-knapp
-                            if (!refresh) {
-                                SmallFloatingActionButton(
-                                    onClick = {
-                                        refresh = !refresh
-                                        mapboxViewModel.refresh()
-                                        // Knappen må vises igjen når bruker begynner å lage ny rute
-                                    }
-                                ) {
-                                    Icon(Icons.Filled.Refresh, "")
+                            SmallFloatingActionButton(
+                                onClick = {
+                                    mapboxViewModel.refreshRoute()
                                 }
+                            ) {
+                                Icon(Icons.Filled.Refresh, "")
                             }
                             //Forward-knapp
                             SmallFloatingActionButton(
                                 onClick = {
+                                    mapboxViewModel.redoClick()
                                 }
                             ) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowForward, "")
                             }
                         }
                         ExtendedFloatingActionButton(
-                            text = { Text(text = if (!isGeneratingRoute) "Tegn rute" else "Avbryt") },
+                            text = { Text(text = if (!generateRoute) "Tegn rute" else "Avbryt") },
                             icon = {
-                                if (!isGeneratingRoute) Icon(
+                                if (!generateRoute) Icon(
                                     imageVector = Icons.Filled.Create,
                                     contentDescription = ""
                                 ) else Icon(
@@ -203,8 +208,20 @@ fun HomeScreen(
                                 )
                             },
                             onClick = {
+                                generateRoute = !generateRoute
+                                if (createdRoute || !generateRoute) {
+                                    mapboxViewModel.refreshRoute()
+                                }
                                 mapboxViewModel.toggleRouteClicking()
-                                isGeneratingRoute = !isGeneratingRoute
+                                /*if (!generateRoute) { // Avbryt
+                                    //mapboxViewModel.refreshRoute() // Se om rekkefølgen har noe å si, se nærmere på generateRoute
+                                    generateRoute = true
+                                    // Hvis en rute er generert, må den refreshes -- vurder boolean-check
+                                    mapboxViewModel.refreshRoute()
+                                } else { // Tegn rute
+                                    mapboxViewModel.refreshRoute()
+                                    generateRoute = false
+                                }*/
                             },
                             modifier = Modifier
                                 .padding(4.dp)
@@ -213,7 +230,6 @@ fun HomeScreen(
 
                 }
             }
-
         }
 
     ) {
@@ -227,6 +243,7 @@ fun HomeScreen(
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
+                    showBottomSheetButton = true
                 },
                 sheetState = sheetState
             ) {
@@ -236,7 +253,6 @@ fun HomeScreen(
                 }
 
                 SwipeUpContent(locationForecastUIState)
-
 
                 Column {
                     Row {
@@ -276,7 +292,6 @@ fun HomeScreen(
                         }
                     }
                 }
-
             }
         }
     }
