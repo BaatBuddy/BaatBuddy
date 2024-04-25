@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertWeatherResId
 
@@ -44,10 +43,10 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertWeatherResId
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    metAlertsViewModel: MetAlertsViewModel = viewModel(),
-    locationForecastViewModel: LocationForecastViewModel = viewModel(),
-    oceanForecastViewModel: OceanForecastViewModel = viewModel(),
-    sunriseViewModel: SunriseViewModel = viewModel()
+    metAlertsViewModel: MetAlertsViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
+    oceanForecastViewModel: OceanForecastViewModel,
+    sunriseViewModel: SunriseViewModel,
 ) {
 
     val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()

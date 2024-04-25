@@ -8,6 +8,7 @@ import androidx.test.espresso.base.MainThread
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -17,6 +18,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculato
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
+import javax.inject.Inject
 
 
 data class MapboxUIState(
@@ -31,10 +33,13 @@ data class MapboxUIState(
     val routePath: List<Point>? = null,
 )
 
-class MapboxViewModel : ViewModel() {
-    private val repository: MapboxRepository = MapboxRepository()
+@HiltViewModel
+class MapboxViewModel @Inject constructor(
+    private val repository: MapboxRepository = MapboxRepository(),
     private val weatherCalculatorRepository: WeatherCalculatorRepository =
         WeatherCalculatorRepository()
+) : ViewModel() {
+
 
     private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
     lateinit var mapboxUIState: StateFlow<MapboxUIState>
@@ -43,9 +48,7 @@ class MapboxViewModel : ViewModel() {
 
     @MainThread
     fun initialize(context: Context, cameraOptions: CameraOptions, style: String) {
-        Log.i("ASDASD", "try init")
         if (initialized) return
-        Log.i("ASDASD", "actual init")
         initialized = true
         createMap(context = context, cameraOptions = cameraOptions, style = style)
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
 import com.mapbox.geojson.Point
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculato
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
+import javax.inject.Inject
 
 data class LocationForecastUIState(
     val locationForecast: LocationForecastData?,
@@ -21,11 +23,13 @@ data class LocationForecastUIState(
     val selectedDay: DayForecast?
 )
 
-class LocationForecastViewModel : ViewModel() {
+@HiltViewModel
+class LocationForecastViewModel @Inject constructor(
     private val locationForecastRepository: LocationForecastRepository =
-        LocationForecastRepository()
+        LocationForecastRepository(),
     private val weatherCalculatorRepository: WeatherCalculatorRepository =
         WeatherCalculatorRepository()
+) : ViewModel() {
 
     private val _locationForecastUIState =
         MutableStateFlow(LocationForecastUIState(null, null, null))

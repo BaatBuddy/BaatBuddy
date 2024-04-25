@@ -11,15 +11,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
+import javax.inject.Inject
 
 data class MetAlertsUIState(
     val metalerts: MetAlertsData?
 )
 
-class MetAlertsViewModel : ViewModel() {
-
+class MetAlertsViewModel @Inject constructor(
     private val repository: MetAlertsRepository = MetAlertsRepository()
-
+) : ViewModel() {
+    
     private val _metalertsUIState = MutableStateFlow(MetAlertsUIState(null))
     val metalertsUIState: StateFlow<MetAlertsUIState> = _metalertsUIState.asStateFlow()
 

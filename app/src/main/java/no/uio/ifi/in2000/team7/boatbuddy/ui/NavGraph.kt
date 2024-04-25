@@ -11,14 +11,28 @@ import androidx.navigation.compose.composable
 import no.uio.ifi.in2000.team7.boatbuddy.ui.BottomBar
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    settingViewModel: SettingViewModel
+    locationForecastViewModel: LocationForecastViewModel,
+    mapboxViewModel: MapboxViewModel,
+    metalertsViewModel: MetAlertsViewModel,
+    oceanforecastViewModel: OceanForecastViewModel,
+    settingViewModel: SettingViewModel,
+    sunriseViewModel: SunriseViewModel,
+    userLocationViewModel: UserLocationViewModel,
+    homeViewModel: HomeViewModel
 ) {
 
     Scaffold(
@@ -31,10 +45,21 @@ fun NavGraph(
                 startDestination = Screen.HomeScreen.route
             ) {
                 composable(route = Screen.HomeScreen.route) {
-                    HomeScreen()
+                    HomeScreen(
+                        metalertsViewModel = metalertsViewModel,
+                        mapboxViewModel = mapboxViewModel,
+                        userLocationViewModel = userLocationViewModel,
+                        locationForecastViewModel = locationForecastViewModel,,
+                        homeViewModel = homeViewModel,
+                    )
                 }
                 composable(route = Screen.InfoScreen.route) {
-                    InfoScreen()
+                    InfoScreen(
+                        metAlertsViewModel = metalertsViewModel,
+                        locationForecastViewModel = locationForecastViewModel,
+                        oceanForecastViewModel = oceanforecastViewModel,
+                        sunriseViewModel = sunriseViewModel
+                    )
                 }
                 composable(route = Screen.SettingScreen.route) {
                     SettingScreen(settingViewModel = settingViewModel)

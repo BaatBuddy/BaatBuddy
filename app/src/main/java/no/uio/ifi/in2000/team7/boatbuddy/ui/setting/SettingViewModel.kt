@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.setting.ProfileRepository
+import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
 import javax.inject.Inject
 
@@ -16,6 +17,7 @@ data class SettingUIState(
     val selectedUser: UserProfile? = null,
     val username: String = "",
     val name: String = "",
+    val boatProfiles: List<BoatProfile> = emptyList()
 )
 
 @HiltViewModel

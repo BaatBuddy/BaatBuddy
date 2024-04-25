@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,13 +12,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.oceanforecast.OceanForecastData
+import javax.inject.Inject
 
 data class OceanForecastUIState(
     val oceanForecast: OceanForecastData? = null
 )
 
-class OceanForecastViewModel : ViewModel() {
+@HiltViewModel
+class OceanForecastViewModel @Inject constructor(
     private val repository: OceanForecastRepository = OceanForecastRepository()
+) : ViewModel() {
 
     private val _oceanForecastUIState = MutableStateFlow(OceanForecastUIState(null))
     val oceanForecastUIState: StateFlow<OceanForecastUIState> = _oceanForecastUIState.asStateFlow()
