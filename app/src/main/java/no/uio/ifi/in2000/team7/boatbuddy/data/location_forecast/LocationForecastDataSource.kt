@@ -20,7 +20,7 @@ class LocationForecastDataSource {
     ): LocationForecastData? {
 
 
-        var path = "weatherapi/locationforecast/2.0/compact"
+        var path = "weatherapi/locationforecast/2.0/complete"
 
         if (lat.isNotBlank() && lon.isNotBlank()) {
             path += "?lat=%s&lon=%s".format(lat, lon)
@@ -56,7 +56,7 @@ class LocationForecastDataSource {
                             relative_humidity = details.relative_humidity,
                             wind_from_direction = details.wind_from_direction,
                             wind_speed = details.wind_speed,
-                            wind_speed_of_gust = details.wind_speed_of_gust,
+                            wind_speed_of_gust = details.wind_speed_of_gust ?: 0.0,
                             precipitation_amount = nextHours.next_6_hours.details.precipitation_amount,
                             symbol_code =
                             if (nextHours.next_1_hours != null) nextHours.next_1_hours.summary.symbol_code

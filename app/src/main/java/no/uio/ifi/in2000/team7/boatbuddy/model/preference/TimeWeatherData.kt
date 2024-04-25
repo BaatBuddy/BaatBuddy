@@ -7,11 +7,12 @@ data class TimeWeatherData(
     val waveHeight: Double,
     val waterTemperature: Double,
     val windSpeed: Double,
-    // val windSpeedOfGust: Double,
+    val windSpeedOfGust: Double,
     val airTemperature: Double,
     val cloudAreaFraction: Double,
     val fogAreaFraction: Double,
     // val ultravioletIndexClearSky: Double?,
     val relativeHumidity: Double,
-    val precipitationAmount: Double
+    val precipitationAmount: Double,
+    val symbolCode: String,
 )

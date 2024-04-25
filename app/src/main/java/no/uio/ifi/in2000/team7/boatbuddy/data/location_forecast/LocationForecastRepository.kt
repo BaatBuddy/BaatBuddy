@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
-import android.util.Log
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
 
 interface LocationForecastRepo {
@@ -21,6 +20,4 @@ class LocationForecastRepository(
 
         return dataSource.getLocationForecastData(lat, lon, altitude)
     }
-
-
 }
