@@ -10,17 +10,13 @@ import com.mapbox.geojson.Polygon
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.ViewAnnotationOptions
-import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
@@ -30,7 +26,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
 
@@ -41,7 +36,6 @@ class AnnotationRepository(
     private val alertPolygons = mutableListOf<AlertPolygon>()
 
     private val annotationApi = mapView.annotations
-    private val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     private val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
     private val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
     private val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
@@ -59,28 +53,6 @@ class AnnotationRepository(
             addRouteClickListener()
         }
     }
-
-
-    // functions for point manager
-    private fun addPinToMap(
-        point: Point
-    ): PointAnnotation? {
-        bitmapFromDrawableRes(
-            mapView.context,
-            R.drawable.ic_map_pin
-        )?.let { bitmap -> // map-pin icon
-
-            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-                .withPoint(point)
-                .withIconImage(bitmap)
-                .withIconAnchor(IconAnchor.BOTTOM)
-
-            return pointAnnotationManager.create(pointAnnotationOptions)
-
-        }
-        return null
-    }
-
 
     // functions for the polyline manager
     fun addLineToMap(
@@ -334,6 +306,12 @@ class AnnotationRepository(
             }
             true
         }
+    }
+
+    fun refresh() {
+        route.clear()
+        circleAnnotationManager.deleteAll()
+        polylineAnnotationManager.deleteAll()
     }
 
     private fun userClick(point: Point) {

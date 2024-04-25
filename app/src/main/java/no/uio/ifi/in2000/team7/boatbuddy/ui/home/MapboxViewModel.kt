@@ -32,7 +32,8 @@ data class MapboxUIState(
 )
 
 class MapboxViewModel : ViewModel() {
-    private val repository: MapboxRepository = MapboxRepository()
+    private val repository: MapboxRepository =
+        MapboxRepository() // Send AnnotationRepository to MapboxRepository?
     private val weatherCalculatorRepository: WeatherCalculatorRepository =
         WeatherCalculatorRepository()
 
@@ -50,7 +51,6 @@ class MapboxViewModel : ViewModel() {
         createMap(context = context, cameraOptions = cameraOptions, style = style)
 
     }
-
 
     private fun createMap(context: Context, cameraOptions: CameraOptions, style: String) {
 
@@ -172,5 +172,9 @@ class MapboxViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    fun refresh() {
+        repository.refresh()
     }
 }

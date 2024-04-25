@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedFilterChip
@@ -25,6 +28,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -109,8 +113,8 @@ fun HomeScreen(
 
 
     var showAlert by remember { mutableStateOf(false) }
-
     var isGeneratingRoute by remember { mutableStateOf(false) }
+    var refresh by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -160,6 +164,32 @@ fun HomeScreen(
                                     mapboxViewModel.generateRoute()
 
                                 })
+                            //Back-knapp
+                            SmallFloatingActionButton(
+                                onClick = {
+                                }
+                            ) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                            }
+                            // Refresh-knapp
+                            if (!refresh) {
+                                SmallFloatingActionButton(
+                                    onClick = {
+                                        refresh = !refresh
+                                        mapboxViewModel.refresh()
+                                        // Knappen må vises igjen når bruker begynner å lage ny rute
+                                    }
+                                ) {
+                                    Icon(Icons.Filled.Refresh, "")
+                                }
+                            }
+                            //Forward-knapp
+                            SmallFloatingActionButton(
+                                onClick = {
+                                }
+                            ) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, "")
+                            }
                         }
                         ExtendedFloatingActionButton(
                             text = { Text(text = if (!isGeneratingRoute) "Tegn rute" else "Avbryt") },
