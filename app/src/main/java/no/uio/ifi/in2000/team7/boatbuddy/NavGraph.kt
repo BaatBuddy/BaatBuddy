@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.ui.BottomBar
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SettingsScreen
@@ -26,7 +28,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SettingsScreen
 fun NavGraph(navController: NavHostController) {
 
     Scaffold(
-        topBar = { topBar(navController) }
+        topBar = { topBar(navController) },
+        bottomBar = { BottomBar(navController) }
     ) { innerPadding ->
 
         Box(modifier = Modifier.padding(innerPadding)) {

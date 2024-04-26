@@ -3,23 +3,33 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 
-data class LocationForecastUiState(
-    val locationForecast: LocationForecastData?
+data class LocationForecastUIState(
+    val locationForecast: LocationForecastData?,
+    val weekdayForecast: WeekForecast?,
+    val selectedDay: DayForecast?
 )
 
 class LocationForecastViewModel : ViewModel() {
-    private val repository: LocationForecastRepository = LocationForecastRepository()
+    private val locationForecastRepository: LocationForecastRepository =
+        LocationForecastRepository()
+    private val weatherCalculatorRepository: WeatherCalculatorRepository =
+        WeatherCalculatorRepository()
 
-    private val _locationForecastUiState = MutableStateFlow(LocationForecastUiState(null))
-    val locationForecastUiState: StateFlow<LocationForecastUiState> = _locationForecastUiState
+    private val _locationForecastUIState =
+        MutableStateFlow(LocationForecastUIState(null, null, null))
+    val locationForecastUiState: StateFlow<LocationForecastUIState> = _locationForecastUIState
 
     private var initialized = false
     private var lastPos = ""
@@ -33,7 +43,6 @@ class LocationForecastViewModel : ViewModel() {
         initialized = true
         lastPos = lat + lon + altitude
         loadLocationForecast(lat, lon, altitude)
-
     }
 
     // keeping altitude as optional if the function is not going to be private
@@ -44,9 +53,41 @@ class LocationForecastViewModel : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            val locationForecast = repository.getLocationForecastData(lat, lon, altitude)
-            _locationForecastUiState.update { it.copy(locationForecast = locationForecast) }
+            val locationForecast =
+                locationForecastRepository.getLocationForecastData(lat, lon, altitude)
 
+            _locationForecastUIState.update {
+                it.copy(
+                    locationForecast = locationForecast,
+                )
+            }
+
+        }
+    }
+
+    fun loadWeekdayForecast(points: List<Point>) {
+        viewModelScope.launch {
+            _locationForecastUIState.update {
+                val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(points)
+                it.copy(
+                    weekdayForecast = weekdayForecast,
+                    selectedDay = weekdayForecast.days.toList()
+                        .minBy { dayForecast -> dayForecast.second.date }.second
+                )
+            }
+        }
+
+    }
+
+    fun updateSelectedDay(
+        dayForecast: DayForecast
+    ) {
+        viewModelScope.launch {
+            _locationForecastUIState.update {
+                it.copy(
+                    selectedDay = dayForecast
+                )
+            }
         }
     }
 }
