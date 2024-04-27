@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.ui.graphics.ImageBitmap
 
 object WeatherConverter {
     // fetches drawable from a english alert event
@@ -74,7 +75,7 @@ object WeatherConverter {
     }
 
     // functions to convert a xml vector to a bitmap object
-    fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
+    fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int): Bitmap? =
         convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
 
     private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {

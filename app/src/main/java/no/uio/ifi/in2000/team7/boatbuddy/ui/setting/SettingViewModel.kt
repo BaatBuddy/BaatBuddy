@@ -14,9 +14,12 @@ import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
 import javax.inject.Inject
 
 data class SettingUIState(
+    val users: List<UserProfile> = emptyList(),
+
     val selectedUser: UserProfile? = null,
     val username: String = "",
     val name: String = "",
+
     val boatProfiles: List<BoatProfile> = emptyList()
 )
 
@@ -30,6 +33,7 @@ class SettingViewModel @Inject constructor(
 
     init {
         updateSelectedUser()
+        getAllUsers()
     }
 
 
@@ -56,6 +60,7 @@ class SettingViewModel @Inject constructor(
     fun selectUser(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.selectUser(username = username)
+            updateSelectedUser()
         }
     }
 
@@ -100,6 +105,17 @@ class SettingViewModel @Inject constructor(
                     selectedUser = null,
                     username = "",
                     name = "",
+                )
+            }
+        }
+    }
+
+    fun getAllUsers() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val users = profileRepository.getAllUsers()
+            _settingUIState.update {
+                it.copy(
+                    users = users
                 )
             }
         }

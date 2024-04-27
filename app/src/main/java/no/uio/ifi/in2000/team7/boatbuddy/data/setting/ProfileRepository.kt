@@ -33,4 +33,8 @@ class ProfileRepository @Inject constructor(
         return userDao.getSelectedUser()
     }
 
+    suspend fun getAllUsers(): List<UserProfile> {
+        return userDao.getAllUsers()
+    }
+
 }

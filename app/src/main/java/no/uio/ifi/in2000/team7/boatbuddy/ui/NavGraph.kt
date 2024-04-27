@@ -19,6 +19,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingViewModel
 
@@ -62,7 +63,16 @@ fun NavGraph(
                     )
                 }
                 composable(route = Screen.SettingScreen.route) {
-                    SettingScreen(settingViewModel = settingViewModel)
+                    SettingScreen(
+                        settingViewModel = settingViewModel,
+                        navController = navController
+                    )
+                }
+                composable(route = "createuser") {
+                    CreateUserScreen(
+                        settingViewModel = settingViewModel,
+                        navController = navController
+                    )
                 }
             }
         }
