@@ -37,7 +37,7 @@ object AppModule {
     @Singleton
     @Provides
     fun fetchProfileRepository(db: ProfileDatabase): ProfileRepository {
-        return ProfileRepository(db.userDao())
+        return ProfileRepository(db.userDao(), db.boatDao())
     }
 
     @Singleton

@@ -73,7 +73,7 @@ fun SettingScreen(settingViewModel: SettingViewModel, navController: NavControll
 fun UserProfileScreen(settingViewModel: SettingViewModel) {
 
     val settingUIState by settingViewModel.settingUIState.collectAsState()
-
+    settingViewModel.getAllBoatsUsername()
 
     Scaffold(
         topBar = {
@@ -118,7 +118,7 @@ fun UserProfileScreen(settingViewModel: SettingViewModel) {
                     )
                 }
                 LazyColumn {
-                    items(settingUIState.boatProfiles) { boatProfile ->
+                    items(settingUIState.boats) { boatProfile ->
                         BoatCards(boatProfile = boatProfile)
                     }
                 }
@@ -129,13 +129,34 @@ fun UserProfileScreen(settingViewModel: SettingViewModel) {
 
 @Composable
 fun BoatCards(boatProfile: BoatProfile) {
-
+    ElevatedCard(
+        onClick = {
+        },
+        modifier = Modifier
+            .padding(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(4.dp)
+            ) {
+                Text(text = "Båtnavn: " + boatProfile.boatname)
+                Text(text = "Båt hastighet: " + boatProfile.boatSpeed)
+                Text(text = "Sikkerhets dybde: " + boatProfile.safetyDepth)
+                Text(text = "Sikkerhets høyde: " + boatProfile.safetyHeight)
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectUserScreen(settingViewModel: SettingViewModel, navController: NavController) {
     val settingUIState by settingViewModel.settingUIState.collectAsState()
+    settingViewModel.getAllUsers()
 
     Scaffold(
         topBar = {
@@ -162,7 +183,6 @@ fun SelectUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                 }
                 Button(
                     onClick = {
-                        // TODO navigate to create profile screen
                         navController.navigate("createuser")
                     }
                 ) {

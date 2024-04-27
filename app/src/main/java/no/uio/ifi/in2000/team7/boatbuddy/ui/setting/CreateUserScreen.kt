@@ -1,5 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.setting
 
+import android.util.Log
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,17 +37,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
+import com.mapbox.maps.extension.style.expressions.dsl.generated.all
 import no.uio.ifi.in2000.team7.boatbuddy.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavController) {
 
-    val settingUIState by settingViewModel.settingUIState.collectAsState()
+    val createUserUIState by settingViewModel.createUserUIState.collectAsState()
 
-    var invalidUsername by remember { mutableStateOf(false) }
-    var invalidName by remember { mutableStateOf(false) }
+    val invalidMap = remember {
+        mutableMapOf(
+            "username" to false,
+            "name" to false,
+            "boatname" to false,
+            "boatSpeed" to false,
+            "safetyHeight" to false,
+            "safetyDepth" to false
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -78,7 +91,7 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-
+                Text(text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge inn minst en båt for å lage en rute.")
                 Text(
                     text = "Bruker profil",
                     fontSize = 20.sp,
@@ -90,47 +103,32 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
 
                 // name
                 OutlinedTextField(
-                    value = settingUIState.name,
+                    value = createUserUIState.name,
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
-                        settingViewModel.updateName(it)
+                        settingViewModel.updateCreateName(it)
                     },
                     label = { Text(text = "Navn") },
-                    isError = invalidName,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    isError = invalidMap["name"] ?: false,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        invalidUsername = settingUIState.username.isBlank()
-                        invalidName = settingUIState.name.isBlank()
-                        if (!invalidUsername && !invalidName) {
-                            settingViewModel.addUser(
-                                username = settingUIState.username,
-                                name = settingUIState.name
-                            )
-                        }
+                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
                     })
                 )
 
                 // username
                 OutlinedTextField(
-                    value = settingUIState.username,
+                    value = createUserUIState.username,
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
-                        settingViewModel.updateUsername(it)
+                        settingViewModel.updateCreateUsername(it)
 
                     },
                     label = { Text(text = "Brukernavn") },
-                    isError = invalidUsername,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    isError = invalidMap["username"] ?: false,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        invalidUsername = settingUIState.username.isBlank()
-                        invalidName = settingUIState.name.isBlank()
-                        if (!invalidUsername && !invalidName) {
-                            settingViewModel.addUser(
-                                username = settingUIState.username,
-                                name = settingUIState.name
-                            )
-                            settingViewModel.selectUser(settingUIState.username)
-                        }
+                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
                     })
                 )
 
@@ -146,70 +144,188 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                 // boat
                 // name
                 OutlinedTextField(
-                    value = settingUIState.username,
+                    value = createUserUIState.boatname,
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
-                        settingViewModel.updateUsername(it)
+                        settingViewModel.updateBoatName(it)
 
                     },
-                    label = { Text(text = "Brukernavn") },
-                    isError = invalidUsername,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    label = { Text(text = "Båt navn") },
+                    isError = invalidMap["boatname"] ?: false,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        invalidUsername = settingUIState.username.isBlank()
-                        invalidName = settingUIState.name.isBlank()
-                        if (!invalidUsername && !invalidName) {
-                            settingViewModel.addUser(
-                                username = settingUIState.username,
-                                name = settingUIState.name
-                            )
-                            settingViewModel.selectUser(settingUIState.username)
-                        }
+                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
                     })
                 )
                 //size
-                Row() {
+                Text(text = "Trykk på et av ikonene for å få raske verdier")
+                Row(
+                    modifier = Modifier
+                        .padding(4.dp)
+                ) {
                     ElevatedCard(
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(72.dp)
+                            .padding(4.dp)
+                            .clickable {
+                                settingViewModel.updateBoatSpeed("21")
+                                settingViewModel.updateBoatHeight("2")
+                                settingViewModel.updateBoatDepth("1")
+                            }
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.boat_svgrepo_com),
-                            contentDescription = "",
+                        Column(
                             modifier = Modifier
-                                .size(32.dp)
-                        )
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(32.dp)
+                            )
+
+                        }
 
                     }
                     ElevatedCard(
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(72.dp)
+                            .padding(4.dp)
+                            .clickable {
+                                settingViewModel.updateBoatSpeed("14")
+                                settingViewModel.updateBoatHeight("4")
+                                settingViewModel.updateBoatDepth("2")
+                            }
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.boat_svgrepo_com),
-                            contentDescription = "",
+                        Column(
                             modifier = Modifier
-                                .size(48.dp)
-                        )
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(48.dp)
+                            )
+
+                        }
 
                     }
                     ElevatedCard(
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(72.dp)
+                            .padding(4.dp)
+                            .clickable {
+                                settingViewModel.updateBoatSpeed("7")
+                                settingViewModel.updateBoatDepth("3")
+                                settingViewModel.updateBoatHeight("6")
+                            }
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.boat_svgrepo_com),
-                            contentDescription = "",
+                        Column(
                             modifier = Modifier
-                                .size(64.dp)
-                        )
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(64.dp)
+                            )
+
+                        }
 
                     }
 
                 }
 
+                OutlinedTextField(
+                    value = createUserUIState.boatSpeed,
+                    onValueChange = {
+                        if (it.length > 20 && !it.isDigitsOnly()) return@OutlinedTextField
+                        settingViewModel.updateBoatSpeed(it)
+
+                    },
+                    label = { Text(text = "Båt hastighet") },
+                    isError = invalidMap["boatSpeed"] ?: false,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onDone = {
+                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                    })
+                )
+
+                OutlinedTextField(
+                    value = createUserUIState.safetyHeight,
+                    onValueChange = {
+                        if (it.length > 20 && !it.isDigitsOnly()) return@OutlinedTextField
+                        settingViewModel.updateBoatHeight(it)
+
+                    },
+                    label = { Text(text = "Sikkerhets høyde på båten") },
+                    isError = invalidMap["safetyHeight"] ?: false,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onDone = {
+                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                    })
+                )
+
+                OutlinedTextField(
+                    value = createUserUIState.safetyDepth,
+                    onValueChange = {
+                        if (it.length > 20 && it.isDigitsOnly()) return@OutlinedTextField
+                        settingViewModel.updateBoatDepth(it)
+
+                    },
+                    label = { Text(text = "Sikkerhets dybde på båten") },
+                    isError = invalidMap["safetyDepth"] ?: false,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                    })
+                )
+
 
             }
         }
+    }
+}
+
+fun checkInputs(
+    createUserUIState: CreateUserUIState,
+    invalidMap: MutableMap<String, Boolean>,
+    settingViewModel: SettingViewModel,
+    navController: NavController
+) {
+    val username = createUserUIState.username
+    val name = createUserUIState.name
+    val boatname = createUserUIState.boatname
+    val boatSpeed = createUserUIState.boatSpeed
+    val safetyDepth = createUserUIState.safetyDepth
+    val safetyHeight = createUserUIState.safetyHeight
+
+    invalidMap["username"] = username.isBlank()
+    invalidMap["name"] = name.isBlank()
+    invalidMap["boatname"] = boatname.isBlank()
+    invalidMap["boatSpeed"] = boatSpeed.isBlank()
+    invalidMap["safetyDepth"] = safetyDepth.isBlank()
+    invalidMap["safetyHeight"] = safetyHeight.isBlank()
+
+    Log.i("ASDASD", invalidMap.toString())
+    if (invalidMap.all { !it.value }) {
+        settingViewModel.addUser(
+            username = username,
+            name = name,
+            boatname = boatname,
+            boatSpeed = boatSpeed,
+            safetyDepth = safetyDepth,
+            safetyHeight = safetyHeight
+        )
+        settingViewModel.clearCreateProfile()
+        navController.popBackStack()
     }
 }

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.setting
 
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,18 @@ data class SettingUIState(
     val username: String = "",
     val name: String = "",
 
-    val boatProfiles: List<BoatProfile> = emptyList()
+    val boats: List<BoatProfile> = emptyList(),
+    val selectedBoat: BoatProfile? = null,
+)
+
+data class CreateUserUIState(
+    val name: String = "",
+    val username: String = "",
+
+    val boatname: String = "",
+    val safetyHeight: String = "",
+    val safetyDepth: String = "",
+    val boatSpeed: String = "",
 )
 
 @HiltViewModel
@@ -30,6 +42,9 @@ class SettingViewModel @Inject constructor(
 
     private val _settingUIState = MutableStateFlow(SettingUIState())
     val settingUIState: StateFlow<SettingUIState> = _settingUIState
+
+    private val _createUserUIState = MutableStateFlow(CreateUserUIState())
+    val createUserUIState: StateFlow<CreateUserUIState> = _createUserUIState
 
     init {
         updateSelectedUser()
@@ -47,6 +62,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+
     fun updateName(name: String) {
         viewModelScope.launch {
             _settingUIState.update {
@@ -56,6 +72,7 @@ class SettingViewModel @Inject constructor(
             }
         }
     }
+
 
     fun selectUser(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -75,9 +92,23 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun addUser(username: String, name: String) {
+    fun addUser(
+        username: String,
+        name: String,
+        boatname: String,
+        boatSpeed: String,
+        safetyDepth: String,
+        safetyHeight: String
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
-            profileRepository.addUserByUsername(username = username, name = name)
+            profileRepository.addUser(
+                username = username,
+                name = name,
+                boatname = boatname,
+                boatSpeed = boatSpeed,
+                safetyDepth = safetyDepth,
+                safetyHeight = safetyHeight
+            )
             updateSelectedUser()
         }
     }
@@ -97,6 +128,19 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun updateSelectedBoat(username: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val boat =
+                profileRepository.getSelectedBoatUsername(username = username)
+
+            _settingUIState.update {
+                it.copy(
+                    selectedBoat = boat
+                )
+            }
+        }
+    }
+
     fun unselectUser() {
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.unselectUser()
@@ -105,6 +149,7 @@ class SettingViewModel @Inject constructor(
                     selectedUser = null,
                     username = "",
                     name = "",
+                    boats = emptyList()
                 )
             }
         }
@@ -117,6 +162,91 @@ class SettingViewModel @Inject constructor(
                 it.copy(
                     users = users
                 )
+            }
+        }
+    }
+
+    fun getAllBoatsUsername() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val boats =
+                settingUIState.value.selectedUser?.let {
+                    profileRepository.getAllBoatsUsername(
+                        username = it.username
+                    )
+                } ?: emptyList()
+            _settingUIState.update {
+                it.copy(
+                    boats = boats
+                )
+            }
+        }
+    }
+
+    // create user UI state
+    fun updateCreateUsername(username: String) {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                it.copy(
+                    username = username
+                )
+            }
+        }
+    }
+
+    fun updateCreateName(name: String) {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                it.copy(
+                    name = name
+                )
+            }
+        }
+    }
+
+    fun updateBoatName(name: String) {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                it.copy(
+                    boatname = name
+                )
+            }
+        }
+    }
+
+    fun updateBoatHeight(height: String) {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                it.copy(
+                    safetyHeight = height
+                )
+            }
+        }
+    }
+
+    fun updateBoatDepth(depth: String) {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                it.copy(
+                    safetyDepth = depth
+                )
+            }
+        }
+    }
+
+    fun updateBoatSpeed(speed: String) {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                it.copy(
+                    boatSpeed = speed
+                )
+            }
+        }
+    }
+
+    fun clearCreateProfile() {
+        viewModelScope.launch {
+            _createUserUIState.update {
+                CreateUserUIState()
             }
         }
     }
