@@ -1,6 +1,5 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.setting
+package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,12 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.setting.ProfileRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
 import javax.inject.Inject
 
-data class SettingUIState(
+data class ProfileUIState(
     val users: List<UserProfile> = emptyList(),
 
     val selectedUser: UserProfile? = null,
@@ -36,12 +35,12 @@ data class CreateUserUIState(
 )
 
 @HiltViewModel
-class SettingViewModel @Inject constructor(
+class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
-    private val _settingUIState = MutableStateFlow(SettingUIState())
-    val settingUIState: StateFlow<SettingUIState> = _settingUIState
+    private val _profileUIState = MutableStateFlow(ProfileUIState())
+    val profileUIState: StateFlow<ProfileUIState> = _profileUIState
 
     private val _createUserUIState = MutableStateFlow(CreateUserUIState())
     val createUserUIState: StateFlow<CreateUserUIState> = _createUserUIState
@@ -54,7 +53,7 @@ class SettingViewModel @Inject constructor(
 
     fun updateUsername(username: String) {
         viewModelScope.launch {
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     username = username
                 )
@@ -65,7 +64,7 @@ class SettingViewModel @Inject constructor(
 
     fun updateName(name: String) {
         viewModelScope.launch {
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     name = name
                 )
@@ -81,10 +80,17 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun selectBoat(boatname: String, username: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            profileRepository.selectBoat(boatname = boatname, username = username)
+            getAllBoatsUsername()
+        }
+    }
+
     fun getUser(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = profileRepository.getUserByUsername(username = username)
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     selectedUser = user
                 )
@@ -117,7 +123,7 @@ class SettingViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val user = profileRepository.getSelectedUser()
             if (user != null) {
-                _settingUIState.update {
+                _profileUIState.update {
                     it.copy(
                         selectedUser = user,
                         username = user.username,
@@ -133,7 +139,7 @@ class SettingViewModel @Inject constructor(
             val boat =
                 profileRepository.getSelectedBoatUsername(username = username)
 
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     selectedBoat = boat
                 )
@@ -144,7 +150,7 @@ class SettingViewModel @Inject constructor(
     fun unselectUser() {
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.unselectUser()
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     selectedUser = null,
                     username = "",
@@ -158,7 +164,7 @@ class SettingViewModel @Inject constructor(
     fun getAllUsers() {
         viewModelScope.launch(Dispatchers.IO) {
             val users = profileRepository.getAllUsers()
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     users = users
                 )
@@ -169,16 +175,35 @@ class SettingViewModel @Inject constructor(
     fun getAllBoatsUsername() {
         viewModelScope.launch(Dispatchers.IO) {
             val boats =
-                settingUIState.value.selectedUser?.let {
+                profileUIState.value.selectedUser?.let {
                     profileRepository.getAllBoatsUsername(
                         username = it.username
                     )
                 } ?: emptyList()
-            _settingUIState.update {
+            _profileUIState.update {
                 it.copy(
                     boats = boats
                 )
             }
+        }
+    }
+
+    fun addBoat(
+        username: String,
+        boatname: String,
+        boatSpeed: String,
+        safetyDepth: String,
+        safetyHeight: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            profileRepository.addBoat(
+                username = username,
+                boatname = boatname,
+                boatSpeed = boatSpeed,
+                safetyDepth = safetyDepth,
+                safetyHeight = safetyHeight
+
+            )
         }
     }
 
@@ -250,5 +275,4 @@ class SettingViewModel @Inject constructor(
             }
         }
     }
-
 }

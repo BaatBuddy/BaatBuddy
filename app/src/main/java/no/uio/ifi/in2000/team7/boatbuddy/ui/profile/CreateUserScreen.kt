@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.setting
+package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,9 +29,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -39,14 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
-import com.mapbox.maps.extension.style.expressions.dsl.generated.all
 import no.uio.ifi.in2000.team7.boatbuddy.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavController) {
+fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavController) {
 
-    val createUserUIState by settingViewModel.createUserUIState.collectAsState()
+    val createUserUIState by profileViewModel.createUserUIState.collectAsState()
 
     val invalidMap = remember {
         mutableMapOf(
@@ -90,6 +89,7 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge inn minst en båt for å lage en rute.")
                 Text(
@@ -106,13 +106,18 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                     value = createUserUIState.name,
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
-                        settingViewModel.updateCreateName(it)
+                        profileViewModel.updateCreateName(it)
                     },
                     label = { Text(text = "Navn") },
                     isError = invalidMap["name"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                        checkInputsUserProfile(
+                            createUserUIState,
+                            invalidMap,
+                            profileViewModel,
+                            navController
+                        )
                     })
                 )
 
@@ -121,14 +126,19 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                     value = createUserUIState.username,
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
-                        settingViewModel.updateCreateUsername(it)
+                        profileViewModel.updateCreateUsername(it)
 
                     },
                     label = { Text(text = "Brukernavn") },
                     isError = invalidMap["username"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                        checkInputsUserProfile(
+                            createUserUIState,
+                            invalidMap,
+                            profileViewModel,
+                            navController
+                        )
                     })
                 )
 
@@ -147,14 +157,19 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                     value = createUserUIState.boatname,
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
-                        settingViewModel.updateBoatName(it)
+                        profileViewModel.updateBoatName(it)
 
                     },
                     label = { Text(text = "Båt navn") },
                     isError = invalidMap["boatname"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                        checkInputsUserProfile(
+                            createUserUIState,
+                            invalidMap,
+                            profileViewModel,
+                            navController
+                        )
                     })
                 )
                 //size
@@ -168,9 +183,9 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                             .size(72.dp)
                             .padding(4.dp)
                             .clickable {
-                                settingViewModel.updateBoatSpeed("21")
-                                settingViewModel.updateBoatHeight("2")
-                                settingViewModel.updateBoatDepth("1")
+                                profileViewModel.updateBoatSpeed("21")
+                                profileViewModel.updateBoatHeight("2")
+                                profileViewModel.updateBoatDepth("1")
                             }
                     ) {
                         Column(
@@ -194,9 +209,9 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                             .size(72.dp)
                             .padding(4.dp)
                             .clickable {
-                                settingViewModel.updateBoatSpeed("14")
-                                settingViewModel.updateBoatHeight("4")
-                                settingViewModel.updateBoatDepth("2")
+                                profileViewModel.updateBoatSpeed("14")
+                                profileViewModel.updateBoatHeight("4")
+                                profileViewModel.updateBoatDepth("2")
                             }
                     ) {
                         Column(
@@ -220,9 +235,9 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                             .size(72.dp)
                             .padding(4.dp)
                             .clickable {
-                                settingViewModel.updateBoatSpeed("7")
-                                settingViewModel.updateBoatDepth("3")
-                                settingViewModel.updateBoatHeight("6")
+                                profileViewModel.updateBoatSpeed("7")
+                                profileViewModel.updateBoatDepth("3")
+                                profileViewModel.updateBoatHeight("6")
                             }
                     ) {
                         Column(
@@ -248,14 +263,19 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                     value = createUserUIState.boatSpeed,
                     onValueChange = {
                         if (it.length > 20 && !it.isDigitsOnly()) return@OutlinedTextField
-                        settingViewModel.updateBoatSpeed(it)
+                        profileViewModel.updateBoatSpeed(it)
 
                     },
                     label = { Text(text = "Båt hastighet") },
                     isError = invalidMap["boatSpeed"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                        checkInputsUserProfile(
+                            createUserUIState,
+                            invalidMap,
+                            profileViewModel,
+                            navController
+                        )
                     })
                 )
 
@@ -263,14 +283,19 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                     value = createUserUIState.safetyHeight,
                     onValueChange = {
                         if (it.length > 20 && !it.isDigitsOnly()) return@OutlinedTextField
-                        settingViewModel.updateBoatHeight(it)
+                        profileViewModel.updateBoatHeight(it)
 
                     },
                     label = { Text(text = "Sikkerhets høyde på båten") },
                     isError = invalidMap["safetyHeight"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onDone = {
-                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                        checkInputsUserProfile(
+                            createUserUIState,
+                            invalidMap,
+                            profileViewModel,
+                            navController
+                        )
                     })
                 )
 
@@ -278,14 +303,19 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
                     value = createUserUIState.safetyDepth,
                     onValueChange = {
                         if (it.length > 20 && it.isDigitsOnly()) return@OutlinedTextField
-                        settingViewModel.updateBoatDepth(it)
+                        profileViewModel.updateBoatDepth(it)
 
                     },
                     label = { Text(text = "Sikkerhets dybde på båten") },
                     isError = invalidMap["safetyDepth"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        checkInputs(createUserUIState, invalidMap, settingViewModel, navController)
+                        checkInputsUserProfile(
+                            createUserUIState,
+                            invalidMap,
+                            profileViewModel,
+                            navController
+                        )
                     })
                 )
 
@@ -295,10 +325,10 @@ fun CreateUserScreen(settingViewModel: SettingViewModel, navController: NavContr
     }
 }
 
-fun checkInputs(
+fun checkInputsUserProfile(
     createUserUIState: CreateUserUIState,
     invalidMap: MutableMap<String, Boolean>,
-    settingViewModel: SettingViewModel,
+    profileViewModel: ProfileViewModel,
     navController: NavController
 ) {
     val username = createUserUIState.username
@@ -317,7 +347,7 @@ fun checkInputs(
 
     Log.i("ASDASD", invalidMap.toString())
     if (invalidMap.all { !it.value }) {
-        settingViewModel.addUser(
+        profileViewModel.addUser(
             username = username,
             name = name,
             boatname = boatname,
@@ -325,7 +355,7 @@ fun checkInputs(
             safetyDepth = safetyDepth,
             safetyHeight = safetyHeight
         )
-        settingViewModel.clearCreateProfile()
+        profileViewModel.clearCreateProfile()
         navController.popBackStack()
     }
 }

@@ -18,7 +18,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
 @AndroidEntryPoint
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     private val mapboxViewModel: MapboxViewModel by viewModels()
     private val metalertsViewModel: MetAlertsViewModel by viewModels()
     private val oceanforecastViewModel: OceanForecastViewModel by viewModels()
-    private val settingViewModel: SettingViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private val sunriseViewModel: SunriseViewModel by viewModels()
     private val userLocationViewModel: UserLocationViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     mapboxViewModel = mapboxViewModel,
                     oceanforecastViewModel = oceanforecastViewModel,
                     metalertsViewModel = metalertsViewModel,
-                    settingViewModel = settingViewModel,
+                    profileViewModel = profileViewModel,
                     sunriseViewModel = sunriseViewModel,
                     userLocationViewModel = userLocationViewModel,
                     homeViewModel = homeViewModel,

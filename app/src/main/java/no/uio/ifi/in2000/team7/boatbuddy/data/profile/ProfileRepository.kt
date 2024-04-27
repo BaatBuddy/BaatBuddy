@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.setting
+package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
 import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfileDao
@@ -41,8 +41,33 @@ class ProfileRepository @Inject constructor(
         )
     }
 
+    suspend fun addBoat(
+        username: String,
+        boatname: String,
+        boatSpeed: String,
+        safetyDepth: String,
+        safetyHeight: String,
+    ) {
+        boatDao.insertBoatProfile(
+            BoatProfile(
+                boatname = boatname,
+                username = username,
+                safetyDepth = safetyDepth,
+                safetyHeight = safetyHeight,
+                boatSpeed = boatSpeed,
+                isSelected = false
+
+            )
+        )
+    }
+
     suspend fun selectUser(username: String) {
         userDao.selectUser(username = username)
+    }
+
+    suspend fun selectBoat(boatname: String, username: String) {
+        unselectBoatUsername(username = username)
+        boatDao.selectBoatUsername(boatname = boatname, username = username)
     }
 
     suspend fun unselectUser() {

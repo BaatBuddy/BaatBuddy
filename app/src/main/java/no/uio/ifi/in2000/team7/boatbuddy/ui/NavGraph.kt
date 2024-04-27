@@ -19,9 +19,10 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.CreateUserScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.setting.SettingViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
 fun NavGraph(
@@ -30,7 +31,7 @@ fun NavGraph(
     mapboxViewModel: MapboxViewModel,
     metalertsViewModel: MetAlertsViewModel,
     oceanforecastViewModel: OceanForecastViewModel,
-    settingViewModel: SettingViewModel,
+    profileViewModel: ProfileViewModel,
     sunriseViewModel: SunriseViewModel,
     userLocationViewModel: UserLocationViewModel,
     homeViewModel: HomeViewModel
@@ -63,14 +64,20 @@ fun NavGraph(
                     )
                 }
                 composable(route = Screen.SettingScreen.route) {
-                    SettingScreen(
-                        settingViewModel = settingViewModel,
+                    ProfileScreen(
+                        profileViewModel = profileViewModel,
                         navController = navController
                     )
                 }
                 composable(route = "createuser") {
                     CreateUserScreen(
-                        settingViewModel = settingViewModel,
+                        profileViewModel = profileViewModel,
+                        navController = navController
+                    )
+                }
+                composable(route = "createboat") {
+                    CreateBoatScreen(
+                        profileViewModel = profileViewModel,
                         navController = navController
                     )
                 }
