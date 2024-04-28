@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.data
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.ui.graphics.ImageBitmap
 
 object WeatherConverter {
     // fetches drawable from a english alert event

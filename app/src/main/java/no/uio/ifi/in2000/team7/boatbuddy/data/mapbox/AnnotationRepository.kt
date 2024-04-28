@@ -30,9 +30,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
 
 class AnnotationRepository(
     private val mapView: MapView

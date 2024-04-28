@@ -1,9 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
-import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfile
-import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfileDao
-import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
-import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfileDao
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfileDao
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(

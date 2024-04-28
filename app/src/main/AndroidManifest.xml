@@ -25,7 +25,7 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
         <service
-            android:name=".background_location_tracking.LocationService"
+            android:name=".data.background_location_tracking.LocationService"
             android:foregroundServiceType="location"
             tools:ignore="ForegroundServicePermission" />
         <activity

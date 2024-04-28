@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking;
+package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking;
 
 import android.app.Application
 import android.app.NotificationChannel
@@ -6,16 +6,17 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 
-public class LocationApp: Application() {
+public class LocationApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "location",
                 "Location",
                 NotificationManager.IMPORTANCE_LOW
             )
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }

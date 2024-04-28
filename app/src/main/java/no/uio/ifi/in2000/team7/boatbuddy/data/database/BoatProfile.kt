@@ -1,7 +1,6 @@
-package no.uio.ifi.in2000.team7.boatbuddy.database
+package no.uio.ifi.in2000.team7.boatbuddy.data.database
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 //finne primary key og foreign key
 @Entity(primaryKeys = ["boatname", "username"])

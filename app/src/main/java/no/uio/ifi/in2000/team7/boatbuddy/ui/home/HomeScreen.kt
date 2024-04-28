@@ -41,7 +41,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 

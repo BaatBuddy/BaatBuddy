@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.database
+package no.uio.ifi.in2000.team7.boatbuddy.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

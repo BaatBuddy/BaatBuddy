@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfile
-import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 
 @Composable
 fun ProfileScreen(profileViewModel: ProfileViewModel, navController: NavController) {

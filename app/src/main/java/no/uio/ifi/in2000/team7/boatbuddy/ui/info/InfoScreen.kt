@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

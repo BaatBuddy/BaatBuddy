@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
-import no.uio.ifi.in2000.team7.boatbuddy.database.BoatProfile
-import no.uio.ifi.in2000.team7.boatbuddy.database.UserProfile
 import javax.inject.Inject
 
 data class ProfileUIState(
