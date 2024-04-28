@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import no.uio.ifi.in2000.team7.boatbuddy.ui.BottomBar
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
@@ -24,11 +27,12 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.TrackingScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.TrackingDialog
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
+    mainViewModel: MainViewModel,
     locationForecastViewModel: LocationForecastViewModel,
     mapboxViewModel: MapboxViewModel,
     metalertsViewModel: MetAlertsViewModel,
@@ -39,11 +43,21 @@ fun NavGraph(
     homeViewModel: HomeViewModel
 ) {
 
+    val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
+
     Scaffold(
-        bottomBar = { BottomBar(navController) }
+        bottomBar = {
+            BottomBar(
+                navController = navController,
+                mainViewModel = mainViewModel,
+            )
+        }
     ) { innerPadding ->
 
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+        ) {
             NavHost(
                 navController = navController,
                 startDestination = Screen.HomeScreen.route
@@ -83,16 +97,17 @@ fun NavGraph(
                         navController = navController
                     )
                 }
-                composable(route = Screen.TrackingScreen.route) {
-                    TrackingScreen(
-                        
-                    )
-                }
                 composable(route = Screen.RouteScreen.route) {
                     RouteScreen(
 
                     )
                 }
+            }
+            if (mainScreenUIState.showDialog) {
+                TrackingDialog(
+                    navController = navController,
+                    mainViewModel = mainViewModel
+                )
             }
         }
 

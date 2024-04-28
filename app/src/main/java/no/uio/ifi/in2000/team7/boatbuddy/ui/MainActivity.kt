@@ -25,8 +25,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
-    private val viewModel by viewModels<MainViewModel>()
 
+    private val mainViewModel: MainViewModel by viewModels()
     private val locationForecastViewModel: LocationForecastViewModel by viewModels()
     private val mapboxViewModel: MapboxViewModel by viewModels()
     private val metalertsViewModel: MetAlertsViewModel by viewModels()
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                !viewModel.isReady.value
+                !mainViewModel.mainScreenUIState.value.splashScreenReady
             }
         }
 
@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
                 NavGraph(
                     navController = navController,
+                    mainViewModel = mainViewModel,
                     locationForecastViewModel = locationForecastViewModel,
                     mapboxViewModel = mapboxViewModel,
                     oceanforecastViewModel = oceanforecastViewModel,

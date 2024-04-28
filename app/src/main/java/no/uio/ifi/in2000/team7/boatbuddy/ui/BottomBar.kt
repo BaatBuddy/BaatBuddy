@@ -13,7 +13,8 @@ import androidx.navigation.NavController
 
 @Composable
 fun BottomBar(
-    navController: NavController
+    navController: NavController,
+    mainViewModel: MainViewModel,
 ) {
     var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
@@ -31,7 +32,7 @@ fun BottomBar(
             NavigationBarItem(
                 selected = selectedIndex == index,
                 onClick = {
-                    if (selectedIndex != index) {
+                    if (selectedIndex != index && item != Screen.TrackingScreen) {
                         selectedIndex = index
 
                         navController.navigate(item.route) {
@@ -44,6 +45,8 @@ fun BottomBar(
                             restoreState = true
                         }
 
+                    } else if (item == Screen.TrackingScreen) {
+                        mainViewModel.showDialog()
                     }
 
                 },

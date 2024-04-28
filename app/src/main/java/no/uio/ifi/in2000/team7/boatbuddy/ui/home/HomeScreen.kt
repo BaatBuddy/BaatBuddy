@@ -3,6 +3,8 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -95,7 +97,19 @@ fun HomeScreen(
         NotificationOptInDialog(
             navigateToSettings = {
                 homeViewModel.navigateToNotificationSettings()
-                settingsActivityResultLauncher.launch(Intent(Settings.ACTION_SETTINGS))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
+                    )
+                } else {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                    )
+                }
             },
             onDismiss = { homeViewModel.showNotificationDialog.value = false }
         )
