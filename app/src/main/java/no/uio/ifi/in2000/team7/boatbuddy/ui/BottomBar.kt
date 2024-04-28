@@ -23,6 +23,7 @@ fun BottomBar(
         listOf(
             Screen.HomeScreen,
             Screen.InfoScreen,
+            Screen.TrackingScreen,
             Screen.RouteScreen,
             Screen.SettingScreen
             // add more screen if needed
