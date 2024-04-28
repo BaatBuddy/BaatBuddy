@@ -23,6 +23,7 @@ fun BottomBar(
         listOf(
             Screen.HomeScreen,
             Screen.InfoScreen,
+            Screen.RouteScreen,
             Screen.SettingScreen
             // add more screen if needed
         ).forEachIndexed { index, item ->

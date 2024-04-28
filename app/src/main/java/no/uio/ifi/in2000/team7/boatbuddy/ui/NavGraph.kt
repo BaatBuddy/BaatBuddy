@@ -23,6 +23,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.TrackingScreen
 
 @Composable
 fun NavGraph(
@@ -79,6 +80,14 @@ fun NavGraph(
                     CreateBoatScreen(
                         profileViewModel = profileViewModel,
                         navController = navController
+                    )
+                }
+                composable(route = Screen.TrackingScreen.route) {
+
+                }
+                composable(route = Screen.RouteScreen.route) {
+                    TrackingScreen(
+
                     )
                 }
             }
