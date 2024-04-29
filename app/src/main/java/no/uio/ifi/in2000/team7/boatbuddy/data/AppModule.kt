@@ -75,5 +75,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchRouteRepository(db: ProfileDatabase): RouteRepository = RouteRepository(db.routeDao())
+    fun fetchRouteRepository(
+        db: ProfileDatabase,
+        @ApplicationContext context: Context
+    ): RouteRepository = RouteRepository(context = context, routeDao = db.routeDao())
 }

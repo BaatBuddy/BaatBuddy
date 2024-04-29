@@ -3,13 +3,19 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 import android.content.Context
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
+import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
+import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.CoordinateBounds
+import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.ImageHolder
 import com.mapbox.maps.MapView
 import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.PuckBearing
+import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
@@ -141,7 +147,7 @@ class MapboxRepository(
             }
         }
     }
-    
+
     fun startFollowUserOnMap() {
         with(mapView.location) {
             addOnIndicatorPositionChangedListener(
@@ -183,7 +189,7 @@ class MapboxRepository(
         annotationRepository.toggleAlertVisibility()
     }
 
-    suspend fun createLinePath(
+    fun createLinePath(
         points: List<Point>
     ) {
         annotationRepository.addLineToMap(points = points)
@@ -216,6 +222,32 @@ class MapboxRepository(
         }
         return null
 
+    }
+
+    fun fitPolylineToScreen(points: List<Point>): CameraOptions {
+        createLinePath(points = points)
+
+        val southwest =
+            Point.fromLngLat(points.minOf { it.longitude() }, points.minOf { it.latitude() })
+
+        val northeast =
+            Point.fromLngLat(points.maxOf { it.longitude() }, points.maxOf { it.latitude() })
+
+        val cameraOptions = mapView.mapboxMap.cameraForCoordinateBounds(
+            bounds = CoordinateBounds(southwest, northeast),
+            boundsPadding = EdgeInsets(-100.0, -100.0, -100.0, -100.0)
+        )
+
+        val testCameraOptions = CameraOptions.Builder()
+            .zoom(cameraOptions.zoom?.plus(2.0))
+            .center(cameraOptions.center)
+            .build()
+
+        mapView.mapboxMap.easeTo(
+            cameraOptions = testCameraOptions
+        )
+
+        return cameraOptions
     }
 
 

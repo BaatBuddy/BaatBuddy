@@ -28,7 +28,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.StopTrackingDialog
 

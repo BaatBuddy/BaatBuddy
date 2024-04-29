@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
@@ -14,6 +15,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import javax.inject.Inject
 
 data class ProfileUIState(
@@ -25,8 +27,6 @@ data class ProfileUIState(
 
     val boats: List<BoatProfile> = emptyList(),
     val selectedBoat: BoatProfile? = null,
-
-    val routes: List<Route> = emptyList(),
 )
 
 data class CreateUserUIState(
@@ -37,6 +37,10 @@ data class CreateUserUIState(
     val safetyHeight: String = "",
     val safetyDepth: String = "",
     val boatSpeed: String = "",
+)
+
+data class RouteScreenUIState(
+    val routeMaps: List<RouteMap> = emptyList()
 )
 
 @HiltViewModel
@@ -50,6 +54,9 @@ class ProfileViewModel @Inject constructor(
 
     private val _createUserUIState = MutableStateFlow(CreateUserUIState())
     val createUserUIState: StateFlow<CreateUserUIState> = _createUserUIState
+
+    private val _routeScreenUIState = MutableStateFlow(RouteScreenUIState())
+    val routeScreenUIState: StateFlow<RouteScreenUIState> = _routeScreenUIState
 
     init {
         updateSelectedUser()
@@ -166,9 +173,9 @@ class ProfileViewModel @Inject constructor(
                 )
             } ?: emptyList()
 
-            _profileUIState.update {
+            _routeScreenUIState.update {
                 it.copy(
-                    routes = routes
+                    routeMaps = routes
                 )
             }
         }

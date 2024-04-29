@@ -1,13 +1,19 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
+import android.content.Context
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import dagger.hilt.android.qualifiers.ApplicationContext
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.RouteDao
+import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import javax.inject.Inject
 
 
 class RouteRepository @Inject constructor(
-    val routeDao: RouteDao
+    private val routeDao: RouteDao,
+    @ApplicationContext val context: Context
 ) {
 
 
@@ -34,7 +40,21 @@ class RouteRepository @Inject constructor(
         )
     }
 
-    suspend fun getAllRoutesUsername(username: String): List<Route> {
-        return routeDao.getAllRoutesUsername(username = username)
+    suspend fun getAllRoutesUsername(username: String): List<RouteMap> {
+        return routeDao.getAllRoutesUsername(username = username).map {
+            val mapRepo = MapboxRepository()
+            val cameraOptions = CameraOptions.Builder()
+                .build()
+            val mapView = mapRepo.createMap(
+                context = context,
+                cameraOptions = cameraOptions,
+                style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg",
+            )
+            mapRepo.fitPolylineToScreen(it.route)
+            RouteMap(
+                route = it,
+                mapView = mapView
+            )
+        }
     }
 }
