@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.tracking
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,6 +16,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,14 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
 fun StopTrackingDialog(
     navController: NavController,
     mainViewModel: MainViewModel,
+    profileViewModel: ProfileViewModel,
 ) {
     Dialog(
         onDismissRequest = {
@@ -37,6 +43,8 @@ fun StopTrackingDialog(
         },
     ) {
         val context = LocalContext.current
+
+        val profileUIState by profileViewModel.profileUIState.collectAsState()
 
         // TODO MUST BE FIXED, TOO BIG BUTTON
         Card {
@@ -56,6 +64,21 @@ fun StopTrackingDialog(
                         mainViewModel.hideDialog()
                         mainViewModel.stopFollowUserOnMap()
 
+                        Log.i("ASDASD", "GIDUYGIUWEGIU")
+                        Log.i(
+                            "ASDASD",
+                            profileUIState.selectedUser.toString() + "\n" + profileUIState.selectedBoat.toString()
+                        )
+                        if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null) {
+                            Log.i("ASDASD", "GIDUYGIUWEGIU")
+
+                            profileViewModel.addRouteToProfile(
+                                username = profileUIState.selectedUser!!.username,
+                                boatname = profileUIState.selectedBoat!!.boatname,
+                                route = AlertNotificationCache.points
+                            )
+                            AlertNotificationCache.points = mutableListOf()
+                        }
 
                         Intent(context, LocationService::class.java).apply {
                             action = LocationService.ACTION_STOP

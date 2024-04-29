@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
@@ -55,6 +56,8 @@ fun StartTrackingDialog(
 
                         mainViewModel.hideDialog()
                         mainViewModel.startFollowUserOnMap()
+
+                        AlertNotificationCache.points = mutableListOf()
 
                         Intent(context, LocationService::class.java).apply {
                             action = LocationService.ACTION_START

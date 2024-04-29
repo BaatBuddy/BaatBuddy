@@ -104,7 +104,7 @@ fun NavGraph(
                 }
                 composable(route = Screen.RouteScreen.route) {
                     RouteScreen(
-
+                        profileViewModel = profileViewModel
                     )
                 }
             }
@@ -116,7 +116,8 @@ fun NavGraph(
             } else if (mainScreenUIState.showDialog == ShowFinishDialog) {
                 StopTrackingDialog(
                     navController = navController,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    profileViewModel = profileViewModel,
                 )
             }
         }

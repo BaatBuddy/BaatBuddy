@@ -7,5 +7,5 @@ object AlertNotificationCache {
     var featureData: List<FeatureData> = emptyList()
     var enteredAlerts: MutableSet<String> = mutableSetOf() // contains events
 
-    val points: MutableList<Point> = mutableListOf()
+    var points: MutableList<Point> = mutableListOf()
 }

@@ -4,11 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [UserProfile::class, BoatProfile::class, Route::class], version = 5)
+@Database(entities = [UserProfile::class, BoatProfile::class, Route::class], version = 6)
 @TypeConverters(PointConverter::class)
 abstract class ProfileDatabase : RoomDatabase() {
     abstract fun userDao(): UserProfileDao
     abstract fun boatDao(): BoatProfileDao
-
     abstract fun routeDao(): RouteDao
 }

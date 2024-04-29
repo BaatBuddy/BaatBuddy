@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,8 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import javax.inject.Inject
 
 data class ProfileUIState(
@@ -22,6 +25,8 @@ data class ProfileUIState(
 
     val boats: List<BoatProfile> = emptyList(),
     val selectedBoat: BoatProfile? = null,
+
+    val routes: List<Route> = emptyList(),
 )
 
 data class CreateUserUIState(
@@ -36,7 +41,8 @@ data class CreateUserUIState(
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val routeRepository: RouteRepository
 ) : ViewModel() {
 
     private val _profileUIState = MutableStateFlow(ProfileUIState())
@@ -130,18 +136,39 @@ class ProfileViewModel @Inject constructor(
                         name = user.name
                     )
                 }
+                updateSelectedBoat()
             }
         }
     }
 
-    fun updateSelectedBoat(username: String) {
+    fun updateSelectedBoat() {
         viewModelScope.launch(Dispatchers.IO) {
             val boat =
-                profileRepository.getSelectedBoatUsername(username = username)
+                _profileUIState.value.selectedUser?.let {
+                    profileRepository.getSelectedBoatUsername(
+                        it.username
+                    )
+                }
 
             _profileUIState.update {
                 it.copy(
                     selectedBoat = boat
+                )
+            }
+        }
+    }
+
+    fun updateRoutes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val routes = _profileUIState.value.selectedUser?.let {
+                routeRepository.getAllRoutesUsername(
+                    username = it.username
+                )
+            } ?: emptyList()
+
+            _profileUIState.update {
+                it.copy(
+                    routes = routes
                 )
             }
         }
@@ -275,4 +302,23 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    // route
+
+    fun addRouteToProfile(
+        username: String,
+        boatname: String,
+        route: List<Point>,
+        routename: String
+    ) {
+        viewModelScope.launch {
+            routeRepository.addRouteUsername(
+                username = username,
+                boatname = boatname,
+                route = route,
+                routename = routename,
+            )
+        }
+    }
+
 }

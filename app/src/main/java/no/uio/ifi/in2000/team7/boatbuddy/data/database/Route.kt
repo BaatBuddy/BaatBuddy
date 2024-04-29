@@ -8,6 +8,7 @@ data class Route(
     val username: String,
     val boatname: String,
     val routeID: Int,
+    val routename: String,
     val route: List<Point>,
     val start: String,
     val finish: String,
