@@ -4,18 +4,28 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class HomeScreenUIState(
+    val showNotificationDialog: Boolean = false,
+)
+
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
-    val showNotificationDialog = mutableStateOf(false)
+
+    private val _homeScreenUIState: MutableStateFlow<HomeScreenUIState> =
+        MutableStateFlow(HomeScreenUIState())
+    val homeScreenUIState: StateFlow<HomeScreenUIState> = _homeScreenUIState
 
     private val preferences =
         getApplication<Application>().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE)
@@ -24,7 +34,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val isFirstStart = preferences.getBoolean("firstStart", true)
             if (isFirstStart) {
-                showNotificationDialog.value = true
+                _homeScreenUIState.update {
+                    it.copy(
+                        showNotificationDialog = true
+                    )
+                }
                 with(preferences.edit()) {
                     putBoolean("firstStart", false)
                     apply()
@@ -33,6 +47,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // takes user to settings and depending on the API version which screen in the settings
     fun navigateToNotificationSettings() {
         val intent = Intent().apply {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -46,5 +61,15 @@ class HomeViewModel @Inject constructor(
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         getApplication<Application>().startActivity(intent)
+    }
+    
+    fun hideNotificationDialog() {
+        viewModelScope.launch {
+            _homeScreenUIState.update {
+                it.copy(
+                    showNotificationDialog = false
+                )
+            }
+        }
     }
 }

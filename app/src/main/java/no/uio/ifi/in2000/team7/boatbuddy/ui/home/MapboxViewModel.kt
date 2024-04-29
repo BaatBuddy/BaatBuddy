@@ -35,7 +35,7 @@ data class MapboxUIState(
 
 @HiltViewModel
 class MapboxViewModel @Inject constructor(
-    private val repository: MapboxRepository,
+    private val mapboxRepository: MapboxRepository,
     private val weatherCalculatorRepository: WeatherCalculatorRepository
 ) : ViewModel() {
 
@@ -58,7 +58,11 @@ class MapboxViewModel @Inject constructor(
 
         // mapview setup
         val mapView =
-            repository.createMap(context = context, cameraOptions = cameraOptions, style = style)
+            mapboxRepository.createMap(
+                context = context,
+                cameraOptions = cameraOptions,
+                style = style
+            )
 
         _mapboxUIState = MutableStateFlow(
             MapboxUIState(
@@ -73,7 +77,7 @@ class MapboxViewModel @Inject constructor(
 
     fun toggleAlertVisibility() {
         viewModelScope.launch {
-            repository.toggleAlertVisibility()
+            mapboxRepository.toggleAlertVisibility()
             _mapboxUIState.update {
                 it.copy(
                     alertVisible = !it.alertVisible
@@ -97,7 +101,7 @@ class MapboxViewModel @Inject constructor(
     ) {
         updateCameraOptions(cameraOptions = cameraOptions)
         viewModelScope.launch {
-            repository.panToPoint(cameraOptions = cameraOptions)
+            mapboxRepository.panToPoint(cameraOptions = cameraOptions)
         }
     }
 
@@ -105,7 +109,7 @@ class MapboxViewModel @Inject constructor(
         style: String
     ) {
         viewModelScope.launch {
-            repository.changeStyle(
+            mapboxRepository.changeStyle(
                 style = style
             )
             _mapboxUIState.update {
@@ -120,7 +124,7 @@ class MapboxViewModel @Inject constructor(
         points: List<Point>
     ) {
         viewModelScope.launch {
-            repository.createLinePath(points = points)
+            mapboxRepository.createLinePath(points = points)
         }
     }
 
@@ -150,7 +154,7 @@ class MapboxViewModel @Inject constructor(
 
     fun toggleRouteClicking() {
         viewModelScope.launch {
-            repository.toggleRouteClicking()
+            mapboxRepository.toggleRouteClicking()
         }
     }
 
@@ -158,7 +162,7 @@ class MapboxViewModel @Inject constructor(
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(
-                    routePoints = repository.getRoutePoints()
+                    routePoints = mapboxRepository.getRoutePoints()
                 )
             }
         }
@@ -167,7 +171,7 @@ class MapboxViewModel @Inject constructor(
     fun generateRoute() {
         updateRoute()
         viewModelScope.launch {
-            val route = repository.generateRoute()
+            val route = mapboxRepository.generateRoute()
             _mapboxUIState.update {
                 it.copy(
                     routePath = route

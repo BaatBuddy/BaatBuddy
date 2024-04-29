@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
+package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.app.Activity
 import android.content.Intent
@@ -21,6 +21,7 @@ import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.ImageHolder
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.Style
@@ -32,6 +33,7 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.AutoRouteViewModel
@@ -63,16 +65,6 @@ fun MBScreen(
             .build(),
         style = "mapbox://styles/mafredri/cluwbjt8q000q01quhopi4g0m"
     )
-
-
-    val boatSpeed = "5" // knop
-    val boatHeight = "5"
-    val safetyDepth = "5"
-    val course = listOf<Point>(
-        Point.fromLngLat(10.707517, 59.879888),
-        Point.fromLngLat(8.788321, 58.431549)
-    )
-    // autorouteViewModel.initialize(course, boatSpeed, boatHeight, safetyDepth)
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
@@ -231,8 +223,8 @@ class LocationTrackingActivity : AppCompatActivity() {
             puckBearingEnabled = true
             enabled = true
             locationPuck = LocationPuck2D(
-//bearingImage = ImageHolder.from(R.drawable.mapbox_user_puck_icon),
-//shadowImage = ImageHolder.from(R.drawable.mapbox_user_icon_shadow),
+                bearingImage = ImageHolder.from(R.drawable.boat_svgrepo_com),
+                shadowImage = ImageHolder.from(R.drawable.ic_map_pin),
                 scaleExpression = interpolate {
                     linear()
                     zoom()
@@ -264,6 +256,7 @@ class LocationTrackingActivity : AppCompatActivity() {
         mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
+    // TODO add this to repo
     override fun onDestroy() {
         super.onDestroy()
         mapView.location

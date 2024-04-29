@@ -38,4 +38,7 @@ interface UserProfileDao {
     @Query("UPDATE userprofile SET isSelected = false")
     fun unselectUser()
 
+    @Query("UPDATE userprofile SET isTracking = true WHERE username LIKE :username")
+    fun startTrackingUsername(username: String)
+
 }

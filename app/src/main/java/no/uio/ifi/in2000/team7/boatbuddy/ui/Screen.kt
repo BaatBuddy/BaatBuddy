@@ -10,13 +10,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 
 sealed class Screen(val route: String, val icon: ImageVector, val label: String) {
-    object HomeScreen : Screen(route = "HomeScreen", icon = Icons.Filled.Home, label = "Hjem")
-    object InfoScreen : Screen(route = "InfoScreen", icon = Icons.Filled.Info, label = "Info")
+    object HomeScreen : Screen(route = "homescreen", icon = Icons.Filled.Home, label = "Hjem")
+    object InfoScreen : Screen(route = "infoscreen", icon = Icons.Filled.Info, label = "Info")
     object TrackingScreen :
-        Screen(route = "TrackingScreen", icon = Icons.Filled.PlayArrow, label = "Spor")
+        Screen(route = "trackingscreen", icon = Icons.Filled.PlayArrow, label = "Spor")
 
-    object RouteScreen : Screen(route = "RouteScreen", icon = Icons.Filled.List, label = "Ruter")
+    object RouteScreen : Screen(route = "routescreen", icon = Icons.Filled.List, label = "Ruter")
     object SettingScreen :
-        Screen(route = "ProfileScreen", icon = Icons.Filled.Person, label = "Profil")
+        Screen(route = "profilescreen", icon = Icons.Filled.Person, label = "Profil")
 
 }

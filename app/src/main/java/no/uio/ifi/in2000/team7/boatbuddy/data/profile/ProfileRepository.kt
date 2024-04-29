@@ -26,7 +26,8 @@ class ProfileRepository @Inject constructor(
             UserProfile(
                 username = username,
                 name = name,
-                isSelected = true
+                isSelected = true,
+                isTracking = false
             )
         )
         boatDao.insertBoatProfile(
@@ -96,5 +97,9 @@ class ProfileRepository @Inject constructor(
 
     suspend fun unselectBoatUsername(username: String) {
         boatDao.unselectBoatUsername(username = username)
+    }
+
+    suspend fun startTrackingUsername(username: String) {
+        userDao
     }
 }

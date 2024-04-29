@@ -55,7 +55,7 @@ fun HomeScreen(
     mapboxViewModel: MapboxViewModel,
     userLocationViewModel: UserLocationViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
 ) {
 
     val context = LocalContext.current
@@ -75,6 +75,7 @@ fun HomeScreen(
 
     val metAlertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
 
     // bottom sheet setup
@@ -93,7 +94,7 @@ fun HomeScreen(
     }
 
     // Show the dialog if required
-    if (homeViewModel.showNotificationDialog.value) {
+    if (homeScreenUIState.showNotificationDialog) {
         NotificationOptInDialog(
             navigateToSettings = {
                 homeViewModel.navigateToNotificationSettings()
@@ -111,7 +112,7 @@ fun HomeScreen(
                     )
                 }
             },
-            onDismiss = { homeViewModel.showNotificationDialog.value = false }
+            onDismiss = { homeViewModel.hideNotificationDialog() }
         )
     }
 
@@ -239,10 +240,7 @@ fun HomeScreen(
 
                     Row {
                         Button(onClick = {
-                            Intent(context, locationService::class.java).apply {
-                                action = LocationService.ACTION_START
-                                context.startService(this)
-                            }
+
 
                         }
                         ) {

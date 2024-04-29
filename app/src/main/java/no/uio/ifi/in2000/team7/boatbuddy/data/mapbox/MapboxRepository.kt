@@ -5,10 +5,19 @@ import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.ImageHolder
 import com.mapbox.maps.MapView
+import com.mapbox.maps.extension.style.expressions.generated.Expression
+import com.mapbox.maps.plugin.LocationPuck2D
+import com.mapbox.maps.plugin.PuckBearing
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
+import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
+import com.mapbox.maps.plugin.locationcomponent.location
+import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
 
 
@@ -16,13 +25,48 @@ interface MapboxRepo {
     fun createMap(context: Context, cameraOptions: CameraOptions, style: String): MapView
 }
 
+
 class MapboxRepository(
 ) : MapboxRepo {
 
     private lateinit var annotationRepository: AnnotationRepository
     private val autorouteRepository = AutorouteRepository()
-    private lateinit var routeRepository: RouteRepository
     private lateinit var mapView: MapView
+    private lateinit var context: Context
+
+
+    // user tracking on map
+    private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
+        mapView.mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .bearing(it)
+                .build()
+        )
+    }
+
+    private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
+        mapView.mapboxMap.setCamera(
+            CameraOptions.Builder()
+                .zoom(14.0)
+                .center(it)
+                .build()
+        )
+        mapView.gestures.focalPoint = mapView.mapboxMap.pixelForCoordinate(it)
+    }
+
+    private val onMoveListener = object : OnMoveListener {
+        override fun onMoveBegin(detector: MoveGestureDetector) {
+            onCameraTrackingDismissed()
+        }
+
+        override fun onMove(detector: MoveGestureDetector): Boolean {
+            return false
+        }
+
+        override fun onMoveEnd(detector: MoveGestureDetector) {
+
+        }
+    }
 
     override fun createMap(context: Context, cameraOptions: CameraOptions, style: String): MapView {
 
@@ -31,6 +75,7 @@ class MapboxRepository(
             "pk.eyJ1IjoibWFmcmVkcmkiLCJhIjoiY2x1MWIxZ3Q2MGtlZDJrbnhmdTZ0NHZtaSJ9.B6Iawg2wbjSnGqMEOEtxvQ"
 
         mapView = MapView(context)
+        this.context = mapView.context
         annotationRepository = AnnotationRepository(mapView)
         onMapReady(style = style, cameraOptions = cameraOptions)
 
@@ -45,61 +90,9 @@ class MapboxRepository(
 
             mapboxMap.setCamera(cameraOptions)
 
-            /*val annotationApi = this.annotations
-            val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
-            var pointsInRoute: MutableList<Point> = mutableListOf()
-
-            mapboxMap.addOnMapClickListener {
-                val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
-                    .withPoint(it)
-                    .withCircleRadius(8.0)
-                    .withCircleColor("#ee4e8b")
-                    .withCircleStrokeWidth(2.0)
-                    .withCircleStrokeColor("#ffffff")
-                circleAnnotationManager.create(circleAnnotationOptions)
-
-                if (pointsInRoute.size < 10) {
-                    pointsInRoute.add(it)
-
-                    val coordinatesInRoute =
-                        pointsInRoute.joinToString(separator = " , ") {
-                            "(${it.latitude()}, ${it.longitude()})"
-                        }
-                    Log.d("Points in route", coordinatesInRoute)
-                }
-
-                true
-            }*/
-
-            /*val annotationApi = this.annotations
-            val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-            var pointsInRoute: MutableList<Point> = mutableListOf()
-
-            mapboxMap.addOnMapClickListener {
-
-                val pointAnnotationOptions = PointAnnotationOptions()
-                    .withPoint(it)
-                pointAnnotationManager.create(pointAnnotationOptions)
-
-                // Ruten kan ikke inneholde mer enn 10 punkter
-                if (pointsInRoute.size < 10) {
-                    pointsInRoute.add(it)
-
-                    val coordinatesInRoute =
-                        pointsInRoute.joinToString(separator = " , ") {
-                            "(${it.latitude()}, ${it.longitude()})"
-                        }
-                    Log.d("Points in route", "$coordinatesInRoute")
-                }
-
-                true
-
-            }*/
-
             mapboxMap.addOnMoveListener(
                 object : OnMoveListener {
                     override fun onMoveBegin(detector: MoveGestureDetector) {
-
                     }
 
                     override fun onMove(detector: MoveGestureDetector): Boolean {
@@ -115,11 +108,65 @@ class MapboxRepository(
             // improve map later
             // eventually add layers with different functionality
             mapboxMap.loadStyle(style) {
-
+                initLocationComponent()
+                setupGesturesListener()
             }
 
 
         }
+    }
+
+    private fun initLocationComponent() {
+        with(mapView.location) {
+            updateSettings {
+                puckBearing = PuckBearing.COURSE
+                puckBearingEnabled = true
+                enabled = true
+                locationPuck = LocationPuck2D(
+                    bearingImage = ImageHolder.from(R.drawable.map_2d_pucker_boat),
+                    shadowImage = ImageHolder.from(R.drawable.map_2d_pucker_shadow),
+                    scaleExpression = Expression.interpolate {
+                        linear()
+                        zoom()
+                        stop {
+                            literal(0.0)
+                            literal(0.6)
+                        }
+                        stop {
+                            literal(20.0)
+                            literal(1.0)
+                        }
+                    }.toJson()
+                )
+            }
+        }
+    }
+    
+    fun startFollowUserOnMap() {
+        with(mapView.location) {
+            addOnIndicatorPositionChangedListener(
+                onIndicatorPositionChangedListener
+            )
+            addOnIndicatorBearingChangedListener(
+                onIndicatorBearingChangedListener
+            )
+        }
+    }
+
+    fun stopFollowUserOnMap() {
+        onCameraTrackingDismissed()
+    }
+
+    private fun setupGesturesListener() {
+        mapView.gestures.addOnMoveListener(onMoveListener)
+    }
+
+    private fun onCameraTrackingDismissed() {
+        with(mapView.location) {
+            removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+            removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        }
+        mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
     suspend fun panToPoint(cameraOptions: CameraOptions) {
@@ -170,5 +217,6 @@ class MapboxRepository(
         return null
 
     }
+
 
 }

@@ -14,6 +14,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteReposito
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import javax.inject.Singleton
@@ -36,49 +37,43 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchProfileRepository(db: ProfileDatabase): ProfileRepository {
-        return ProfileRepository(db.userDao(), db.boatDao())
-    }
+    fun fetchRouteDao(db: ProfileDatabase) = db.routeDao()
 
     @Singleton
     @Provides
-    fun fetchAutorouteRepository(db: ProfileDatabase): AutorouteRepository {
-        return AutorouteRepository()
-    }
+    fun fetchProfileRepository(db: ProfileDatabase): ProfileRepository =
+        ProfileRepository(db.userDao(), db.boatDao())
 
     @Singleton
     @Provides
-    fun fetchLocationForecastRepository(): LocationForecastRepository {
-        return LocationForecastRepository()
-    }
+    fun fetchAutorouteRepository(): AutorouteRepository = AutorouteRepository()
 
     @Singleton
     @Provides
-    fun fetchWeatherCalculatorRepository(): WeatherCalculatorRepository {
-        return WeatherCalculatorRepository()
-    }
+    fun fetchLocationForecastRepository(): LocationForecastRepository = LocationForecastRepository()
 
     @Singleton
     @Provides
-    fun fetchMapboxRepository(): MapboxRepository {
-        return MapboxRepository()
-    }
+    fun fetchWeatherCalculatorRepository(): WeatherCalculatorRepository =
+        WeatherCalculatorRepository()
 
     @Singleton
     @Provides
-    fun fetchOceanForecastRepository(): OceanForecastRepository {
-        return OceanForecastRepository()
-    }
+    fun fetchMapboxRepository(): MapboxRepository = MapboxRepository()
 
     @Singleton
     @Provides
-    fun fetchSunriseRepository(): SunriseRepository {
-        return SunriseRepository()
-    }
+    fun fetchOceanForecastRepository(): OceanForecastRepository = OceanForecastRepository()
 
     @Singleton
     @Provides
-    fun fetchMetAlertsRepository(): MetAlertsRepository {
-        return MetAlertsRepository()
-    }
+    fun fetchSunriseRepository(): SunriseRepository = SunriseRepository()
+
+    @Singleton
+    @Provides
+    fun fetchMetAlertsRepository(): MetAlertsRepository = MetAlertsRepository()
+
+    @Singleton
+    @Provides
+    fun fetchRouteRepository(db: ProfileDatabase): RouteRepository = RouteRepository(db.routeDao())
 }

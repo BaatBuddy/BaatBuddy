@@ -9,6 +9,7 @@ data class UserProfile(
     val username: String,
     val name: String,
     val isSelected: Boolean,
+    val isTracking: Boolean,
 )
 
 

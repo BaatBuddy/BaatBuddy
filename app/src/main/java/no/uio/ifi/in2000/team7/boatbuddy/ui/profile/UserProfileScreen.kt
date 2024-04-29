@@ -42,6 +42,7 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                 actions = {
                     IconButton(
                         onClick = {
+                            // TODO prevent this if the user is currently tracking a route
                             profileViewModel.unselectUser()
                         }
                     ) {
