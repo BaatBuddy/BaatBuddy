@@ -71,7 +71,7 @@ fun HomeScreen(
             .bearing(0.0)
             .pitch(0.0)
             .build(),
-        style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg"
+        style = "mapbox://styles/suio/clvgn1b0y018901qv7ht41s71"
     )
 
     val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
