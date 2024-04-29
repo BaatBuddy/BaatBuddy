@@ -4,6 +4,8 @@ import android.content.Context
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.RouteDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
@@ -42,19 +44,19 @@ class RouteRepository @Inject constructor(
 
     suspend fun getAllRoutesUsername(username: String): List<RouteMap> {
         return routeDao.getAllRoutesUsername(username = username).map {
-            val mapRepo = MapboxRepository()
-            val cameraOptions = CameraOptions.Builder()
-                .build()
-            val mapView = mapRepo.createMap(
-                context = context,
-                cameraOptions = cameraOptions,
-                style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg",
-            )
-            mapRepo.fitPolylineToScreen(it.route)
-            RouteMap(
-                route = it,
-                mapView = mapView
-            )
+            withContext(Dispatchers.Main) {
+                val mapRepo = MapboxRepository()
+                val cameraOptions = CameraOptions.Builder().build()
+
+                val mapView = mapRepo.createMap(
+                    context = context,
+                    cameraOptions = cameraOptions,
+                    style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg"
+                )
+                mapRepo.fitPolylineToScreen(it.route)
+                RouteMap(route = it, mapView = mapView)
+            }
+
         }
     }
 }
