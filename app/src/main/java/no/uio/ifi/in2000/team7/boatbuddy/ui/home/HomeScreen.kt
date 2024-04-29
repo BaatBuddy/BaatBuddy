@@ -87,7 +87,6 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheetButton by remember { mutableStateOf(true) }
-    var drawRoute by remember { mutableStateOf(true) }
 
     // notification setup
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
@@ -213,15 +212,6 @@ fun HomeScreen(
                                     mapboxViewModel.refreshRoute()
                                 }
                                 mapboxViewModel.toggleRouteClicking()
-                                /*if (!generateRoute) { // Avbryt
-                                    //mapboxViewModel.refreshRoute() // Se om rekkefølgen har noe å si, se nærmere på generateRoute
-                                    generateRoute = true
-                                    // Hvis en rute er generert, må den refreshes -- vurder boolean-check
-                                    mapboxViewModel.refreshRoute()
-                                } else { // Tegn rute
-                                    mapboxViewModel.refreshRoute()
-                                    generateRoute = false
-                                }*/
                             },
                             modifier = Modifier
                                 .padding(4.dp)

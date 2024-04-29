@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -51,9 +50,6 @@ class AnnotationRepository(
 
     private var isSelectingRoute = false
     val route: MutableList<Point> = mutableListOf()
-
-    var undoClick = false // LiveData elns!!
-    var redoClick = false
 
     init {
         runBlocking {
@@ -311,22 +307,6 @@ class AnnotationRepository(
                 circleAnnotationManager.delete(clickedCircle)
                 polylineAnnotationManager.deleteAll()
                 addLineToMap(route)
-                undoDeque.add(clickedCircle.point to clickedCircle) // Legger alle punkter til i undoDeque
-
-                if (undoClick) { // Fjerner punkt og sirkel, pusher til undoDeque
-                    Log.d("undoClick", "Undo clicked")
-                    val undo = undoDeque.removeLastOrNull()
-                    undo?.let { route.remove(it.first) }
-                    undo?.let { circleAnnotationManager.delete(it.second) }
-                    undo?.let { redoDeque.add(it) }
-                    undoClick = false
-                }
-                if (redoClick) { // Legger til punkt og sirkel tilbake
-                    val redo = redoDeque.removeFirstOrNull()
-                    redo?.let { route.add(it.first) }
-                    redo?.let { circleAnnotationManager.delete(it.second) }
-                    redoClick = false
-                }
             }
             true
         }
@@ -351,7 +331,9 @@ class AnnotationRepository(
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
 
-        circleAnnotationManager.create(circleAnnotationOptions)
+        val circleAnnotation = circleAnnotationManager.create(circleAnnotationOptions)
+        undoDeque.add(point to circleAnnotation) // Legger alle punkter til i undoDeque
+
     }
 
     suspend fun getRoutePoints(): List<Point> {
@@ -370,13 +352,17 @@ class AnnotationRepository(
     }
 
     fun undoClick() {
-        //Log.d("undoClick", "Undo clicked")
-        undoClick = true
+        val undo = undoDeque.removeLastOrNull()
+        undo?.let { route.remove(it.first) }
+        undo?.let { circleAnnotationManager.delete(it.second) }
+        undo?.let { redoDeque.add(it) }
     }
 
     fun redoClick() {
-        //Log.d("redoClick", "Redo clicked")
-        redoClick = true
+        val redo = redoDeque.removeFirstOrNull()
+        redo?.let { route.add(it.first) }
+        redo?.let { addCircleToMap(it.first) }
+        redo?.let { redoDeque.addLast(redo.first to redo.second) } // Legg tilbake i undoDeque
     }
 
 }
