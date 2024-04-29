@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.tracking
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -47,6 +46,7 @@ fun StopTrackingDialog(
         val profileUIState by profileViewModel.profileUIState.collectAsState()
 
         // TODO MUST BE FIXED, TOO BIG BUTTON
+        // TODO navigate to new screen with the list of points, later create a route with name and ditt og datt
         Card {
             Column(
                 modifier = Modifier
@@ -64,18 +64,13 @@ fun StopTrackingDialog(
                         mainViewModel.hideDialog()
                         mainViewModel.stopFollowUserOnMap()
 
-                        Log.i("ASDASD", "GIDUYGIUWEGIU")
-                        Log.i(
-                            "ASDASD",
-                            profileUIState.selectedUser.toString() + "\n" + profileUIState.selectedBoat.toString()
-                        )
                         if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null) {
-                            Log.i("ASDASD", "GIDUYGIUWEGIU")
 
                             profileViewModel.addRouteToProfile(
                                 username = profileUIState.selectedUser!!.username,
                                 boatname = profileUIState.selectedBoat!!.boatname,
-                                route = AlertNotificationCache.points
+                                route = AlertNotificationCache.points,
+                                routename = ""
                             )
                             AlertNotificationCache.points = mutableListOf()
                         }

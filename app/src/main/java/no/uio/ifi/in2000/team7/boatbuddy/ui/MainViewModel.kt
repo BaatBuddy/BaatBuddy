@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowNoDialog
@@ -27,7 +26,6 @@ data class MainScreenUIState(
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
-    private val routeRepository: RouteRepository
 ) : ViewModel() {
 
     private val _mainScreenUIState = MutableStateFlow(MainScreenUIState())
