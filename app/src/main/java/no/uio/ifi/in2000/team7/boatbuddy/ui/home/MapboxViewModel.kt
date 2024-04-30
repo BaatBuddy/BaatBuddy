@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
+package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
 import android.util.Log

@@ -325,7 +325,7 @@ class AnnotationRepository(
         }
     }
 
-    private fun addCircleToMap(point: Point) {
+    private fun addCircleToMap(point: Point): CircleAnnotation {
         val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
             .withPoint(point)
             .withCircleRadius(8.0)
@@ -333,7 +333,7 @@ class AnnotationRepository(
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
 
-        circleAnnotationManager.create(circleAnnotationOptions)
+        return circleAnnotationManager.create(circleAnnotationOptions)
     }
 
     suspend fun getRoutePoints(): List<Point> {
