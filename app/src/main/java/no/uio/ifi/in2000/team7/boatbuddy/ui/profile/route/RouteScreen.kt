@@ -24,9 +24,7 @@ fun RouteScreen(
 ) {
     profileViewModel.updateRoutes()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
-
-    val context = LocalContext.current
-
+    
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(

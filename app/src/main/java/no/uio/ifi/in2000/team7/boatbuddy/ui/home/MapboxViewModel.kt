@@ -26,7 +26,6 @@ import javax.inject.Inject
 data class MapboxUIState(
     val mapView: MapView,
     val cameraOptions: CameraOptions,
-    val style: String,
 
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
     val alertVisible: Boolean = false,
@@ -54,31 +53,27 @@ class MapboxViewModel @Inject constructor(
     val redoClick: LiveData<Boolean> = _redoClick
 
     @MainThread
-    fun initialize(context: Context, cameraOptions: CameraOptions, style: String) {
-        Log.i("ASDASD", "try init")
+    fun initialize(context: Context, cameraOptions: CameraOptions) {
         if (initialized) return
-        Log.i("ASDASD", "actual init")
         initialized = true
-        createMap(context = context, cameraOptions = cameraOptions, style = style)
+        createMap(context = context, cameraOptions = cameraOptions)
 
     }
 
 
-    private fun createMap(context: Context, cameraOptions: CameraOptions, style: String) {
+    private fun createMap(context: Context, cameraOptions: CameraOptions) {
 
         // mapview setup
         val mapView =
             mapboxRepository.createMap(
                 context = context,
-                cameraOptions = cameraOptions,
-                style = style
+                cameraOptions = cameraOptions
             )
 
         _mapboxUIState = MutableStateFlow(
             MapboxUIState(
                 mapView = mapView,
-                cameraOptions = cameraOptions,
-                style = style
+                cameraOptions = cameraOptions
             )
         )
         mapboxUIState = _mapboxUIState
@@ -115,20 +110,21 @@ class MapboxViewModel @Inject constructor(
         }
     }
 
-    fun changeStyle(
-        style: String
-    ) {
-        viewModelScope.launch {
-            mapboxRepository.changeStyle(
-                style = style
-            )
-            _mapboxUIState.update {
-                it.copy(
-                    style = style
-                )
-            }
-        }
-    }
+    // TODO fix
+//    fun changeStyle(
+//        style: String
+//    ) {
+//        viewModelScope.launch {
+//            mapboxRepository.changeStyle(
+//                style = style
+//            )
+//            _mapboxUIState.update {
+//                it.copy(
+//                    style = style
+//                )
+//            }
+//        }
+//    }
 
     fun createLinePath(
         points: List<Point>

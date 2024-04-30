@@ -63,7 +63,7 @@ class AnnotationRepository(
 
     // functions for the polyline manager
     fun addLineToMap(
-        points: List<Point>, // order of point matter
+        points: List<Point>, // order of points matter
     ): PolylineAnnotation {
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()

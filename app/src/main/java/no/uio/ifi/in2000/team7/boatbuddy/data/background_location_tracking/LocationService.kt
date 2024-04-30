@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.mapbox.geojson.Point
@@ -26,8 +25,11 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.enteredAlerts
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.featureData
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.start
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
+import java.util.Date
 
 
 class LocationService : Service() {
@@ -101,7 +103,9 @@ class LocationService : Service() {
 
                 points.add(Point.fromLngLat(lon, lat))
 
-                Log.i("ASDASD", points.toString())
+                if (start.isBlank()) {
+                    start = sdf.format(Date())
+                }
 
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")

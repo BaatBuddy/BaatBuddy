@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -47,7 +48,11 @@ fun StopTrackingDialog(
 
         // TODO MUST BE FIXED, TOO BIG BUTTON
         // TODO navigate to new screen with the list of points, later create a route with name and ditt og datt
-        Card {
+        Card(
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxSize()
+        ) {
             Column(
                 modifier = Modifier
                     .padding(32.dp),

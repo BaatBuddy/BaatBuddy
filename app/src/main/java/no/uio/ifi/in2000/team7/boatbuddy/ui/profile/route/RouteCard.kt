@@ -12,13 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.MapboxExperimental
 import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 
 
-@OptIn(MapboxExperimental::class)
 @Composable
 fun RouteCard(routeMap: RouteMap) {
     Card(
@@ -34,7 +30,7 @@ fun RouteCard(routeMap: RouteMap) {
                 Text(text = "Rute info jada jada")
 
                 AndroidView(
-                    factory = { ctx ->
+                    factory = { _ ->
                         routeMap.mapView
                     },
                     modifier = Modifier

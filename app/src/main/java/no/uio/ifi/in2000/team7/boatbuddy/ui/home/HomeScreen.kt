@@ -73,8 +73,7 @@ fun HomeScreen(
             .zoom(10.0)
             .bearing(0.0)
             .pitch(0.0)
-            .build(),
-        style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg"
+            .build()
     )
 
     val metAlertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
