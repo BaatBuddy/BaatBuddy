@@ -16,6 +16,7 @@ import com.mapbox.maps.plugin.annotation.generated.CircleAnnotation
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
@@ -45,8 +46,8 @@ class AnnotationRepository(
     private var isAlertClickable = false
     private var alertData: List<FeatureData>? = null
 
-    private val undoDeque = ArrayDeque<Pair<Point, CircleAnnotation>>()
-    private val redoDeque = ArrayDeque<Pair<Point, CircleAnnotation>>()
+    private val undoDeque = ArrayDeque<Triple<Point, CircleAnnotation, PolylineAnnotation?>>()
+    private val redoDeque = ArrayDeque<Triple<Point, CircleAnnotation, PolylineAnnotation?>>()
 
     private var isSelectingRoute = false
     val route: MutableList<Point> = mutableListOf()
@@ -61,7 +62,7 @@ class AnnotationRepository(
     // functions for the polyline manager
     fun addLineToMap(
         points: List<Point>, // order of point matter
-    ) {
+    ): PolylineAnnotation {
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(points)
@@ -70,8 +71,7 @@ class AnnotationRepository(
             .withLineBorderColor("#023047")
             .withLineBorderWidth(1.0)
 
-        polylineAnnotationManager.create(polylineAnnotationOptions)
-
+        return polylineAnnotationManager.create(polylineAnnotationOptions)
     }
 
     // functions for the polygon manager
@@ -313,27 +313,29 @@ class AnnotationRepository(
     }
 
     private fun userClick(point: Point) {
+        var circle: CircleAnnotation? = null
+        var line: PolylineAnnotation? = null
+
         if (route.size < 10) {
-            addCircleToMap(point)
+            circle = addCircleToMap(point)
             route.add(point)
             if (route.size > 1) {
                 polylineAnnotationManager.deleteAll()
-                addLineToMap(route)
+                line = addLineToMap(route)
             }
+            undoDeque.add(Triple(point, circle, line))
         }
     }
 
-    private fun addCircleToMap(point: Point) {
+    private fun addCircleToMap(point: Point): CircleAnnotation {
         val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
             .withPoint(point)
             .withCircleRadius(8.0)
             .withCircleColor("#ee4e8b")
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
-
-        val circleAnnotation = circleAnnotationManager.create(circleAnnotationOptions)
-        undoDeque.add(point to circleAnnotation) // Legger alle punkter til i undoDeque
-
+        return circleAnnotationManager.create(circleAnnotationOptions)
+        //undoDeque.add(point, circleAnnotation) // Legger alle punkter til i undoDeque
     }
 
     suspend fun getRoutePoints(): List<Point> {
@@ -353,16 +355,32 @@ class AnnotationRepository(
 
     fun undoClick() {
         val undo = undoDeque.removeLastOrNull()
-        undo?.let { route.remove(it.first) }
-        undo?.let { circleAnnotationManager.delete(it.second) }
-        undo?.let { redoDeque.add(it) }
+        undo?.let {
+            route.remove(it.first)
+            redoDeque.add(
+                Triple(
+                    it.first,
+                    it.second,
+                    it.third
+                )
+            )
+            circleAnnotationManager.delete(it.second)
+        }
     }
 
     fun redoClick() {
-        val redo = redoDeque.removeFirstOrNull()
-        redo?.let { route.add(it.first) }
-        redo?.let { addCircleToMap(it.first) }
-        redo?.let { redoDeque.addLast(redo.first to redo.second) } // Legg tilbake i undoDeque
+        val redo = redoDeque.removeLastOrNull()
+        redo?.let {
+            route.add(it.first)
+            val newCircle = addCircleToMap(it.first)
+            undoDeque.add(
+                Triple(
+                    it.first,
+                    newCircle,
+                    it.third
+                )
+            )
+        }
     }
 
 }
