@@ -2,6 +2,8 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -32,7 +34,8 @@ data class MapboxUIState(
 )
 
 class MapboxViewModel : ViewModel() {
-    private val repository: MapboxRepository = MapboxRepository()
+    private val repository: MapboxRepository =
+        MapboxRepository() // Send AnnotationRepository to MapboxRepository?
     private val weatherCalculatorRepository: WeatherCalculatorRepository =
         WeatherCalculatorRepository()
 
@@ -40,6 +43,12 @@ class MapboxViewModel : ViewModel() {
     lateinit var mapboxUIState: StateFlow<MapboxUIState>
 
     private var initialized = false
+
+    private val _undoClick = MutableLiveData(false)
+    val undoClick: LiveData<Boolean> = _undoClick
+
+    private val _redoClick = MutableLiveData(false)
+    val redoClick: LiveData<Boolean> = _redoClick
 
     @MainThread
     fun initialize(context: Context, cameraOptions: CameraOptions, style: String) {
@@ -50,7 +59,6 @@ class MapboxViewModel : ViewModel() {
         createMap(context = context, cameraOptions = cameraOptions, style = style)
 
     }
-
 
     private fun createMap(context: Context, cameraOptions: CameraOptions, style: String) {
 
@@ -172,5 +180,17 @@ class MapboxViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    fun refreshRoute() {
+        repository.refreshRoute()
+    }
+
+    fun undoClick() {
+        repository.undoClick()
+    }
+
+    fun redoClick() {
+        repository.redoClick()
     }
 }

@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedFilterChip
@@ -25,6 +28,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -82,6 +86,7 @@ fun HomeScreen(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheetButton by remember { mutableStateOf(true) }
 
     // notification setup
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
@@ -107,10 +112,9 @@ fun HomeScreen(
     val locationService = LocationService()
     metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
 
-
     var showAlert by remember { mutableStateOf(false) }
-
-    var isGeneratingRoute by remember { mutableStateOf(false) }
+    var generateRoute by remember { mutableStateOf(false) }
+    var createdRoute by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -136,17 +140,21 @@ fun HomeScreen(
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
-                    ExtendedFloatingActionButton(
-                        text = { Text("Show bottom sheet") },
-                        icon = { Icon(Icons.Filled.Add, contentDescription = "") },
-                        onClick = {
-                            showBottomSheet = true
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
+                    if (showBottomSheetButton) {
+                        ExtendedFloatingActionButton(
+                            text = { Text("Show bottom sheet") },
+                            icon = { Icon(Icons.Filled.Add, contentDescription = "") },
+                            onClick = {
+                                showBottomSheet = true
+                                showBottomSheetButton = !showBottomSheetButton
+                            },
+                            modifier = Modifier
+                                .padding(4.dp)
+                        )
+                    }
                     Row {
-                        if (isGeneratingRoute) {
+                        if (generateRoute) {
+                            showBottomSheetButton = false
                             ExtendedFloatingActionButton(
                                 text = { Text(text = "Generer rute") },
                                 icon = {
@@ -156,15 +164,41 @@ fun HomeScreen(
                                     )
                                 },
                                 onClick = {
-                                    isGeneratingRoute = !isGeneratingRoute
+                                    generateRoute = false
+                                    createdRoute = true
                                     mapboxViewModel.generateRoute()
-
+                                    mapboxViewModel.toggleRouteClicking()
                                 })
+
+                            //Back-knapp
+                            SmallFloatingActionButton(
+                                onClick = {
+                                    mapboxViewModel.undoClick()
+                                }
+                            ) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                            }
+                            // Refresh-knapp
+                            SmallFloatingActionButton(
+                                onClick = {
+                                    mapboxViewModel.refreshRoute()
+                                }
+                            ) {
+                                Icon(Icons.Filled.Refresh, "")
+                            }
+                            //Forward-knapp
+                            SmallFloatingActionButton(
+                                onClick = {
+                                    mapboxViewModel.redoClick()
+                                }
+                            ) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowForward, "")
+                            }
                         }
                         ExtendedFloatingActionButton(
-                            text = { Text(text = if (!isGeneratingRoute) "Tegn rute" else "Avbryt") },
+                            text = { Text(text = if (!generateRoute) "Tegn rute" else "Avbryt") },
                             icon = {
-                                if (!isGeneratingRoute) Icon(
+                                if (!generateRoute) Icon(
                                     imageVector = Icons.Filled.Create,
                                     contentDescription = ""
                                 ) else Icon(
@@ -173,8 +207,11 @@ fun HomeScreen(
                                 )
                             },
                             onClick = {
+                                generateRoute = !generateRoute
+                                if (createdRoute || !generateRoute) {
+                                    mapboxViewModel.refreshRoute()
+                                }
                                 mapboxViewModel.toggleRouteClicking()
-                                isGeneratingRoute = !isGeneratingRoute
                             },
                             modifier = Modifier
                                 .padding(4.dp)
@@ -183,7 +220,6 @@ fun HomeScreen(
 
                 }
             }
-
         }
 
     ) {
@@ -197,6 +233,7 @@ fun HomeScreen(
             ModalBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
+                    showBottomSheetButton = true
                 },
                 sheetState = sheetState
             ) {
@@ -206,7 +243,6 @@ fun HomeScreen(
                 }
 
                 SwipeUpContent(locationForecastUIState)
-
 
                 Column {
                     Row {
@@ -246,7 +282,6 @@ fun HomeScreen(
                         }
                     }
                 }
-
             }
         }
     }

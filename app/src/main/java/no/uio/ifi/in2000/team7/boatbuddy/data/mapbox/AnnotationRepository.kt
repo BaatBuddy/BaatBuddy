@@ -10,17 +10,15 @@ import com.mapbox.geojson.Polygon
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.ViewAnnotationOptions
-import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.CircleAnnotation
 import com.mapbox.maps.plugin.annotation.generated.CircleAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotation
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createCircleAnnotationManager
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolygonAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
@@ -30,7 +28,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
 
@@ -41,7 +38,6 @@ class AnnotationRepository(
     private val alertPolygons = mutableListOf<AlertPolygon>()
 
     private val annotationApi = mapView.annotations
-    private val pointAnnotationManager = annotationApi.createPointAnnotationManager()
     private val polylineAnnotationManager = annotationApi.createPolylineAnnotationManager()
     private val polygonAnnotationManager = annotationApi.createPolygonAnnotationManager()
     private val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
@@ -49,6 +45,11 @@ class AnnotationRepository(
 
     private var isAlertClickable = false
     private var alertData: List<FeatureData>? = null
+
+    private val undoDeque: MutableList<Triple<Point, CircleAnnotation, PolylineAnnotation?>> =
+        mutableListOf()
+    private val redoDeque: MutableList<Triple<Point, CircleAnnotation, PolylineAnnotation?>> =
+        mutableListOf()
 
     private var isSelectingRoute = false
     val route: MutableList<Point> = mutableListOf()
@@ -60,32 +61,10 @@ class AnnotationRepository(
         }
     }
 
-
-    // functions for point manager
-    private fun addPinToMap(
-        point: Point
-    ): PointAnnotation? {
-        bitmapFromDrawableRes(
-            mapView.context,
-            R.drawable.ic_map_pin
-        )?.let { bitmap -> // map-pin icon
-
-            val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-                .withPoint(point)
-                .withIconImage(bitmap)
-                .withIconAnchor(IconAnchor.BOTTOM)
-
-            return pointAnnotationManager.create(pointAnnotationOptions)
-
-        }
-        return null
-    }
-
-
     // functions for the polyline manager
     fun addLineToMap(
         points: List<Point>, // order of point matter
-    ) {
+    ): PolylineAnnotation {
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(points)
@@ -94,8 +73,7 @@ class AnnotationRepository(
             .withLineBorderColor("#023047")
             .withLineBorderWidth(1.0)
 
-        polylineAnnotationManager.create(polylineAnnotationOptions)
-
+        return polylineAnnotationManager.create(polylineAnnotationOptions)
     }
 
     // functions for the polygon manager
@@ -337,25 +315,28 @@ class AnnotationRepository(
     }
 
     private fun userClick(point: Point) {
+        var circle: CircleAnnotation? = null
+        var line: PolylineAnnotation? = null
+
         if (route.size < 10) {
-            addCircleToMap(point)
+            circle = addCircleToMap(point)
             route.add(point)
             if (route.size > 1) {
                 polylineAnnotationManager.deleteAll()
-                addLineToMap(route)
+                line = addLineToMap(route)
             }
+            undoDeque.add(Triple(point, circle, line))
         }
     }
 
-    private fun addCircleToMap(point: Point) {
+    private fun addCircleToMap(point: Point): CircleAnnotation {
         val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
             .withPoint(point)
             .withCircleRadius(8.0)
             .withCircleColor("#ee4e8b")
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
-
-        circleAnnotationManager.create(circleAnnotationOptions)
+        return circleAnnotationManager.create(circleAnnotationOptions)
     }
 
     suspend fun getRoutePoints(): List<Point> {
@@ -366,4 +347,45 @@ class AnnotationRepository(
         polylineAnnotationManager.deleteAll()
         addLineToMap(autoroutePoints)
     }
+
+    fun refreshRoute() {
+        route.clear()
+        circleAnnotationManager.deleteAll()
+        polylineAnnotationManager.deleteAll()
+    }
+
+    fun undoClick() {
+        val undo = undoDeque.removeLastOrNull()
+        undo?.let {
+            redoDeque.add(
+                Triple(
+                    it.first,
+                    it.second,
+                    it.third
+                )
+            )
+            route.remove(it.first)
+            circleAnnotationManager.delete(it.second)
+            polylineAnnotationManager.deleteAll()
+            addLineToMap(route)
+        }
+    }
+
+    fun redoClick() {
+        val redo = redoDeque.removeLastOrNull()
+        redo?.let {
+            route.add(it.first)
+            val newCircle = addCircleToMap(it.first)
+            undoDeque.add(
+                Triple(
+                    it.first,
+                    newCircle,
+                    it.third
+                )
+            )
+            polylineAnnotationManager.deleteAll()
+            addLineToMap(route)
+        }
+    }
+
 }

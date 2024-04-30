@@ -21,7 +21,6 @@ class MapboxRepository(
 
     private lateinit var annotationRepository: AnnotationRepository
     private val autorouteRepository = AutorouteRepository()
-    private lateinit var routeRepository: RouteRepository
     private lateinit var mapView: MapView
 
     override fun createMap(context: Context, cameraOptions: CameraOptions, style: String): MapView {
@@ -44,57 +43,6 @@ class MapboxRepository(
             val mapboxMap = this.mapboxMap
 
             mapboxMap.setCamera(cameraOptions)
-
-            /*val annotationApi = this.annotations
-            val circleAnnotationManager = annotationApi.createCircleAnnotationManager()
-            var pointsInRoute: MutableList<Point> = mutableListOf()
-
-            mapboxMap.addOnMapClickListener {
-                val circleAnnotationOptions: CircleAnnotationOptions = CircleAnnotationOptions()
-                    .withPoint(it)
-                    .withCircleRadius(8.0)
-                    .withCircleColor("#ee4e8b")
-                    .withCircleStrokeWidth(2.0)
-                    .withCircleStrokeColor("#ffffff")
-                circleAnnotationManager.create(circleAnnotationOptions)
-
-                if (pointsInRoute.size < 10) {
-                    pointsInRoute.add(it)
-
-                    val coordinatesInRoute =
-                        pointsInRoute.joinToString(separator = " , ") {
-                            "(${it.latitude()}, ${it.longitude()})"
-                        }
-                    Log.d("Points in route", coordinatesInRoute)
-                }
-
-                true
-            }*/
-
-            /*val annotationApi = this.annotations
-            val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-            var pointsInRoute: MutableList<Point> = mutableListOf()
-
-            mapboxMap.addOnMapClickListener {
-
-                val pointAnnotationOptions = PointAnnotationOptions()
-                    .withPoint(it)
-                pointAnnotationManager.create(pointAnnotationOptions)
-
-                // Ruten kan ikke inneholde mer enn 10 punkter
-                if (pointsInRoute.size < 10) {
-                    pointsInRoute.add(it)
-
-                    val coordinatesInRoute =
-                        pointsInRoute.joinToString(separator = " , ") {
-                            "(${it.latitude()}, ${it.longitude()})"
-                        }
-                    Log.d("Points in route", "$coordinatesInRoute")
-                }
-
-                true
-
-            }*/
 
             mapboxMap.addOnMoveListener(
                 object : OnMoveListener {
@@ -169,6 +117,18 @@ class MapboxRepository(
         }
         return null
 
+    }
+
+    fun refreshRoute() {
+        annotationRepository.refreshRoute()
+    }
+
+    fun undoClick() {
+        annotationRepository.undoClick()
+    }
+
+    fun redoClick() {
+        annotationRepository.redoClick()
     }
 
 }
