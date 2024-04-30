@@ -335,7 +335,6 @@ class AnnotationRepository(
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
         return circleAnnotationManager.create(circleAnnotationOptions)
-        //undoDeque.add(point, circleAnnotation) // Legger alle punkter til i undoDeque
     }
 
     suspend fun getRoutePoints(): List<Point> {
@@ -356,7 +355,6 @@ class AnnotationRepository(
     fun undoClick() {
         val undo = undoDeque.removeLastOrNull()
         undo?.let {
-            route.remove(it.first)
             redoDeque.add(
                 Triple(
                     it.first,
@@ -364,7 +362,11 @@ class AnnotationRepository(
                     it.third
                 )
             )
+            route.remove(it.first)
             circleAnnotationManager.delete(it.second)
+            //it.third?.let { it1 -> polylineAnnotationManager.delete(it1) }
+            polylineAnnotationManager.deleteAll()
+            addLineToMap(route)
         }
     }
 
@@ -380,6 +382,8 @@ class AnnotationRepository(
                     it.third
                 )
             )
+            polylineAnnotationManager.deleteAll()
+            addLineToMap(route)
         }
     }
 
