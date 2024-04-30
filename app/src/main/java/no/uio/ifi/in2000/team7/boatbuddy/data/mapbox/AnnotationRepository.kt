@@ -46,8 +46,10 @@ class AnnotationRepository(
     private var isAlertClickable = false
     private var alertData: List<FeatureData>? = null
 
-    private val undoDeque = ArrayDeque<Triple<Point, CircleAnnotation, PolylineAnnotation?>>()
-    private val redoDeque = ArrayDeque<Triple<Point, CircleAnnotation, PolylineAnnotation?>>()
+    private val undoDeque: MutableList<Triple<Point, CircleAnnotation, PolylineAnnotation?>> =
+        mutableListOf()
+    private val redoDeque: MutableList<Triple<Point, CircleAnnotation, PolylineAnnotation?>> =
+        mutableListOf()
 
     private var isSelectingRoute = false
     val route: MutableList<Point> = mutableListOf()
@@ -364,7 +366,6 @@ class AnnotationRepository(
             )
             route.remove(it.first)
             circleAnnotationManager.delete(it.second)
-            //it.third?.let { it1 -> polylineAnnotationManager.delete(it1) }
             polylineAnnotationManager.deleteAll()
             addLineToMap(route)
         }
