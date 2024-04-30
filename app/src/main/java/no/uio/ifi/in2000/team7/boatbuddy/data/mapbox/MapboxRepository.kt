@@ -224,6 +224,18 @@ class MapboxRepository(
 
     }
 
+    fun refreshRoute() {
+        annotationRepository.refreshRoute()
+    }
+
+    fun undoClick() {
+        annotationRepository.undoClick()
+    }
+
+    fun redoClick() {
+        annotationRepository.redoClick()
+    }
+
     fun fitPolylineToScreen(points: List<Point>): CameraOptions {
         createLinePath(points = points)
 
