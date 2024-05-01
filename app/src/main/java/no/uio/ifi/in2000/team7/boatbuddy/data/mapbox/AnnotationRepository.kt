@@ -50,8 +50,6 @@ class AnnotationRepository(
         mutableListOf()
     private val redoDeque: MutableList<Pair<Point, CircleAnnotation>> =
         mutableListOf()
-
-    //private var removeFromList: CircleAnnotation? = null
     private var removeFromList: Pair<Point, CircleAnnotation>? = null
 
     private var isSelectingRoute = false
@@ -311,9 +309,6 @@ class AnnotationRepository(
             if (isSelectingRoute) {
                 route.remove(clickedCircle.point)
                 undoDeque.remove(pair)
-                /*if (redoDeque.contains(pair)) { // If the pair is in undoDeque, it is not in redoDeque?
-                    redoDeque.remove(pair)
-                }*/
                 circleAnnotationManager.delete(clickedCircle)
                 polylineAnnotationManager.deleteAll()
                 addLineToMap(route)
