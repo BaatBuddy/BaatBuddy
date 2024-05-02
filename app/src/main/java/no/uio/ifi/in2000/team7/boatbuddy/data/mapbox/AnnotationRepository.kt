@@ -386,9 +386,9 @@ class AnnotationRepository(
                         newCircle,
                     )
                 )
+                polylineAnnotationManager.deleteAll()
+                addLineToMap(route)
             }
-            polylineAnnotationManager.deleteAll()
-            addLineToMap(route)
         }
     }
 
