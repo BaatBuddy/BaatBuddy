@@ -14,6 +14,6 @@ object AlertNotificationCache {
     @SuppressLint("SimpleDateFormat")
     val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
 
-    var start: String = ""
-    var end: String = ""
+    var startTime: String = ""
+    var finishTime: String = ""
 }

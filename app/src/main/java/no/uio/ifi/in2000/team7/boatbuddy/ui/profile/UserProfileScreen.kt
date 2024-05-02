@@ -21,7 +21,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,27 +74,37 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                 .fillMaxSize()
                 .padding(paddingValue)
         ) {
-            Column {
-                Text(text = "Profil")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Valgt profil",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.W900
+                )
                 profileUIState.selectedUser?.let {
                     UserCard(
                         user = it,
                         profileViewModel = profileViewModel
                     )
                 }
-                Text(text = "Båter")
-                LazyColumn {
-                    items(profileUIState.boats) { boatProfile ->
-                        BoatCards(boatProfile = boatProfile, profileViewModel = profileViewModel)
-                    }
+                Text(
+                    text = "Valgt båt",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.W900
+                )
+                profileUIState.selectedBoat?.let {
+                    BoatCards(
+                        boatProfile = it,
+                        profileViewModel = profileViewModel,
+                    )
                 }
-                Button(
-                    onClick = {
-                        navController.navigate("createboat")
-                    }
-                ) {
-                    Text(text = "Lag ny båt")
-                }
+                Text(
+                    text = "Vær preferanser",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.W900
+                )
+                
             }
         }
     }

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -47,6 +48,7 @@ fun InfoScreen(
     locationForecastViewModel: LocationForecastViewModel,
     oceanForecastViewModel: OceanForecastViewModel,
     sunriseViewModel: SunriseViewModel,
+    mainViewModel: MainViewModel,
 ) {
 
     val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
@@ -57,7 +59,7 @@ fun InfoScreen(
     val lat = "59.9" // må hente posisjon fra bruker
     val lon = "10.7"
 
-
+    mainViewModel.selectScreen(1)
 
     metAlertsViewModel.initialize(lat = lat, lon = lon)
     locationForecastViewModel.initialize(lat = lat, lon = lon)

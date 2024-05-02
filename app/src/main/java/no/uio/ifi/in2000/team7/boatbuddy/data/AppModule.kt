@@ -78,5 +78,9 @@ object AppModule {
     fun fetchRouteRepository(
         db: ProfileDatabase,
         @ApplicationContext context: Context
-    ): RouteRepository = RouteRepository(context = context, routeDao = db.routeDao())
+    ): RouteRepository = RouteRepository(
+        context = context,
+        routeDao = db.routeDao(),
+        mapRepo = MapboxRepository()
+    )
 }

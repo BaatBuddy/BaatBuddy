@@ -48,6 +48,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 
@@ -60,6 +61,7 @@ fun HomeScreen(
     userLocationViewModel: UserLocationViewModel,
     locationForecastViewModel: LocationForecastViewModel,
     homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
 ) {
 
     val context = LocalContext.current
@@ -75,6 +77,8 @@ fun HomeScreen(
             .pitch(0.0)
             .build()
     )
+
+    mainViewModel.selectScreen(0)
 
     val metAlertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()

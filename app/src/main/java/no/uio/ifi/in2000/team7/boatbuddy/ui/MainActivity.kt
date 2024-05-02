@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -70,7 +71,6 @@ class MainActivity : ComponentActivity() {
 
         }
     }
-
 }
 
 

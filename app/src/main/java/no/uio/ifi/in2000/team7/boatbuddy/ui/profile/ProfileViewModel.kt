@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +41,14 @@ data class CreateUserUIState(
 )
 
 data class RouteScreenUIState(
-    val routeMaps: List<RouteMap> = emptyList()
+    val routeMaps: List<RouteMap> = emptyList(),
+    val routeName: String = "",
+    val routeDescription: String = "",
+    val currentRouteView: String? = null,
+    val startTime: String = "",
+    val finishTime: String = "",
+
+    val selectedRouteMap: RouteMap? = null,
 )
 
 @HiltViewModel
@@ -315,17 +323,75 @@ class ProfileViewModel @Inject constructor(
     fun addRouteToProfile(
         username: String,
         boatname: String,
-        route: List<Point>,
-        routename: String
+        routename: String,
+        routeDescription: String,
     ) {
         viewModelScope.launch {
             routeRepository.addRouteUsername(
                 username = username,
                 boatname = boatname,
-                route = route,
                 routename = routename,
+                routeDescription = routeDescription,
             )
+            _routeScreenUIState.update {
+                it.copy(
+                    routeName = "",
+                    routeDescription = "",
+                    currentRouteView = null,
+                )
+            }
         }
     }
 
+    fun updateRouteName(routeName: String) {
+        viewModelScope.launch {
+            _routeScreenUIState.update {
+                it.copy(
+                    routeName = routeName
+                )
+            }
+        }
+    }
+
+    fun updateCurrentRouteTime() {
+        viewModelScope.launch {
+            routeRepository.setFinalFinishTime()
+            _routeScreenUIState.update {
+                it.copy(
+                    startTime = routeRepository.getStartTime(),
+                    finishTime = routeRepository.getFinishTime()
+                )
+            }
+        }
+    }
+
+    fun updateRouteDescription(routeDescription: String) {
+        viewModelScope.launch {
+            _routeScreenUIState.update {
+                it.copy(
+                    routeDescription = routeDescription
+                )
+            }
+        }
+    }
+
+    fun updateSelectedRoute(routeMap: RouteMap?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _routeScreenUIState.update {
+                it.copy(
+                    selectedRouteMap = routeMap
+                )
+            }
+        }
+    }
+
+    fun updateCurrentRoute() {
+        viewModelScope.launch {
+            _routeScreenUIState.update {
+                it.copy(
+                    currentRouteView = routeRepository.getTemporaryRouteView()
+                )
+            }
+        }
+    }
 }

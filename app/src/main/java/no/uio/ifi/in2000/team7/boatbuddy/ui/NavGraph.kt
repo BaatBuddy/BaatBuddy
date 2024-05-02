@@ -28,9 +28,11 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.AddRouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.tracking.StopTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.StopTrackingDialog
 
 
 @Composable
@@ -51,11 +53,13 @@ fun NavGraph(
 
     Scaffold(
         bottomBar = {
-            BottomBar(
-                navController = navController,
-                mainViewModel = mainViewModel,
-                profileViewModel = profileViewModel,
-            )
+            if (mainScreenUIState.showBottomBar) {
+                BottomBar(
+                    navController = navController,
+                    mainViewModel = mainViewModel,
+                    profileViewModel = profileViewModel,
+                )
+            }
         }
     ) { innerPadding ->
 
@@ -74,6 +78,7 @@ fun NavGraph(
                         userLocationViewModel = userLocationViewModel,
                         locationForecastViewModel = locationForecastViewModel,
                         homeViewModel = homeViewModel,
+                        mainViewModel = mainViewModel,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -81,13 +86,15 @@ fun NavGraph(
                         metAlertsViewModel = metalertsViewModel,
                         locationForecastViewModel = locationForecastViewModel,
                         oceanForecastViewModel = oceanforecastViewModel,
-                        sunriseViewModel = sunriseViewModel
+                        sunriseViewModel = sunriseViewModel,
+                        mainViewModel = mainViewModel,
                     )
                 }
                 composable(route = Screen.SettingScreen.route) {
                     ProfileScreen(
                         profileViewModel = profileViewModel,
-                        navController = navController
+                        navController = navController,
+                        mainViewModel = mainViewModel,
                     )
                 }
                 composable(route = "createuser") {
@@ -104,8 +111,25 @@ fun NavGraph(
                 }
                 composable(route = Screen.RouteScreen.route) {
                     RouteScreen(
-                        profileViewModel = profileViewModel
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
                     )
+                }
+                composable(route = "addroute") {
+                    AddRouteScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
+                    )
+                }
+                composable(route = "routeinfo") {
+                    RouteInfoScreen(
+                        navController = navController,
+                        mainViewModel = mainViewModel,
+                        profileViewModel = profileViewModel,
+
+                        )
                 }
             }
             if (mainScreenUIState.showDialog == ShowStartDialog) {

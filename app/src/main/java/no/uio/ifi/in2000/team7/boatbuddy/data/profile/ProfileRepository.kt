@@ -1,9 +1,11 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(
@@ -27,7 +29,8 @@ class ProfileRepository @Inject constructor(
                 username = username,
                 name = name,
                 isSelected = true,
-                isTracking = false
+                isTracking = false,
+                preferences = WeatherPreferences()
             )
         )
         boatDao.insertBoatProfile(
@@ -60,6 +63,21 @@ class ProfileRepository @Inject constructor(
 
             )
         )
+    }
+
+    suspend fun startTrackingUser() {
+        val username = getSelectedUser()?.username
+        if (username != null) {
+            userDao.startTrackingUsername(username = username)
+        }
+    }
+
+    suspend fun stopTrackingUser() {
+        val username = getSelectedUser()?.username
+        if (username != null) {
+            userDao.stopTrackingUsername(username = username)
+        }
+        points = mutableListOf()
     }
 
     suspend fun selectUser(username: String) {
@@ -99,7 +117,4 @@ class ProfileRepository @Inject constructor(
         boatDao.unselectBoatUsername(username = username)
     }
 
-    suspend fun startTrackingUsername(username: String) {
-        userDao
-    }
 }

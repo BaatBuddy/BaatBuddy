@@ -1,9 +1,11 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
+import android.util.Log
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.utils.PolylineUtils
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.ImageHolder
 import com.mapbox.maps.MapView
@@ -18,6 +20,7 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListene
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxCache.savedMapURL
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
 
 
@@ -27,7 +30,7 @@ class MapboxRepository(
     private lateinit var annotationRepository: AnnotationRepository
     private val autorouteRepository = AutorouteRepository()
     private lateinit var mapView: MapView
-    private lateinit var context: Context
+    lateinit var context: Context
 
 
     // user tracking on map
@@ -223,6 +226,32 @@ class MapboxRepository(
 
     fun redoClick() {
         annotationRepository.redoClick()
+    }
+
+    suspend fun generateMapURI(points: List<Point>): String {
+        if (points in savedMapURL) {
+            Log.i("ASDASD", savedMapURL.toString())
+            return savedMapURL[points]!!
+        }
+
+        val unformattedURL =
+            "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-%s+%s-%s(%s)/auto/500x300?access_token=%s"
+
+        val encodedStringPath = PolylineUtils.encode(points, 5)
+
+        // strokeWidth (double), strokeColor(hex), strokeOpacity(double), fillColor(hex), fillOpacity(double), path encoded string, access token
+        val formattedURL = unformattedURL.format(
+            4,
+            "023047",
+            1.0,
+            encodedStringPath,
+            MapboxConstants.token
+        )
+
+        savedMapURL = savedMapURL.plus(points to formattedURL)
+
+
+        return formattedURL
     }
 
 }

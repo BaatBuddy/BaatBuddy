@@ -14,17 +14,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteScreen(
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    navController: NavController,
+    mainViewModel: MainViewModel,
 ) {
+    mainViewModel.selectScreen(3)
     profileViewModel.updateRoutes()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
-    
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -43,7 +48,11 @@ fun RouteScreen(
 
             ) {
                 items(routeScreenUIState.routeMaps) {
-                    RouteCard(routeMap = it)
+                    RouteCard(
+                        routeMap = it,
+                        navController = navController,
+                        profileViewModel = profileViewModel,
+                    )
                 }
             }
         }

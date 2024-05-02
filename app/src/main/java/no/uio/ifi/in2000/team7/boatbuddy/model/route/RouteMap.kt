@@ -6,5 +6,5 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 
 data class RouteMap(
     val route: Route,
-    val mapView: MapView,
+    val mapURL: String,
 )
