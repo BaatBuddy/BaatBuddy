@@ -210,6 +210,7 @@ fun HomeScreen(
                                 generateRoute = !generateRoute
                                 if (createdRoute || !generateRoute) {
                                     mapboxViewModel.refreshRoute()
+                                    createdRoute = false
                                 }
                                 mapboxViewModel.toggleRouteClicking()
                             },
