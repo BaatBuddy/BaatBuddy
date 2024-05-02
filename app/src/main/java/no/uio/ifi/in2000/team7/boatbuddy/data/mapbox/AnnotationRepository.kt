@@ -46,10 +46,11 @@ class AnnotationRepository(
     private var isAlertClickable = false
     private var alertData: List<FeatureData>? = null
 
-    private val undoDeque: MutableList<Triple<Point, CircleAnnotation, PolylineAnnotation?>> =
+    private val undoList: MutableList<Pair<Point, CircleAnnotation>> =
         mutableListOf()
-    private val redoDeque: MutableList<Triple<Point, CircleAnnotation, PolylineAnnotation?>> =
+    private val redoList: MutableList<Pair<Point, CircleAnnotation>> =
         mutableListOf()
+    private var removeFromList: Pair<Point, CircleAnnotation>? = null
 
     private var isSelectingRoute = false
     val route: MutableList<Point> = mutableListOf()
@@ -63,7 +64,7 @@ class AnnotationRepository(
 
     // functions for the polyline manager
     fun addLineToMap(
-        points: List<Point>, // order of points matter
+        points: List<Point>, // order of point matter
     ): PolylineAnnotation {
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
@@ -304,8 +305,10 @@ class AnnotationRepository(
         }
 
         circleAnnotationManager.addClickListener { clickedCircle ->
+            val pair = Pair(clickedCircle.point, clickedCircle)
             if (isSelectingRoute) {
                 route.remove(clickedCircle.point)
+                undoList.remove(pair)
                 circleAnnotationManager.delete(clickedCircle)
                 polylineAnnotationManager.deleteAll()
                 addLineToMap(route)
@@ -315,13 +318,16 @@ class AnnotationRepository(
     }
 
     private fun userClick(point: Point) {
+        var circle: CircleAnnotation?
         if (route.size < 10) {
-            addCircleToMap(point)
+            removeFromList = redoList.lastOrNull()
+            circle = addCircleToMap(point)
             route.add(point)
             if (route.size > 1) {
                 polylineAnnotationManager.deleteAll()
                 addLineToMap(route)
             }
+            undoList.add(Pair(point, circle))
         }
     }
 
@@ -332,7 +338,6 @@ class AnnotationRepository(
             .withCircleColor("#ee4e8b")
             .withCircleStrokeWidth(2.0)
             .withCircleStrokeColor("#ffffff")
-
         return circleAnnotationManager.create(circleAnnotationOptions)
     }
 
@@ -347,41 +352,43 @@ class AnnotationRepository(
 
     fun refreshRoute() {
         route.clear()
+        undoList.clear()
+        redoList.clear()
         circleAnnotationManager.deleteAll()
         polylineAnnotationManager.deleteAll()
     }
 
     fun undoClick() {
-        val undo = undoDeque.removeLastOrNull()
-        undo?.let {
-            redoDeque.add(
-                Triple(
-                    it.first,
-                    it.second,
-                    it.third
+        val undo = undoList.removeLastOrNull()
+        undo?.let { (point, circle) ->
+            redoList.add(
+                Pair(
+                    point,
+                    circle,
                 )
             )
-            route.remove(it.first)
-            circleAnnotationManager.delete(it.second)
+            route.remove(point)
+            circleAnnotationManager.delete(circle)
             polylineAnnotationManager.deleteAll()
             addLineToMap(route)
         }
     }
 
     fun redoClick() {
-        val redo = redoDeque.removeLastOrNull()
-        redo?.let {
-            route.add(it.first)
-            val newCircle = addCircleToMap(it.first)
-            undoDeque.add(
-                Triple(
-                    it.first,
-                    newCircle,
-                    it.third
+        val redo = redoList.removeLastOrNull()
+        redo?.let { (point, _) ->
+            if (redo != removeFromList) {
+                val newCircle = addCircleToMap(point)
+                route.add(point)
+                undoList.add(
+                    Pair(
+                        point,
+                        newCircle,
+                    )
                 )
-            )
-            polylineAnnotationManager.deleteAll()
-            addLineToMap(route)
+                polylineAnnotationManager.deleteAll()
+                addLineToMap(route)
+            }
         }
     }
 
