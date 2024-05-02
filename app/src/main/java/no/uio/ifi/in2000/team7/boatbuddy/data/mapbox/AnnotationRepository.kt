@@ -360,15 +360,15 @@ class AnnotationRepository(
 
     fun undoClick() {
         val undo = undoList.removeLastOrNull()
-        undo?.let {
+        undo?.let { (point, circle) ->
             redoList.add(
                 Pair(
-                    it.first,
-                    it.second,
+                    point,
+                    circle,
                 )
             )
-            route.remove(it.first)
-            circleAnnotationManager.delete(it.second)
+            route.remove(point)
+            circleAnnotationManager.delete(circle)
             polylineAnnotationManager.deleteAll()
             addLineToMap(route)
         }
@@ -376,13 +376,13 @@ class AnnotationRepository(
 
     fun redoClick() {
         val redo = redoList.removeLastOrNull()
-        redo?.let {
+        redo?.let { (point, _) ->
             if (redo != removeFromList) {
-                val newCircle = addCircleToMap(it.first)
-                route.add(it.first)
+                val newCircle = addCircleToMap(point)
+                route.add(point)
                 undoList.add(
                     Pair(
-                        it.first,
+                        point,
                         newCircle,
                     )
                 )
