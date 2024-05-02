@@ -184,7 +184,7 @@ class AnnotationRepository(
     }
 
     // click listener for metalert polygon
-    suspend fun addPolygonClickListener() {
+    fun addPolygonClickListener() {
         val context = mapView.context
         polygonAnnotationManager.addClickListener { clickedPolygon ->
             if (isAlertClickable) {
@@ -292,7 +292,7 @@ class AnnotationRepository(
 
     // creating route section
 
-    suspend fun toggleRouteClicking() {
+    fun toggleRouteClicking() {
         isSelectingRoute = !isSelectingRoute
     }
 
@@ -318,7 +318,7 @@ class AnnotationRepository(
     }
 
     private fun userClick(point: Point) {
-        var circle: CircleAnnotation?
+        val circle: CircleAnnotation?
         if (route.size < 10) {
             removeFromList = redoList.lastOrNull()
             circle = addCircleToMap(point)
@@ -341,7 +341,7 @@ class AnnotationRepository(
         return circleAnnotationManager.create(circleAnnotationOptions)
     }
 
-    suspend fun getRoutePoints(): List<Point> {
+    fun getRoutePoints(): List<Point> {
         return route
     }
 

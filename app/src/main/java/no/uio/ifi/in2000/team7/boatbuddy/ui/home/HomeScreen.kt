@@ -58,7 +58,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 fun HomeScreen(
     metalertsViewModel: MetAlertsViewModel,
     mapboxViewModel: MapboxViewModel,
-    userLocationViewModel: UserLocationViewModel,
     locationForecastViewModel: LocationForecastViewModel,
     homeViewModel: HomeViewModel,
     mainViewModel: MainViewModel,
@@ -95,10 +94,10 @@ fun HomeScreen(
     // notification setup
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+    ) { _ ->
+        /*if (result.resultCode == Activity.RESULT_OK) {
             // Handle the result if needed
-        }
+        }*/
     }
 
     // Show the dialog if required
