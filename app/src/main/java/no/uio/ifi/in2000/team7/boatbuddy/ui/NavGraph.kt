@@ -75,7 +75,6 @@ fun NavGraph(
                     HomeScreen(
                         metalertsViewModel = metalertsViewModel,
                         mapboxViewModel = mapboxViewModel,
-                        userLocationViewModel = userLocationViewModel,
                         locationForecastViewModel = locationForecastViewModel,
                         homeViewModel = homeViewModel,
                         mainViewModel = mainViewModel,
