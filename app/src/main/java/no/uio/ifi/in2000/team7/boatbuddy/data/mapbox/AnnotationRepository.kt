@@ -46,9 +46,9 @@ class AnnotationRepository(
     private var isAlertClickable = false
     private var alertData: List<FeatureData>? = null
 
-    private val undoDeque: MutableList<Pair<Point, CircleAnnotation>> =
+    private val undoList: MutableList<Pair<Point, CircleAnnotation>> =
         mutableListOf()
-    private val redoDeque: MutableList<Pair<Point, CircleAnnotation>> =
+    private val redoList: MutableList<Pair<Point, CircleAnnotation>> =
         mutableListOf()
     private var removeFromList: Pair<Point, CircleAnnotation>? = null
 
@@ -308,7 +308,7 @@ class AnnotationRepository(
             val pair = Pair(clickedCircle.point, clickedCircle)
             if (isSelectingRoute) {
                 route.remove(clickedCircle.point)
-                undoDeque.remove(pair)
+                undoList.remove(pair)
                 circleAnnotationManager.delete(clickedCircle)
                 polylineAnnotationManager.deleteAll()
                 addLineToMap(route)
@@ -320,14 +320,14 @@ class AnnotationRepository(
     private fun userClick(point: Point) {
         var circle: CircleAnnotation?
         if (route.size < 10) {
-            removeFromList = redoDeque.lastOrNull()
+            removeFromList = redoList.lastOrNull()
             circle = addCircleToMap(point)
             route.add(point)
             if (route.size > 1) {
                 polylineAnnotationManager.deleteAll()
                 addLineToMap(route)
             }
-            undoDeque.add(Pair(point, circle))
+            undoList.add(Pair(point, circle))
         }
     }
 
@@ -352,14 +352,16 @@ class AnnotationRepository(
 
     fun refreshRoute() {
         route.clear()
+        undoList.clear()
+        redoList.clear()
         circleAnnotationManager.deleteAll()
         polylineAnnotationManager.deleteAll()
     }
 
     fun undoClick() {
-        val undo = undoDeque.removeLastOrNull()
+        val undo = undoList.removeLastOrNull()
         undo?.let {
-            redoDeque.add(
+            redoList.add(
                 Pair(
                     it.first,
                     it.second,
@@ -373,12 +375,12 @@ class AnnotationRepository(
     }
 
     fun redoClick() {
-        val redo = redoDeque.removeLastOrNull()
+        val redo = redoList.removeLastOrNull()
         redo?.let {
             if (redo != removeFromList) {
                 val newCircle = addCircleToMap(it.first)
                 route.add(it.first)
-                undoDeque.add(
+                undoList.add(
                     Pair(
                         it.first,
                         newCircle,
