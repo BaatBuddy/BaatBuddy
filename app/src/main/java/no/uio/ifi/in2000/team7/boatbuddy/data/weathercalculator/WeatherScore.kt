@@ -14,53 +14,46 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.time.times
 
 object WeatherScore {
 
-    // from A - B to a - b with value v
-    private fun mapValue(
-        value: Double,
-        fromA: Double,
-        fromB: Double,
-        toA: Double = 100.0,
-        toB: Double = 0.0
-    ): Double {
-        val mappedValue = (toA + (value - fromA) * (toB - toA) / (fromB - fromA))
-        println(mappedValue)
-        if (mappedValue > 100.0) {
-            return max(0.0, 100 - abs(100 - mappedValue))
-        } else if (mappedValue < 0.0) {
-            return min(0.0, mappedValue * -1)
-        }
+    fun calculateWaves(realData: Double, preferredData: Double): Double {
+        // set ratio between difference of data to score -> 0.01m = 1score
+        val diff = abs(realData - preferredData)
+        val ratio = 0.01
 
-        return mappedValue
+        return max(
+            (100 - diff / ratio),
+            0.0
+        ) * if (realData < preferredData) 1.5 else 1.0 // everything above 1,5m waves gives 0 but under 0.5 is preferred
     }
 
-    // maps value from actual data and preference to a score between 0 and 100 (100 being closest to the preferred condition)
-    private fun calculateFactor(
-        value: Double,
-        preferredData: Double,
-        from: Double,
-        to: Double
-    ): Double {
-        // Calculate the difference ratio where 'to' is the largest acceptable difference yielding a score of 0
-        val differenceRatio = abs(value - preferredData) / to
-        // Map this ratio to a score of 0 to 100
-        return mapValue(differenceRatio, from, to, 100.0, 0.0)
+    fun calculatePercentages(
+        realData: Double,
+        preferredData: Double
+    ): Double { // used for cloud area and humidity
+        return 100 - abs(realData - preferredData)
     }
 
-    // TODO adjust the function to handle null values and add rain. null values means that user doesn't care about the following weather
+    fun calculateTemp(realData: Double, preferredData: Double): Double {
+        val diff = abs(realData - preferredData)
+        val ratio = 0.15
 
-    // creates a score based on how far away from preferred weather data is (gpt :) )
-    fun calculateInstance(realData: Double, preferredData: Double): Double {
-        val asd = calculateFactor(
-            value = realData,
-            preferredData = preferredData,
-            from = preferredData * 0.1,
-            to = min(preferredData * 1.9, 0.01),
-        )
-        println(asd)
-        return asd
+        return (100 - diff / ratio).coerceIn(
+            0.0,
+            100.0
+        ) // makes sure that the data is between 0 and 100
+    }
+
+    fun calculateSpeed(realData: Double, preferredData: Double): Double {
+        val diff = abs(realData - preferredData)
+        val ratio = 0.15
+
+        return (100 - diff / ratio).coerceIn(
+            0.0,
+            100.0
+        ) // makes sure that the data is between 0 and 100
     }
 
     // creates a score from 0 - 100 based on preference and real data
@@ -69,45 +62,49 @@ object WeatherScore {
         weatherPreferences: WeatherPreferences,
         // isEndpoint: Boolean,
     ): Double {
-        val wantedData = mutableListOf(
-            Pair(timeWeatherData.windSpeed, weatherPreferences.windSpeed),
-            Pair(timeWeatherData.airTemperature, weatherPreferences.airTemperature),
-            Pair(timeWeatherData.cloudAreaFraction, weatherPreferences.cloudAreaFraction),
-            Pair(timeWeatherData.waveHeight, 0.5)
+
+        var sumScore = 0.0
+        var factors = 4
+
+        sumScore += calculateSpeed(timeWeatherData.windSpeed, weatherPreferences.windSpeed)
+        sumScore += calculateTemp(timeWeatherData.airTemperature, weatherPreferences.airTemperature)
+        sumScore += calculatePercentages(
+            timeWeatherData.cloudAreaFraction,
+            weatherPreferences.cloudAreaFraction
         )
+        sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+
 
         if (weatherPreferences.waterTemperature != null) {
-            wantedData.add(
-                Pair(timeWeatherData.waterTemperature, weatherPreferences.waterTemperature)
+            sumScore += calculateTemp(
+                timeWeatherData.waterTemperature,
+                weatherPreferences.waterTemperature
             )
+            factors += 1
         }
         if (weatherPreferences.relativeHumidity != null) {
-            wantedData.add(
-                Pair(timeWeatherData.relativeHumidity, weatherPreferences.relativeHumidity)
+            sumScore += calculatePercentages(
+                timeWeatherData.relativeHumidity,
+                weatherPreferences.relativeHumidity
             )
+            factors += 1
         }
 
-        return wantedData.sumOf {
-            calculateInstance(it.first, it.second)
-        } / (wantedData.size + listOf(
-            timeWeatherData.precipitationAmount,
-            timeWeatherData.fogAreaFraction
-        ).count { it != 0.0 })
+        return sumScore / factors
     }
 
     fun calculateDate(
         timeWeatherData: List<TimeWeatherData>,
         weatherPreferences: WeatherPreferences
     ): Double {
-        val asd = timeWeatherData.sumOf {
+        return timeWeatherData.sumOf {
             calculateHour(
                 it,
                 weatherPreferences,
                 // it == timeWeatherData.last()
             )
         } / timeWeatherData.size
-        println(asd.toString() + "asdasd")
-        return asd
+
     }
 
     // calculates the amount of points based on the length in km
@@ -116,15 +113,13 @@ object WeatherScore {
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
         return pathWeatherData.map {
-            val asd = DateScore(
+            DateScore(
                 date = it.date,
                 score = calculateDate(
                     timeWeatherData = it.timeWeatherData,
                     weatherPreferences = weatherPreferences
                 )
             )
-            println(asd)
-            asd
         }
     }
 

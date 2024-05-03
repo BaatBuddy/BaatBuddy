@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
+import androidx.compose.ui.util.fastRoundToInt
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateDate
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateHour
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
@@ -58,14 +59,14 @@ class WeatherScoreUnitTest {
             lat = 0.0,
             lon = 0.0,
             waveHeight = 0.5,
-            waterTemperature = 20.0,
             windSpeed = 4.0,
-            windSpeedOfGust = 0.0,
             airTemperature = 20.0,
             cloudAreaFraction = 20.0,
-            fogAreaFraction = 0.0,
+            waterTemperature = 20.0,
             relativeHumidity = 30.0,
             precipitationAmount = 0.0,
+            fogAreaFraction = 0.0,
+            windSpeedOfGust = 0.0,
             symbolCode = "",
         )
 
@@ -129,8 +130,6 @@ class WeatherScoreUnitTest {
             weatherPreferences = weatherPreferences,
             // isEndpoint = true
         )
-
-        println(result)
 
         // assert
         assert(result != 100.0)
