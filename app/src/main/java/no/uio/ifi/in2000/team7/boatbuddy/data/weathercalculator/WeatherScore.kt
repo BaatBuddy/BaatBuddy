@@ -90,7 +90,10 @@ object WeatherScore {
             factors += 1
         }
 
-        return sumScore / factors
+        return sumScore / (factors + listOf(
+            timeWeatherData.precipitationAmount,
+            timeWeatherData.fogAreaFraction
+        ).count { it != 0.0 }) // takes down the score if they are not equal to 0.0 which is ideal
     }
 
     fun calculateDate(

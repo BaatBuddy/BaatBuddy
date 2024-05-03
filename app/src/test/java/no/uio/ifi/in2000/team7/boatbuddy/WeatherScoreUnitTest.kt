@@ -136,6 +136,88 @@ class WeatherScoreUnitTest {
     }
 
     @Test
+    fun calculatingHourScoreWithRain_isNotPerfect() {
+        // arrange, create
+        val timeWeatherData = TimeWeatherData(
+            time = "",
+            lat = 0.0,
+            lon = 0.0,
+            waveHeight = 0.5,
+            waterTemperature = 0.0,
+            windSpeed = 4.0,
+            windSpeedOfGust = 0.0,
+            airTemperature = 20.0,
+            cloudAreaFraction = 20.0,
+            fogAreaFraction = 0.0,
+            relativeHumidity = 0.0,
+            precipitationAmount = 1.0,
+            symbolCode = "",
+        )
+
+        val weatherPreferences = WeatherPreferences(
+            waveHeight = 0.5,
+            windSpeed = 4.0,
+            airTemperature = 20.0,
+            cloudAreaFraction = 20.0,
+            waterTemperature = null,
+            relativeHumidity = null,
+            precipitationAmount = 0.0,
+            fogAreaFraction = 0.0
+        )
+
+        // act
+        val result = calculateHour(
+            timeWeatherData = timeWeatherData,
+            weatherPreferences = weatherPreferences,
+            // isEndpoint = true
+        )
+
+        // assert
+        assert(result != 100.0)
+    }
+
+    @Test
+    fun calculatingHourScoreWithFog_isNotPerfect() {
+        // arrange, create
+        val timeWeatherData = TimeWeatherData(
+            time = "",
+            lat = 0.0,
+            lon = 0.0,
+            waveHeight = 0.5,
+            waterTemperature = 0.0,
+            windSpeed = 4.0,
+            windSpeedOfGust = 0.0,
+            airTemperature = 20.0,
+            cloudAreaFraction = 20.0,
+            fogAreaFraction = 1.0,
+            relativeHumidity = 0.0,
+            precipitationAmount = 0.0,
+            symbolCode = "",
+        )
+
+        val weatherPreferences = WeatherPreferences(
+            waveHeight = 0.5,
+            windSpeed = 4.0,
+            airTemperature = 20.0,
+            cloudAreaFraction = 20.0,
+            waterTemperature = null,
+            relativeHumidity = null,
+            precipitationAmount = 0.0,
+            fogAreaFraction = 0.0
+        )
+
+        // act
+        val result = calculateHour(
+            timeWeatherData = timeWeatherData,
+            weatherPreferences = weatherPreferences,
+            // isEndpoint = true
+        )
+
+        // assert
+        assert(result != 100.0)
+    }
+
+    @Test
     fun calculatingDayScore_isPerfect() {
         // arrange, create
 
