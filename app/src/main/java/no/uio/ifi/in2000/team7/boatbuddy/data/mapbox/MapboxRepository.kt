@@ -48,7 +48,7 @@ class MapboxRepository(
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         mapView.mapboxMap.setCamera(
             CameraOptions.Builder()
-                .zoom(14.0)
+                // .zoom(14.0)
                 .center(it)
                 .build()
         )
@@ -166,7 +166,7 @@ class MapboxRepository(
             removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
             removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
         }
-        mapView.gestures.removeOnMoveListener(onMoveListener)
+        // mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
     suspend fun panToPoint(cameraOptions: CameraOptions) {
