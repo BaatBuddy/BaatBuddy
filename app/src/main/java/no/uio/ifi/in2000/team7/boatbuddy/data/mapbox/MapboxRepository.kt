@@ -19,9 +19,12 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxCache.savedMapURL
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 class MapboxRepository(
@@ -229,16 +232,18 @@ class MapboxRepository(
     }
 
     suspend fun generateMapURI(points: List<Point>): String {
-        if (points in savedMapURL) {
-            Log.i("ASDASD", savedMapURL.toString())
-            return savedMapURL[points]!!
-        }
+
 
         val unformattedURL =
             "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/path-%s+%s-%s(%s)/auto/500x300?access_token=%s"
 
-        val encodedStringPath = PolylineUtils.encode(points, 5)
-
+        val encodedStringPath =
+            withContext(Dispatchers.IO) {
+                URLEncoder.encode(
+                    PolylineUtils.encode(points, 5),
+                    StandardCharsets.UTF_8.toString()
+                )
+            }
         // strokeWidth (double), strokeColor(hex), strokeOpacity(double), fillColor(hex), fillOpacity(double), path encoded string, access token
         val formattedURL = unformattedURL.format(
             4,
@@ -247,8 +252,8 @@ class MapboxRepository(
             encodedStringPath,
             MapboxConstants.token
         )
+        Log.i("ASDASD", points.toString() + "ASDASDASD")
 
-        savedMapURL = savedMapURL.plus(points to formattedURL)
 
 
         return formattedURL

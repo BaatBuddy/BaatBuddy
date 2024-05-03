@@ -28,7 +28,7 @@ fun BottomBar(
             Screen.InfoScreen,
             Screen.TrackingScreen,
             Screen.RouteScreen,
-            Screen.SettingScreen
+            Screen.SettingsScreen
             // add more screen if needed
         ).forEachIndexed { index, item ->
             NavigationBarItem(

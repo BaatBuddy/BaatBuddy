@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -9,6 +8,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
@@ -61,6 +62,7 @@ fun HomeScreen(
     locationForecastViewModel: LocationForecastViewModel,
     homeViewModel: HomeViewModel,
     mainViewModel: MainViewModel,
+    navController: NavController,
 ) {
 
     val context = LocalContext.current
@@ -132,6 +134,11 @@ fun HomeScreen(
     var createdRoute by remember { mutableStateOf(false) }
 
     Scaffold(
+        topBar = {
+            TopBar(
+                navController = navController,
+            )
+        },
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -150,7 +157,7 @@ fun HomeScreen(
                         Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
                     },
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(top = 80.dp, end = 48.dp)
                 )
                 Column(
                     horizontalAlignment = Alignment.End
@@ -238,68 +245,73 @@ fun HomeScreen(
             }
         }
 
-    ) {
-        AndroidView(
-            factory = { ctx ->
-                mapboxUIState.mapView
-            }
-        )
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                    showBottomSheetButton = true
-                },
-                sheetState = sheetState
-            ) {
-                if (mapboxUIState.routePoints.isNotEmpty()) {
-                    locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
-                    showBottomSheet = true
+    ) { paddingValue ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValue)
+        ) {
+            AndroidView(
+                factory = { _ ->
+                    mapboxUIState.mapView
                 }
+            )
 
-                SwipeUpContent(locationForecastUIState)
-
-                Column {
-                    Row {
-
-                        Button(onClick = {
-                            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    showBottomSheet = false
-                                }
-                            }
-                        }) {
-                            Text("Hide bottom sheet")
-                        }
-                        Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
-                            Text(text = "Toggle alert visibility")
-                        }
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                        showBottomSheetButton = true
+                    },
+                    sheetState = sheetState
+                ) {
+                    if (mapboxUIState.routePoints.isNotEmpty()) {
+                        locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
+                        showBottomSheet = true
                     }
 
-                    Row {
-                        Button(onClick = {
+                    SwipeUpContent(locationForecastUIState)
 
+                    Column {
+                        Row {
 
+                            Button(onClick = {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                    }
+                                }
+                            }) {
+                                Text("Hide bottom sheet")
+                            }
+                            Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
+                                Text(text = "Toggle alert visibility")
+                            }
                         }
-                        ) {
-                            Text(text = "Start")
-                        }
 
-                        Button(onClick = {
-                            Intent(context, locationService::class.java).apply {
-                                action = LocationService.ACTION_STOP
-                                context.startService(this)
+                        Row {
+                            Button(onClick = {
+
+
+                            }
+                            ) {
+                                Text(text = "Start")
                             }
 
-                        }
-                        ) {
-                            Text(text = "Stop")
+                            Button(onClick = {
+                                Intent(context, locationService::class.java).apply {
+                                    action = LocationService.ACTION_STOP
+                                    context.startService(this)
+                                }
+
+                            }
+                            ) {
+                                Text(text = "Stop")
+                            }
                         }
                     }
                 }
             }
         }
     }
-
 }

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
@@ -180,7 +181,6 @@ class ProfileViewModel @Inject constructor(
                     username = it.username
                 )
             } ?: emptyList()
-
             _routeScreenUIState.update {
                 it.copy(
                     routeMaps = routes

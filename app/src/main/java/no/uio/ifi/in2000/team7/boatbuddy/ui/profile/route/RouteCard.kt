@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,12 +61,12 @@ fun RouteCard(
             Column {
                 Text(text = "Rute navn")
                 Text(text = routeMap.route.routename)
+                Log.i("ASDASD", routeMap.mapURL + " HGBWEHBGFHEWBGJ")
                 AsyncImage(
                     model = routeMap.mapURL,
                     contentDescription = "Map with path",
                     modifier = Modifier
                         .fillMaxWidth(),
-                    imageLoader = ImageLoader(context = context),
                     onError = {
                         loading = false
                     },

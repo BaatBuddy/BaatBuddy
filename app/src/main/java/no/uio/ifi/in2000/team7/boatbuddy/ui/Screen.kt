@@ -16,7 +16,7 @@ sealed class Screen(val route: String, val icon: ImageVector, val label: String)
         Screen(route = "trackingscreen", icon = Icons.Filled.PlayArrow, label = "Spor")
 
     object RouteScreen : Screen(route = "routescreen", icon = Icons.Filled.List, label = "Ruter")
-    object SettingScreen :
+    object SettingsScreen :
         Screen(route = "profilescreen", icon = Icons.Filled.Person, label = "Profil")
 
 }

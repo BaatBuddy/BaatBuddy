@@ -73,6 +73,7 @@ fun NavGraph(
                         locationForecastViewModel = locationForecastViewModel,
                         homeViewModel = homeViewModel,
                         mainViewModel = mainViewModel,
+                        navController = navController,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -84,7 +85,7 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                     )
                 }
-                composable(route = Screen.SettingScreen.route) {
+                composable(route = Screen.SettingsScreen.route) {
                     ProfileScreen(
                         profileViewModel = profileViewModel,
                         navController = navController,

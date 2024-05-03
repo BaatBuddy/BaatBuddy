@@ -41,8 +41,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchProfileRepository(db: ProfileDatabase): ProfileRepository =
-        ProfileRepository(db.userDao(), db.boatDao())
+    fun fetchProfileRepository(
+        db: ProfileDatabase,
+        @ApplicationContext context: Context
+    ): ProfileRepository =
+        ProfileRepository(db.userDao(), db.boatDao(), context = context)
 
     @Singleton
     @Provides

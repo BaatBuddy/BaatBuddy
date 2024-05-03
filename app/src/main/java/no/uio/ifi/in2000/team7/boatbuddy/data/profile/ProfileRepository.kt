@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
+import android.content.Context
+import android.content.Intent
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
@@ -10,7 +13,8 @@ import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(
     private val userDao: UserProfileDao,
-    private val boatDao: BoatProfileDao
+    private val boatDao: BoatProfileDao,
+    private val context: Context,
 ) {
     suspend fun getUserByUsername(username: String): UserProfile {
         return userDao.getUserByUsername(username = username)
@@ -77,7 +81,11 @@ class ProfileRepository @Inject constructor(
         if (username != null) {
             userDao.stopTrackingUsername(username = username)
         }
-        points = mutableListOf()
+
+        Intent(context, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            context.startService(this)
+        }
     }
 
     suspend fun selectUser(username: String) {

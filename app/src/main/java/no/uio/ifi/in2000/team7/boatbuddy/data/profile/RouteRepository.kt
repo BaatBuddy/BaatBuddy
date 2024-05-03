@@ -34,7 +34,7 @@ class RouteRepository @Inject constructor(
         routename: String,
         routeDescription: String,
     ) {
-        Log.i("ASDASD", points.toString())
+        Log.i("ASDASD", points.toString() + "AJFBUEWBUHJEWBFG")
         routeDao.insertRoute(
             Route(
                 username = username,
@@ -54,6 +54,7 @@ class RouteRepository @Inject constructor(
 
         return routeDao.getAllRoutesUsername(username = username).map {
             withContext(Dispatchers.Main) {
+                Log.i("ASDASD", it.route.toString())
                 val mapURL = mapRepo.generateMapURI(it.route)
                 RouteMap(route = it, mapURL = mapURL)
             }
