@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking
+package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -8,8 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,14 +19,20 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import no.uio.ifi.in2000.team7.boatbuddy.MainActivity
+import kotlinx.coroutines.flow.take
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.enteredAlerts
-import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.AlertNotificationCache.featureData
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
+import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.featureData
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.startTime
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.bitmapFromDrawableRes
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertAlertResId
-import no.uio.ifi.in2000.team7.boatbuddy.ui.WeatherConverter.convertLanguage
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
+import java.util.Date
 
 
 class LocationService : Service() {
@@ -88,6 +96,21 @@ class LocationService : Service() {
 
         startForeground(locationNotificationId, locationNotificationBuilder.build())
 
+        locationClient.getLocationUpdates(10L)
+            .take(2) // Take only the two first location update
+            .catch { e -> e.printStackTrace() }
+            .onEach { location ->
+                val lat = location.latitude
+                val lon = location.longitude
+                val updatedLocationNotification = locationNotificationBuilder
+                    .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
+                    .build()
+                notificationManager.notify(locationNotificationId, updatedLocationNotification)
+            }
+            .launchIn(serviceScope)
+
+
+
         locationClient.getLocationUpdates(10000L)
             .catch { e -> e.printStackTrace() }
             .onEach { location ->
@@ -95,6 +118,15 @@ class LocationService : Service() {
                 val lon = location.longitude
                 val currentAlerts =
                     checkUserLocationAlertAreas(lon = lon, lat = lat)
+
+                points.add(Point.fromLngLat(lon, lat))
+
+                Log.i("ASDASD", points.toString())
+
+                if (startTime.isBlank()) {
+                    startTime = sdf.format(Date())
+                }
+                finishTime = sdf.format(Date())
 
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
@@ -124,8 +156,7 @@ class LocationService : Service() {
                         notificationManager
                     )
                 }
-            }
-            .launchIn(serviceScope)
+            }.launchIn(serviceScope)
     }
 
     private fun sendAlertNotification(
