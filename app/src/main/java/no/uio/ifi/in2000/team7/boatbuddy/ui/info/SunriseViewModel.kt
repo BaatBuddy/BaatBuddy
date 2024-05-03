@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,13 +12,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
+import javax.inject.Inject
 
 data class SunriseUIState(
     val sunriseData: SunriseData? = null
 )
 
-class SunriseViewModel : ViewModel() {
-    private val repository: SunriseRepository = SunriseRepository()
+@HiltViewModel
+class SunriseViewModel @Inject constructor(
+    private val repository: SunriseRepository
+) : ViewModel() {
 
     private val _sunriseUIState = MutableStateFlow(SunriseUIState(null))
     val sunriseUIState: StateFlow<SunriseUIState> = _sunriseUIState.asStateFlow()

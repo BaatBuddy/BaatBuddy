@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.data
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -74,7 +74,7 @@ object WeatherConverter {
     }
 
     // functions to convert a xml vector to a bitmap object
-    fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
+    fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int): Bitmap? =
         convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
 
     private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {

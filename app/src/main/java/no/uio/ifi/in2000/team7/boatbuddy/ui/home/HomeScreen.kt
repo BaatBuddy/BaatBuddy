@@ -1,13 +1,14 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
-import UserLocationViewModel
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,30 +44,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox.MapboxViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
-    metAlertsViewModel: MetAlertsViewModel = viewModel(),
-    mapboxViewModel: MapboxViewModel = viewModel(),
-    userLocationViewModel: UserLocationViewModel = viewModel(),
-    homeViewModel: HomeViewModel = viewModel(),
-    locationForecastViewModel: LocationForecastViewModel = viewModel(),
+    metalertsViewModel: MetAlertsViewModel,
+    mapboxViewModel: MapboxViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
+    homeViewModel: HomeViewModel,
+    mainViewModel: MainViewModel,
+    navController: NavController,
 ) {
 
     val context = LocalContext.current
 
     // fetches all alerts (no arguments)
-    metAlertsViewModel.initialize()
+    metalertsViewModel.initialize()
     mapboxViewModel.initialize(
         context = context,
         cameraOptions = CameraOptions.Builder()
@@ -74,12 +76,14 @@ fun HomeScreen(
             .zoom(10.0)
             .bearing(0.0)
             .pitch(0.0)
-            .build(),
-        style = "mapbox://styles/mafredri/clu8bbhvh019501p71sewd7eg"
+            .build()
     )
 
-    val metAlertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
+    mainViewModel.selectScreen(0)
+
+    val metAlertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
 
     // bottom sheet setup
@@ -88,23 +92,36 @@ fun HomeScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheetButton by remember { mutableStateOf(true) }
 
+
     // notification setup
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+    ) { _ ->
+        /*if (result.resultCode == Activity.RESULT_OK) {
             // Handle the result if needed
-        }
+        }*/
     }
 
     // Show the dialog if required
-    if (homeViewModel.showNotificationDialog.value) {
+    if (homeScreenUIState.showNotificationDialog) {
         NotificationOptInDialog(
             navigateToSettings = {
                 homeViewModel.navigateToNotificationSettings()
-                settingsActivityResultLauncher.launch(Intent(Settings.ACTION_SETTINGS))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
+                    )
+                } else {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                    )
+                }
             },
-            onDismiss = { homeViewModel.showNotificationDialog.value = false }
+            onDismiss = { homeViewModel.hideNotificationDialog() }
         )
     }
 
@@ -117,6 +134,11 @@ fun HomeScreen(
     var createdRoute by remember { mutableStateOf(false) }
 
     Scaffold(
+        topBar = {
+            TopBar(
+                navController = navController,
+            )
+        },
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -135,7 +157,7 @@ fun HomeScreen(
                         Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
                     },
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(top = 80.dp, end = 48.dp)
                 )
                 Column(
                     horizontalAlignment = Alignment.End
@@ -223,63 +245,69 @@ fun HomeScreen(
             }
         }
 
-    ) {
-        AndroidView(
-            factory = { ctx ->
-                mapboxUIState.mapView
-            }
-        )
-
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    showBottomSheet = false
-                    showBottomSheetButton = true
-                },
-                sheetState = sheetState
-            ) {
-                if (mapboxUIState.routePoints.isNotEmpty()) {
-                    locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
-                    showBottomSheet = true
+    ) { paddingValue ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValue)
+        ) {
+            AndroidView(
+                factory = { _ ->
+                    mapboxUIState.mapView
                 }
+            )
 
-                SwipeUpContent(locationForecastUIState)
-
-                Column {
-                    Row {
-
-                        Button(onClick = {
-                            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    showBottomSheet = false
-                                }
-                            }
-                        }) {
-                            Text("Hide bottom sheet")
-                        }
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                        showBottomSheetButton = true
+                    },
+                    sheetState = sheetState
+                ) {
+                    if (mapboxUIState.routePoints.isNotEmpty()) {
+                        locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
+                        showBottomSheet = true
                     }
 
-                    Row {
-                        Button(onClick = {
-                            Intent(context, LocationService::class.java).apply {
-                                action = LocationService.ACTION_START
-                                context.startService(this)
+                    SwipeUpContent(locationForecastUIState)
+
+                    Column {
+                        Row {
+
+                            Button(onClick = {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    if (!sheetState.isVisible) {
+                                        showBottomSheet = false
+                                    }
+                                }
+                            }) {
+                                Text("Hide bottom sheet")
+                            }
+                            Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
+                                Text(text = "Toggle alert visibility")
+                            }
+                        }
+
+                        Row {
+                            Button(onClick = {
+
+
+                            }
+                            ) {
+                                Text(text = "Start")
                             }
 
-                        }
-                        ) {
-                            Text(text = "Start")
-                        }
+                            Button(onClick = {
+                                Intent(context, locationService::class.java).apply {
+                                    action = LocationService.ACTION_STOP
+                                    context.startService(this)
+                                }
 
-                        Button(onClick = {
-                            Intent(context, LocationService::class.java).apply {
-                                action = LocationService.ACTION_STOP
-                                context.startService(this)
                             }
-
-                        }
-                        ) {
-                            Text(text = "Stop")
+                            ) {
+                                Text(text = "Stop")
+                            }
                         }
                     }
                 }

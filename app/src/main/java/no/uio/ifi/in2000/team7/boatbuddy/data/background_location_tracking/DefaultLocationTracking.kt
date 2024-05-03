@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.background_location_tracking
+package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,25 +17,25 @@ import kotlinx.coroutines.launch
 class DefaultLocationClient(
     private val context: Context,
     private val client: FusedLocationProviderClient
-): LocationClient {
+) : LocationClient {
 
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
         return callbackFlow {
-            if(!context.hasLocationPermission()) {
+            if (!context.hasLocationPermission()) {
                 throw LocationClient.LocationException("Missing location permission")
             }
 
-            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val locationManager =
+                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-            if(!isGpsEnabled && !isNetworkEnabled) {
+            val isNetworkEnabled =
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            if (!isGpsEnabled && !isNetworkEnabled) {
                 throw LocationClient.LocationException("GPS is disabled")
             }
 
-            val request = LocationRequest.create()
-                .setInterval(interval)
-                .setFastestInterval(interval)
+            val request = LocationRequest.Builder(interval).build()
 
             val locationCallback = object : LocationCallback() {
                 override fun onLocationResult(result: LocationResult) {

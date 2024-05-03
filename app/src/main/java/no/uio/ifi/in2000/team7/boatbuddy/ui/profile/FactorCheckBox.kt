@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.setting
+package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Checkbox
