@@ -1,25 +1,43 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.ExtendedColorScheme
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.extendedDarkHighContrast
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.primaryContainerLight
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.primaryLight
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.secondaryContainerLight
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.triadic1ContainerDarkHighContrast
+import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.triadic1ContainerLight
 
 @Composable
 fun BottomBar(
-    navController: NavController
+    navController: NavController,
+    modifier: Modifier = Modifier
 ) {
     var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
-    NavigationBar {
+    NavigationBar(
+        modifier = modifier,
+
+
+    ) {
         listOf(
             Screen.HomeScreen,
             Screen.InfoScreen
