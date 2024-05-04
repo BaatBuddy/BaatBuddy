@@ -1,13 +1,16 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.mapbox
+package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -17,12 +20,12 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculato
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
+import javax.inject.Inject
 
 
 data class MapboxUIState(
     val mapView: MapView,
     val cameraOptions: CameraOptions,
-    val style: String,
 
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
     val alertVisible: Boolean = false,
@@ -31,38 +34,46 @@ data class MapboxUIState(
     val routePath: List<Point>? = null,
 )
 
-class MapboxViewModel : ViewModel() {
-    private val repository: MapboxRepository = MapboxRepository()
-    private val weatherCalculatorRepository: WeatherCalculatorRepository =
-        WeatherCalculatorRepository()
+@HiltViewModel
+class MapboxViewModel @Inject constructor(
+    private val mapboxRepository: MapboxRepository,
+    private val weatherCalculatorRepository: WeatherCalculatorRepository
+) : ViewModel() {
+
 
     private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
     lateinit var mapboxUIState: StateFlow<MapboxUIState>
 
     private var initialized = false
 
+    private val _undoClick = MutableLiveData(false)
+    val undoClick: LiveData<Boolean> = _undoClick
+
+    private val _redoClick = MutableLiveData(false)
+    val redoClick: LiveData<Boolean> = _redoClick
+
     @MainThread
-    fun initialize(context: Context, cameraOptions: CameraOptions, style: String) {
-        Log.i("ASDASD", "try init")
+    fun initialize(context: Context, cameraOptions: CameraOptions) {
         if (initialized) return
-        Log.i("ASDASD", "actual init")
         initialized = true
-        createMap(context = context, cameraOptions = cameraOptions, style = style)
+        createMap(context = context, cameraOptions = cameraOptions)
 
     }
 
 
-    private fun createMap(context: Context, cameraOptions: CameraOptions, style: String) {
+    private fun createMap(context: Context, cameraOptions: CameraOptions) {
 
         // mapview setup
         val mapView =
-            repository.createMap(context = context, cameraOptions = cameraOptions, style = style)
+            mapboxRepository.createMap(
+                context = context,
+                cameraOptions = cameraOptions
+            )
 
         _mapboxUIState = MutableStateFlow(
             MapboxUIState(
                 mapView = mapView,
-                cameraOptions = cameraOptions,
-                style = style
+                cameraOptions = cameraOptions
             )
         )
         mapboxUIState = _mapboxUIState
@@ -71,7 +82,7 @@ class MapboxViewModel : ViewModel() {
 
     fun toggleAlertVisibility() {
         viewModelScope.launch {
-            repository.toggleAlertVisibility()
+            mapboxRepository.toggleAlertVisibility()
             _mapboxUIState.update {
                 it.copy(
                     alertVisible = !it.alertVisible
@@ -95,30 +106,31 @@ class MapboxViewModel : ViewModel() {
     ) {
         updateCameraOptions(cameraOptions = cameraOptions)
         viewModelScope.launch {
-            repository.panToPoint(cameraOptions = cameraOptions)
+            mapboxRepository.panToPoint(cameraOptions = cameraOptions)
         }
     }
 
-    fun changeStyle(
-        style: String
-    ) {
-        viewModelScope.launch {
-            repository.changeStyle(
-                style = style
-            )
-            _mapboxUIState.update {
-                it.copy(
-                    style = style
-                )
-            }
-        }
-    }
+    // TODO fix
+//    fun changeStyle(
+//        style: String
+//    ) {
+//        viewModelScope.launch {
+//            mapboxRepository.changeStyle(
+//                style = style
+//            )
+//            _mapboxUIState.update {
+//                it.copy(
+//                    style = style
+//                )
+//            }
+//        }
+//    }
 
     fun createLinePath(
         points: List<Point>
     ) {
         viewModelScope.launch {
-            repository.createLinePath(points = points)
+            mapboxRepository.createLinePath(points = points)
         }
     }
 
@@ -148,7 +160,7 @@ class MapboxViewModel : ViewModel() {
 
     fun toggleRouteClicking() {
         viewModelScope.launch {
-            repository.toggleRouteClicking()
+            mapboxRepository.toggleRouteClicking()
         }
     }
 
@@ -156,7 +168,7 @@ class MapboxViewModel : ViewModel() {
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(
-                    routePoints = repository.getRoutePoints()
+                    routePoints = mapboxRepository.getRoutePoints()
                 )
             }
         }
@@ -165,12 +177,24 @@ class MapboxViewModel : ViewModel() {
     fun generateRoute() {
         updateRoute()
         viewModelScope.launch {
-            val route = repository.generateRoute()
+            val route = mapboxRepository.generateRoute()
             _mapboxUIState.update {
                 it.copy(
                     routePath = route
                 )
             }
         }
+    }
+
+    fun refreshRoute() {
+        mapboxRepository.refreshRoute()
+    }
+
+    fun undoClick() {
+        mapboxRepository.undoClick()
+    }
+
+    fun redoClick() {
+        mapboxRepository.redoClick()
     }
 }

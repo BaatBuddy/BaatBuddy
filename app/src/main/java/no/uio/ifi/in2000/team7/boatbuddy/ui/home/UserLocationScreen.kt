@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
-import UserLocationViewModel
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager

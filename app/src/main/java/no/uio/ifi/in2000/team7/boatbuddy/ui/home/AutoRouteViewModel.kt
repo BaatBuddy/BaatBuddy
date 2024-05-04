@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
 import com.mapbox.geojson.Point
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,14 +12,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
+import javax.inject.Inject
 
 data class AutorouteUiState(
     val autoRoute: AutorouteData?
 )
 
-
-class AutoRouteViewModel : ViewModel() {
-    private val repository: AutorouteRepository = AutorouteRepository()
+@HiltViewModel
+class AutoRouteViewModel @Inject constructor(
+    private val repository: AutorouteRepository
+) : ViewModel() {
 
     private val _autoRouteUiState = MutableStateFlow(AutorouteUiState(null))
     val autoRouteUiState: StateFlow<AutorouteUiState> = _autoRouteUiState
