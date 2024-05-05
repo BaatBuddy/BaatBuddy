@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route
+package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -13,15 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,45 +32,39 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.Alert
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
-fun StopTrackingDialog(
+fun StartTrackingDialog(
     navController: NavController,
     mainViewModel: MainViewModel,
-    profileViewModel: ProfileViewModel,
 ) {
     Dialog(
         onDismissRequest = {
             mainViewModel.hideDialog()
         },
     ) {
+        val context = LocalContext.current
+
         // TODO MUST BE FIXED, TOO BIG BUTTON
-        // TODO navigate to new screen with the list of points, later create a route with name and ditt og datt
-        Card(
-            modifier = Modifier
-                .padding(4.dp)
-        ) {
+        Card {
             Column(
                 modifier = Modifier
                     .padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Vil du avslutte turen din?",
+                    text = "Vil du starte sporing av turen din?",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.W500
                 )
-
                 Spacer(
                     modifier = Modifier
-                        .height(10.dp)
+                        .height(20.dp)
                 )
-
                 Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                        .fillMaxWidth()
                 ) {
                     Button(
                         onClick = {
@@ -99,27 +91,35 @@ fun StopTrackingDialog(
                     }
                     Button(
                         onClick = {
-                            mainViewModel.hideBottomBar()
-                            navController.navigate("addroute")
+                            if (navController.currentDestination?.route != Screen.HomeScreen.route) {
+                                navController.navigate(Screen.HomeScreen.route)
+                                mainViewModel.selectScreen(0)
+                            }
 
                             mainViewModel.hideDialog()
+                            mainViewModel.startFollowUserOnMap()
 
-                            profileViewModel.updateCurrentRouteTime()
-                            profileViewModel.updateCurrentRoute()
+                            AlertNotificationCache.points = mutableListOf()
+
+                            Intent(context, LocationService::class.java).apply {
+                                action = LocationService.ACTION_START
+                                context.startService(this)
+                            }
                         },
                         modifier = Modifier
-                            .size(100.dp),
+                            .size(100.dp)
+                            .aspectRatio(1f),
                         shape = CircleShape,
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Check,
+                            imageVector = Icons.Filled.PlayArrow,
                             contentDescription = "",
                             modifier = Modifier
                                 .size(25.dp)
                         )
                         Text(
-                            text = "FERDIG",
+                            text = "START",
                             maxLines = 1,
                             fontSize = 16.sp
                         )

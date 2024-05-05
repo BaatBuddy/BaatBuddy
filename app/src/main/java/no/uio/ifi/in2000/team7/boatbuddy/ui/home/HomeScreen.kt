@@ -44,10 +44,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.NotificationOptInDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 
@@ -61,7 +61,6 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
-    scope: CoroutineScope,
 ) {
 
     val context = LocalContext.current
@@ -269,15 +268,15 @@ fun HomeScreen(
 
 
                 }
-                if (mapboxUIState.routeData is APIStatus.Loading) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+            }
+            if (mapboxUIState.routeData is APIStatus.Loading) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         }

@@ -35,11 +35,11 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.AddRouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteInfoScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.StopTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
 
 @Composable
@@ -119,7 +119,6 @@ fun NavGraph(
                         homeViewModel = homeViewModel,
                         mainViewModel = mainViewModel,
                         navController = navController,
-                        scope = scope,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {

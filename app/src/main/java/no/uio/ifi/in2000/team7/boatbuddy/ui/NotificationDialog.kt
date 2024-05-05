@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.home
+package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button

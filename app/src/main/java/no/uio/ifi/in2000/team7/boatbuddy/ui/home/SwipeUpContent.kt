@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +20,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastUIState
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeUpContent(
     locationForecastUIState: LocationForecastUIState

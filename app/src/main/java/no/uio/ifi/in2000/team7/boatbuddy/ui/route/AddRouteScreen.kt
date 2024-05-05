@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route
+package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -39,15 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
-import org.jetbrains.annotations.Async
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
