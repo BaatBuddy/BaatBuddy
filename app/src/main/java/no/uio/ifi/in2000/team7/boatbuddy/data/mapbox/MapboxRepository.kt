@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -190,6 +191,14 @@ class MapboxRepository(
         annotationRepository.addLineToMap(points = points)
     }
 
+    suspend fun convertListToPoint(points: List<List<Double>>): List<Point> = points.map {
+        Point.fromLngLat(it[0], it[1])
+    }
+
+    suspend fun createRoute(points: List<Point>) {
+        annotationRepository.createRoute(autoroutePoints = points)
+    }
+
     suspend fun toggleRouteClicking() {
         annotationRepository.toggleRouteClicking()
     }
@@ -198,25 +207,14 @@ class MapboxRepository(
         return annotationRepository.getRoutePoints()
     }
 
-    suspend fun generateRoute(): List<Point>? {
-        if (annotationRepository.getRoutePoints().size < 2) return null
-        val autoroutePoints = autorouteRepository.getAutorouteData(
+    suspend fun fetchRouteData(): APIStatus {
+        return autorouteRepository.getAutorouteData(
             course = annotationRepository.route.toList(),
             // TODO needs to retrive data from the database (user profile)
             safetyDepth = "5",
             safetyHeight = "5",
             boatSpeed = "5",
         )
-
-        if (autoroutePoints != null) {
-            val formattedPoints = autoroutePoints.geometry.coordinates.map {
-                Point.fromLngLat(it[0], it[1])
-            }
-            annotationRepository.createRoute(formattedPoints)
-            return formattedPoints
-        }
-        return null
-
     }
 
     fun refreshRoute() {

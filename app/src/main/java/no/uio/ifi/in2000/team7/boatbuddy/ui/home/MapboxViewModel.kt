@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
+import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import javax.inject.Inject
@@ -30,6 +32,8 @@ data class MapboxUIState(
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
     val alertVisible: Boolean = false,
 
+    val lastRouteData: APIStatus = APIStatus.Failed,
+    val routeData: APIStatus = APIStatus.Failed,
     val routePoints: List<Point> = mutableListOf(),
     val routePath: List<Point>? = null,
 )
@@ -164,7 +168,7 @@ class MapboxViewModel @Inject constructor(
         }
     }
 
-    fun updateRoute() {
+    private fun updateRoute() {
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(
@@ -177,11 +181,50 @@ class MapboxViewModel @Inject constructor(
     fun generateRoute() {
         updateRoute()
         viewModelScope.launch {
-            val route = mapboxRepository.generateRoute()
+            // init Loading
             _mapboxUIState.update {
                 it.copy(
-                    routePath = route
+                    lastRouteData = APIStatus.Failed,
+                    routeData = APIStatus.Loading
                 )
+            }
+            // fetch data from autoroute api and handle the data
+            when (val routeData = mapboxRepository.fetchRouteData()) {
+                APIStatus.Failed -> {
+                    _mapboxUIState.update {
+                        it.copy(
+                            lastRouteData = _mapboxUIState.value.routeData,
+                            routeData = APIStatus.Failed
+                        )
+                    }
+                }
+
+                // do nothing if loading
+                APIStatus.Loading -> {}
+
+                // draw route on map
+                is APIStatus.Success -> {
+                    _mapboxUIState.update {
+                        it.copy(
+                            routeData = routeData,
+                            routePath = when (val data = routeData.data) {
+                                is AutorouteData -> {
+                                    val convertedPath = mapboxRepository.convertListToPoint(
+                                        data.geometry.coordinates
+                                    )
+
+                                    mapboxRepository.createRoute(
+                                        convertedPath
+                                    )
+
+                                    convertedPath
+                                }
+
+                                else -> null
+                            }
+                        )
+                    }
+                }
             }
         }
     }

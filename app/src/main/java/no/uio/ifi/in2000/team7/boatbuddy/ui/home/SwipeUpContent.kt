@@ -23,7 +23,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwipeUpContent(locationForecastUIState: LocationForecastUIState) {
+fun SwipeUpContent(
+    locationForecastUIState: LocationForecastUIState
+) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,49 +48,6 @@ fun SwipeUpContent(locationForecastUIState: LocationForecastUIState) {
 
         locationForecastUIState.weekdayForecast?.let { DayWeatherTable(weekForecast = it) }
     }
-
-
-    /*var start by remember { mutableStateOf("") }
-    var end by remember { mutableStateOf("") }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = "Din reise",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(4.dp)
-        )
-        HorizontalDivider(
-            thickness = 2.dp,
-            modifier = Modifier
-                .padding(8.dp)
-        )
-        Row {
-            Column {
-                OutlinedTextField(
-                    value = start,
-                    onValueChange = { start = it },
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp
-                    )
-                )
-                OutlinedTextField(
-                    value = end,
-                    onValueChange = { end = it },
-                    shape = RoundedCornerShape(
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
-                    )
-                )
-            }
-        }
-    }*/
 }
 
 

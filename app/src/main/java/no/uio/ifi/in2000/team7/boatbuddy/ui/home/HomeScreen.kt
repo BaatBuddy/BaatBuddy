@@ -22,7 +22,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -37,7 +37,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,10 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
 import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
@@ -63,21 +61,14 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
+    scope: CoroutineScope,
 ) {
 
     val context = LocalContext.current
 
     // fetches all alerts (no arguments)
     metalertsViewModel.initialize()
-    mapboxViewModel.initialize(
-        context = context,
-        cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(10.20449, 59.74389))
-            .zoom(10.0)
-            .bearing(0.0)
-            .pitch(0.0)
-            .build()
-    )
+
 
     mainViewModel.selectScreen(0)
 
@@ -88,7 +79,6 @@ fun HomeScreen(
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheetButton by remember { mutableStateOf(true) }
 
@@ -134,6 +124,7 @@ fun HomeScreen(
     var createdRoute by remember { mutableStateOf(false) }
 
     Scaffold(
+
         topBar = {
             TopBar(
                 navController = navController,
@@ -185,6 +176,7 @@ fun HomeScreen(
                                         contentDescription = ""
                                     )
                                 },
+                                // TODO move into UIstate and collect weather data on click
                                 onClick = {
                                     generateRoute = false
                                     createdRoute = true
@@ -229,6 +221,7 @@ fun HomeScreen(
                                 )
                             },
                             onClick = {
+                                // TODO move into UIstate
                                 generateRoute = !generateRoute
                                 if (createdRoute || !generateRoute) {
                                     mapboxViewModel.refreshRoute()
@@ -257,9 +250,11 @@ fun HomeScreen(
                 }
             )
 
+
             if (showBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = {
+                        // TODO move into UI state
                         showBottomSheet = false
                         showBottomSheetButton = true
                     },
@@ -272,43 +267,16 @@ fun HomeScreen(
 
                     SwipeUpContent(locationForecastUIState)
 
-                    Column {
-                        Row {
 
-                            Button(onClick = {
-                                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                    if (!sheetState.isVisible) {
-                                        showBottomSheet = false
-                                    }
-                                }
-                            }) {
-                                Text("Hide bottom sheet")
-                            }
-                            Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
-                                Text(text = "Toggle alert visibility")
-                            }
-                        }
-
-                        Row {
-                            Button(onClick = {
-
-
-                            }
-                            ) {
-                                Text(text = "Start")
-                            }
-
-                            Button(onClick = {
-                                Intent(context, locationService::class.java).apply {
-                                    action = LocationService.ACTION_STOP
-                                    context.startService(this)
-                                }
-
-                            }
-                            ) {
-                                Text(text = "Stop")
-                            }
-                        }
+                }
+                if (mapboxUIState.routeData is APIStatus.Loading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
             }

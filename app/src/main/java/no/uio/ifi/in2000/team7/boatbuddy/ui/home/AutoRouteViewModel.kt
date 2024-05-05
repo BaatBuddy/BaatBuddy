@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
-import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import javax.inject.Inject
 
 data class AutorouteUiState(
-    val autoRoute: AutorouteData?
+    val autoRoute: APIStatus = APIStatus.Failed
 )
 
 @HiltViewModel
@@ -23,7 +23,7 @@ class AutoRouteViewModel @Inject constructor(
     private val repository: AutorouteRepository
 ) : ViewModel() {
 
-    private val _autoRouteUiState = MutableStateFlow(AutorouteUiState(null))
+    private val _autoRouteUiState = MutableStateFlow(AutorouteUiState())
     val autoRouteUiState: StateFlow<AutorouteUiState> = _autoRouteUiState
 
     private var initialized = false

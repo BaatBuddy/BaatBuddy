@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute
 
 import com.mapbox.geojson.Point
-import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 
 interface AutorouteRepo {
     suspend fun getAutorouteData(
@@ -9,7 +9,7 @@ interface AutorouteRepo {
         safetyDepth: String,
         safetyHeight: String,
         boatSpeed: String
-    ): AutorouteData?
+    ): APIStatus
 }
 
 class AutorouteRepository(
@@ -21,7 +21,13 @@ class AutorouteRepository(
         safetyDepth: String,
         safetyHeight: String,
         boatSpeed: String
-    ): AutorouteData? {
-        return dataSource.getAutoRouteData(course, safetyDepth, safetyHeight, boatSpeed)
+    ): APIStatus {
+        // check if its valid
+        return if (course.size !in 2..10) APIStatus.Failed else dataSource.getAutoRouteData(
+            course,
+            safetyDepth,
+            safetyHeight,
+            boatSpeed
+        )
     }
 }

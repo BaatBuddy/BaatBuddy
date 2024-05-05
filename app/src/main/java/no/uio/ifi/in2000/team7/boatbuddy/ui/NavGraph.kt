@@ -3,13 +3,24 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
@@ -44,9 +55,43 @@ fun NavGraph(
     homeViewModel: HomeViewModel
 ) {
 
+    val context = LocalContext.current
+
+    mapboxViewModel.initialize(
+        context = context,
+        cameraOptions = CameraOptions.Builder()
+            .center(Point.fromLngLat(10.20449, 59.74389))
+            .zoom(10.0)
+            .bearing(0.0)
+            .pitch(0.0)
+            .build()
+    )
+
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // if route is either too long or points is not close enough to the water
+    LaunchedEffect(mapboxUIState.lastRouteData) {
+        if (mapboxUIState.routeData is APIStatus.Failed
+            && mapboxUIState.lastRouteData is APIStatus.Loading
+        ) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Ruten er for lang eller inneholder punkter på land",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+
+    }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             if (mainScreenUIState.showBottomBar) {
                 BottomBar(
@@ -74,6 +119,7 @@ fun NavGraph(
                         homeViewModel = homeViewModel,
                         mainViewModel = mainViewModel,
                         navController = navController,
+                        scope = scope,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
