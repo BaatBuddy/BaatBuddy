@@ -6,14 +6,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun NotificationDialog(navigateToSettings: () -> Unit, onDismiss: () -> Unit) {
+fun LocationDialog(launchRequest: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(text = "Aktiver varsling") },
-        text = { Text(text = "Varsling er nødvendig for å advare om værfarer. Vil du aktivere varsling?") },
+        title = { Text(text = "Del din lokasjon") },
+        text = { Text(text = "Deling av lokasjon er nødvendig for å vise været på din posisjon og sporing av ruter for egen bruk.") },
         confirmButton = {
             Button(onClick = {
-                navigateToSettings()
+                launchRequest()
                 onDismiss()
             }) {
                 Text(text = "Aktiver")

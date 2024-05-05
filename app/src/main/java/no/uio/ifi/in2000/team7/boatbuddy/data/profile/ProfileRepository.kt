@@ -2,12 +2,11 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
 import android.content.Context
 import android.content.Intent
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import javax.inject.Inject
 

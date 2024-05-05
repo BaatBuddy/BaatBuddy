@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking
+package no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -24,12 +24,12 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.enteredAlerts
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.featureData
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.finishTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.sdf
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.featureData
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.startTime
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import java.util.Date

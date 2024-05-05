@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute
+package no.uio.ifi.in2000.team7.boatbuddy.data.autoroute
 
 import android.util.Log
 import com.mapbox.geojson.Point

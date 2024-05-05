@@ -22,7 +22,7 @@ import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets

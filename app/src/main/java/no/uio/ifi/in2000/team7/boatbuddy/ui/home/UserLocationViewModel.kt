@@ -1,106 +1,72 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.location.Location
-import android.os.Looper
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationSettingsResponse
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.Task
+import androidx.lifecycle.viewModelScope
+import com.mapbox.geojson.Point
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
+import javax.inject.Inject
 
 
-class UserLocationViewModel : ViewModel() {
+data class UserLocationUIState(
+    val userLocation: Point? = null,
+)
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
-    var locationState by mutableStateOf<LocationResult?>(null) // User Location
-    var permissionsGranted by mutableStateOf(false)
+@HiltViewModel
+class UserLocationViewModel @Inject constructor(
+    private val userLocationRepository: UserLocationRepository
+) : ViewModel() {
+
+
+    private val _userLocationUIState = MutableStateFlow(UserLocationUIState())
+    val userLocationUIState: StateFlow<UserLocationUIState> = _userLocationUIState.asStateFlow()
+
+    private val fusedLocationClient = userLocationRepository.getFusedLocationClient()
+
 
     @SuppressLint("MissingPermission")
-    private fun createLocationRequest(context: Context, permissionGranted: String) {
+    fun getFineLocation() {
+        Log.i("ASDASD", "ASDASDASD")
+        viewModelScope.launch(Dispatchers.IO) {
+            if (userLocationRepository.checkPermissions()) {
+                try {
+                    Log.i("ASDASD", "ASDASDASD")
+                    // Call await in an IO dispatcher
+                    withContext(Dispatchers.IO) {
+                        fusedLocationClient.lastLocation.continueWith {
+                            Log.i("ASDASD", it.result.toString())
+                            if (it.result != null) {
+                                Log.i("ASDASD", it.result.toString())
+                            } else {
+                                Log.i("ASDASD", "Location is null.")
+                            }
+                        }
+                    }
 
-        // If fine location is granted
-        if (permissionGranted == Manifest.permission.ACCESS_FINE_LOCATION) {
-            permissionsGranted = true
-            locationRequest = LocationRequest.Builder(5000)
-                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                .setMinUpdateIntervalMillis(100)
-                .build()
-        }
-        // If coarse location is granted
-        else if (permissionGranted == Manifest.permission.ACCESS_COARSE_LOCATION) {
-            permissionsGranted = true
-            locationRequest = LocationRequest.Builder(10000) //10000
-                .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setMinUpdateIntervalMillis(500) // 5000
-                .build()
-        }
-        // No permission granted
-        else {
 
-        }
-
-        val locationSettingsRequest = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
-            .build()
-
-        val settingsClient = LocationServices.getSettingsClient(context)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        val task: Task<LocationSettingsResponse> =
-            settingsClient.checkLocationSettings(locationSettingsRequest)
-        task.addOnCompleteListener {
-            if (task.isSuccessful) {
-                getLocation()
+                } catch (e: Exception) {
+                    // Handle exception
+                    Log.e("ASDASD", "Failed to get last location.", e)
+                }
             } else {
-                // Handle exception?
-                val e = task.exception
-            }
-        }
-
-    }
-
-    private fun createLocationCallback() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                locationState = locationResult
+                Log.i("ASDASD", "Location permission is not granted.")
             }
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getLocation() {
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    }
 
-    fun fetchLocation(context: Context, permissionGranted: String) {
-        createLocationRequest(context, permissionGranted)
-        createLocationCallback()
-    }
+    fun requestLocationPermission() {
+        viewModelScope.launch {
 
-
-    fun fetchUserLocation(context: Context): Location? {
-        if (permissionsGranted) {
-            return locationState?.lastLocation
         }
-        return null
     }
-
 
 }

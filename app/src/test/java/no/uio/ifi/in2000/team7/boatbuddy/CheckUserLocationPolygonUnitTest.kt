@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.LocationService
 import org.junit.Test
 
 class CheckUserLocationPolygonUnitTest {

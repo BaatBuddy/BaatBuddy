@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import javax.inject.Inject
 

@@ -1,12 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,10 +38,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.NotificationOptInDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 
@@ -81,38 +74,6 @@ fun HomeScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheetButton by remember { mutableStateOf(true) }
 
-
-    // notification setup
-    val settingsActivityResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { _ ->
-        /*if (result.resultCode == Activity.RESULT_OK) {
-            // Handle the result if needed
-        }*/
-    }
-
-    // Show the dialog if required
-    if (homeScreenUIState.showNotificationDialog) {
-        NotificationOptInDialog(
-            navigateToSettings = {
-                homeViewModel.navigateToNotificationSettings()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    settingsActivityResultLauncher.launch(
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                        }
-                    )
-                } else {
-                    settingsActivityResultLauncher.launch(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                    )
-                }
-            },
-            onDismiss = { homeViewModel.hideNotificationDialog() }
-        )
-    }
 
     // foreground location setup
     val locationService = LocationService()

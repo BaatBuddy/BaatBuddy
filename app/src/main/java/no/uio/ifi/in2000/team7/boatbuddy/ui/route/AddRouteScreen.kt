@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 

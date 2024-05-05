@@ -5,12 +5,12 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.finishTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.sdf
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.startTime
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.RouteDao
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.startTime
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import java.util.Date

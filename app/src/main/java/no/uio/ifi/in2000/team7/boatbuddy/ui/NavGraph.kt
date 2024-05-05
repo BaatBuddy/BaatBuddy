@@ -1,5 +1,12 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,6 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
@@ -26,7 +35,9 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
@@ -42,6 +53,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -52,7 +64,9 @@ fun NavGraph(
     oceanforecastViewModel: OceanForecastViewModel,
     profileViewModel: ProfileViewModel,
     sunriseViewModel: SunriseViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    infoScreenViewModel: InfoScreenViewModel,
+    userLocationViewModel: UserLocationViewModel,
 ) {
 
     val context = LocalContext.current
@@ -86,6 +100,52 @@ fun NavGraph(
             }
         }
 
+    }
+
+    // notification setup
+    val settingsActivityResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { _ ->
+        /*if (result.resultCode == Activity.RESULT_OK) {
+            // Handle the result if needed
+        }*/
+    }
+
+    // Show the dialog if required
+    if (mainScreenUIState.showNotificationDialog) {
+        NotificationDialog(
+            navigateToSettings = {
+                mainViewModel.navigateToNotificationSettings()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
+                    )
+                } else {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                    )
+                }
+            },
+            onDismiss = {
+                mainViewModel.hideNotificationDialog()
+            }
+        )
+    }
+
+    val locationPermissionState =
+        rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    if (mainScreenUIState.showLocationDialog) {
+        LocationDialog(
+            launchRequest = {
+                locationPermissionState.launchPermissionRequest()
+            },
+            onDismiss = { mainViewModel.hideLocationDialog() }
+        )
     }
 
     Scaffold(
@@ -128,6 +188,8 @@ fun NavGraph(
                         oceanForecastViewModel = oceanforecastViewModel,
                         sunriseViewModel = sunriseViewModel,
                         mainViewModel = mainViewModel,
+                        infoScreenViewModel = infoScreenViewModel,
+                        userLocationViewModel = userLocationViewModel,
                     )
                 }
                 composable(route = Screen.SettingsScreen.route) {
