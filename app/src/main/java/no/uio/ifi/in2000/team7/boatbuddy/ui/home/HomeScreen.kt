@@ -221,7 +221,9 @@ fun HomeScreen(
                     sheetState = sheetState
                 ) {
                     if (mapboxUIState.routePoints.isNotEmpty()) {
-                        locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
+                        locationForecastViewModel.loadWeekdayForecastRoute(
+                            mapboxUIState.routePoints
+                        )
                         showBottomSheet = true
                     }
 

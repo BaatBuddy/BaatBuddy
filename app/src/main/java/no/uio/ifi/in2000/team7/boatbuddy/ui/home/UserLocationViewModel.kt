@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
@@ -38,43 +39,24 @@ class UserLocationViewModel @Inject constructor(
     private val _userLocationUIState = MutableStateFlow(UserLocationUIState())
     val userLocationUIState: StateFlow<UserLocationUIState> = _userLocationUIState.asStateFlow()
 
-    private val fusedLocationClient = userLocationRepository.getFusedLocationClient()
-
-
-    @SuppressLint("MissingPermission")
-    fun getFineLocation() {
-        Log.i("ASDASD", "ASDASDASD")
-        viewModelScope.launch(Dispatchers.IO) {
-            if (userLocationRepository.hasPermissions()) {
-                try {
-                    Log.i("ASDASD", "ASDASDASD")
-                    // Call await in an IO dispatcher
-                    withContext(Dispatchers.IO) {
-                        fusedLocationClient.lastLocation.continueWith {
-                            Log.i("ASDASD", it.result.toString())
-                            if (it.result != null) {
-                                Log.i("ASDASD", it.result.toString())
-                            } else {
-                                Log.i("ASDASD", "Location is null.")
-                            }
-                        }
-                    }
-
-
-                } catch (e: Exception) {
-                    // Handle exception
-                    Log.e("ASDASD", "Failed to get last location.", e)
-                }
-            } else {
-                Log.i("ASDASD", "Location permission is not granted.")
-            }
-        }
+    init {
+        requestLocationPermission()
     }
 
 
     fun requestLocationPermission() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            userLocationRepository.fetchLocation()
+        }
+    }
 
+    fun fetchUserLocation() {
+        viewModelScope.launch {
+            _userLocationUIState.update {
+                it.copy(
+                    userLocation = userLocationRepository.fetchUserLocation()
+                )
+            }
         }
     }
 

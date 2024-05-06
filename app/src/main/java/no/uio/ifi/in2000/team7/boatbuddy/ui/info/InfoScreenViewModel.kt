@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,7 @@ class InfoScreenViewModel : ViewModel() {
     val infoScreenUIState: StateFlow<InfoScreenUIState> = _infoScreenUIState.asStateFlow()
 
     fun selectTab(tabIndex: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _infoScreenUIState.update {
                 it.copy(
                     selectedTab = tabIndex

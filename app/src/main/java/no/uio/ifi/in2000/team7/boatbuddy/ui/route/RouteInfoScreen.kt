@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +33,7 @@ fun RouteInfoScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
+    locationForecastViewModel: LocationForecastViewModel
 ) {
 
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
@@ -88,9 +90,11 @@ fun RouteInfoScreen(
                         Button(
                             onClick = {
                                 // TODO show it on the main map with a function or something
+                                locationForecastViewModel.deselectWeekDayForecastRoute()
                                 mainViewModel.displayRouteOnMap(route.route)
                                 navController.navigate(Screen.HomeScreen.route)
                                 mainViewModel.selectScreen(0) // select homescreen
+
                             }
                         ) {
                             Text(text = "Vis på hovedkart")

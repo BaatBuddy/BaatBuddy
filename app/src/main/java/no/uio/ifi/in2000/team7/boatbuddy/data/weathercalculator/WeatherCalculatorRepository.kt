@@ -30,8 +30,7 @@ class WeatherCalculatorRepository {
                 lon = lon,
             )
             val locationData = locationForecastRepository.getLocationForecastData(
-                lat = lat,
-                lon = lon,
+                point
             )
 
             locationData?.timeseries?.mapNotNull { ld ->

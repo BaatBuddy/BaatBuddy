@@ -50,6 +50,7 @@ data class RouteScreenUIState(
     val finishTime: String = "",
 
     val selectedRouteMap: RouteMap? = null,
+    val pickedRouteMap: RouteMap? = null, // user picks to have on map / have weather info on
 )
 
 @HiltViewModel

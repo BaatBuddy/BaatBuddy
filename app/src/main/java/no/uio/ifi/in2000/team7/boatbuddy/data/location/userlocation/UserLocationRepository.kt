@@ -21,6 +21,7 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Task
+import com.mapbox.geojson.Point
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -50,6 +51,15 @@ class UserLocationRepository @Inject constructor(
         return false
     }
 
+    fun fetchUserLocation(): Point? {
+        val location = locationState?.lastLocation
+        return if (location != null) {
+            Point.fromLngLat(location.longitude, location.latitude)
+        } else {
+            null
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         fusedLocationClient.requestLocationUpdates(
@@ -57,9 +67,10 @@ class UserLocationRepository @Inject constructor(
             locationCallback,
             Looper.getMainLooper()
         )
+        fetchUserLocation()
     }
 
-    fun createLocationRequest() {
+    private fun createLocationRequest() {
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -69,6 +80,7 @@ class UserLocationRepository @Inject constructor(
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                 .setMinUpdateIntervalMillis(1000)
                 .build()
+            Log.i("ASDASD", "noe annet")
         }
         // If coarse location is granted
         else if (ContextCompat.checkSelfPermission(
@@ -76,6 +88,7 @@ class UserLocationRepository @Inject constructor(
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            Log.i("ASDASD", "noe")
             locationRequest = LocationRequest.Builder(5000)
                 .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
                 .setMinUpdateIntervalMillis(1000)
@@ -84,6 +97,7 @@ class UserLocationRepository @Inject constructor(
         // No permission granted
         else {
 
+            return
         }
 
         val locationSettingsRequest = LocationSettingsRequest.Builder()
@@ -95,7 +109,7 @@ class UserLocationRepository @Inject constructor(
             settingsClient.checkLocationSettings(locationSettingsRequest)
         task.addOnCompleteListener {
             if (task.isSuccessful) {
-
+                getLocation()
             } else {
                 // Handle exception?
                 val e = task.exception
@@ -110,5 +124,10 @@ class UserLocationRepository @Inject constructor(
                 locationState = locationResult
             }
         }
+    }
+
+    fun fetchLocation() {
+        createLocationRequest()
+        createLocationCallback()
     }
 }

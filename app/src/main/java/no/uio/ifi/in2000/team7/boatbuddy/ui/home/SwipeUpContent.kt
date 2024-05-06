@@ -44,7 +44,7 @@ fun SwipeUpContent(
                 .padding(8.dp)
         )
 
-        locationForecastUIState.weekdayForecast?.let { DayWeatherTable(weekForecast = it) }
+        locationForecastUIState.weekdayForecastRoute?.let { DayWeatherTable(weekForecast = it) }
     }
 }
 

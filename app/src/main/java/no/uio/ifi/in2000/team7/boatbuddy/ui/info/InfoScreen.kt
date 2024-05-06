@@ -43,6 +43,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherRes
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +57,7 @@ fun InfoScreen(
     mainViewModel: MainViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
+    profileViewModel: ProfileViewModel,
 ) {
 
     val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
@@ -63,16 +65,9 @@ fun InfoScreen(
     val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
     val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
-
-    val lat = "59.9" // må hente posisjon fra bruker
-    val lon = "10.7"
+    val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
 
     mainViewModel.selectScreen(1)
-
-    metAlertsViewModel.initialize(lat = lat, lon = lon)
-    locationForecastViewModel.initialize(lat = lat, lon = lon)
-    oceanForecastViewModel.initialize(lat = lat, lon = lon)
-    sunriseViewModel.initialize(lat = lat, lon = lon)
 
     Scaffold(
         modifier = Modifier
@@ -118,38 +113,21 @@ fun InfoScreen(
                     }
                 }
 
-                UserLocationWeatherInfo(
-                    locationForecastViewModel = locationForecastViewModel,
-                    userLocationViewModel = userLocationViewModel,
-                )
-
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .horizontalScroll(rememberScrollState())
-//                ) {
-//
-//                    locationForecastUIState.weekdayForecast?.days?.let {
-//                        it.toList().sortedBy { pair ->
-//                            pair.second.date
-//                        }.forEach { tld ->
-//                            LocationCard(
-//                                dayForecast = tld.second,
-//                                selectedDay = locationForecastUIState.selectedDay,
-//                                changeDay = { locationForecastViewModel.updateSelectedDay(tld.second) },
-//                            )
-//
-//                        }
-//                    }
-//                }
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(4.dp)
-//                ) {
-//                    locationForecastUIState.selectedDay?.let { LocationTable(dayForecast = it) }
-//                }
-
+                if (infoScreenUIState.selectedTab == 0) {
+                    UserLocationWeatherInfo(
+                        locationForecastViewModel = locationForecastViewModel,
+                        userLocationViewModel = userLocationViewModel,
+                    )
+                } else {
+                    if (routeScreenUIState.selectedRouteMap == null) {
+                        Text(text = "Må velge en rute")
+                    } else {
+                        RouteWeatherInfo(
+                            routeMap = routeScreenUIState.selectedRouteMap!!,
+                            locationForecastViewModel = locationForecastViewModel
+                        )
+                    }
+                }
             }
         }
     }

@@ -224,7 +224,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun showLocationDialog() {
-        viewModelScope.launch {
+        Log.i("ASDASD", "HDBFHEWBGUWEB")
+        viewModelScope.launch(Dispatchers.IO) {
             _mainScreenUIState.update {
                 it.copy(
                     showLocationDialog = true

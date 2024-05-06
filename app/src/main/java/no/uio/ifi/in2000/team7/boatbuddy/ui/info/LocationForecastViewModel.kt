@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.points
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
@@ -18,9 +19,15 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import javax.inject.Inject
 
 data class LocationForecastUIState(
-    val locationForecast: LocationForecastData?,
-    val weekdayForecast: WeekForecast?,
-    val selectedDay: DayForecast?
+    val locationForecast: LocationForecastData? = null,
+
+    val selectedDayRoute: DayForecast? = null,
+    val weekdayForecastUser: WeekForecast? = null,
+    val weekdayForecastRoute: WeekForecast? = null,
+
+    val selectedDayUser: DayForecast? = null,
+    val fetchedWeekDayUser: Boolean = false,
+    val fetchedWeekDayRoute: Boolean = false,
 )
 
 @HiltViewModel
@@ -30,33 +37,32 @@ class LocationForecastViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _locationForecastUIState =
-        MutableStateFlow(LocationForecastUIState(null, null, null))
+        MutableStateFlow(LocationForecastUIState())
     val locationForecastUiState: StateFlow<LocationForecastUIState> = _locationForecastUIState
 
     private var initialized = false
     private var lastPos = ""
 
     @MainThread
-    fun initialize(lat: String, lon: String, altitude: String = "") {
-        initialized = lastPos == lat + lon + altitude
+    fun initialize(point: Point, altitude: String = "") {
+        initialized = lastPos == point.toJson()
 
         if (initialized) return
 
         initialized = true
-        lastPos = lat + lon + altitude
-        loadLocationForecast(lat, lon, altitude)
+        lastPos = point.toJson()
+        loadLocationForecast(point, altitude)
     }
 
     // keeping altitude as optional if the function is not going to be private
     private fun loadLocationForecast(
-        lat: String,
-        lon: String,
+        point: Point,
         altitude: String = ""
     ) {
         viewModelScope.launch(Dispatchers.IO) {
 
             val locationForecast =
-                locationForecastRepository.getLocationForecastData(lat, lon, altitude)
+                locationForecastRepository.getLocationForecastData(point, altitude)
 
             _locationForecastUIState.update {
                 it.copy(
@@ -67,27 +73,65 @@ class LocationForecastViewModel @Inject constructor(
         }
     }
 
-    fun loadWeekdayForecast(points: List<Point>) {
-        viewModelScope.launch {
+    fun deselectWeekDayForecastRoute() {
+        viewModelScope.launch(Dispatchers.IO) {
             _locationForecastUIState.update {
-                val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(points)
                 it.copy(
-                    weekdayForecast = weekdayForecast,
-                    selectedDay = weekdayForecast.days.toList()
-                        .minBy { dayForecast -> dayForecast.second.date }.second
+                    weekdayForecastRoute = null,
+                    selectedDayRoute = null,
+                    fetchedWeekDayRoute = false,
+                )
+            }
+        }
+    }
+
+    fun loadWeekdayForecastRoute(points: List<Point>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(points)
+            _locationForecastUIState.update {
+                it.copy(
+                    weekdayForecastRoute = weekdayForecast,
+                    selectedDayRoute = weekdayForecast.days.toList()[0].second,
+
+                    fetchedWeekDayRoute = true,
                 )
             }
         }
 
     }
 
-    fun updateSelectedDay(
+    fun loadWeekdayForecastUser(point: Point) {
+        viewModelScope.launch {
+            val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
+            _locationForecastUIState.update {
+                it.copy(
+                    weekdayForecastUser = weekdayForecast,
+                    selectedDayUser = weekdayForecast.days.toList()[0].second,
+                    fetchedWeekDayUser = true,
+                )
+            }
+        }
+    }
+
+    fun updateSelectedDayUser(
         dayForecast: DayForecast
     ) {
         viewModelScope.launch {
             _locationForecastUIState.update {
                 it.copy(
-                    selectedDay = dayForecast
+                    selectedDayUser = dayForecast
+                )
+            }
+        }
+    }
+
+    fun updateSelectedDayRoute(
+        dayForecast: DayForecast
+    ) {
+        viewModelScope.launch {
+            _locationForecastUIState.update {
+                it.copy(
+                    selectedDayRoute = dayForecast
                 )
             }
         }

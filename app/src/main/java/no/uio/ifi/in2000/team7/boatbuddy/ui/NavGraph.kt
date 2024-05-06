@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -136,13 +137,20 @@ fun NavGraph(
         )
     }
 
-    val locationPermissionState =
-        rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    val permissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                userLocationViewModel.requestLocationPermission()
+                userLocationViewModel.fetchUserLocation()
+                mapboxViewModel.panToUser()
+            }
+        }
 
     if (mainScreenUIState.showLocationDialog) {
+        Log.i("ASDASD", "ASDASDASDASD")
         LocationDialog(
             launchRequest = {
-                locationPermissionState.launchPermissionRequest()
+                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             },
             onDismiss = { mainViewModel.hideLocationDialog() }
         )
@@ -190,6 +198,7 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                         infoScreenViewModel = infoScreenViewModel,
                         userLocationViewModel = userLocationViewModel,
+                        profileViewModel = profileViewModel,
                     )
                 }
                 composable(route = Screen.SettingsScreen.route) {
@@ -230,6 +239,7 @@ fun NavGraph(
                         navController = navController,
                         mainViewModel = mainViewModel,
                         profileViewModel = profileViewModel,
+                        locationForecastViewModel = locationForecastViewModel,
 
                         )
                 }

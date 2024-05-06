@@ -99,8 +99,6 @@ class MainActivity : ComponentActivity() {
                 Log.i("ASDASD", "Else")
             }
         }
-
-
     }
 }
 
