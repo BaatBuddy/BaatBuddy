@@ -1,14 +1,21 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
@@ -22,6 +29,8 @@ class UserLocationRepository @Inject constructor(
 ) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    var locationState by mutableStateOf<LocationResult?>(null)
 
     fun getFusedLocationClient() = fusedLocationClient
     fun getContext() = context
@@ -41,7 +50,16 @@ class UserLocationRepository @Inject constructor(
         return false
     }
 
-    fun buildThingy() {
+    @SuppressLint("MissingPermission")
+    private fun getLocation() {
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    fun createLocationRequest() {
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -77,10 +95,19 @@ class UserLocationRepository @Inject constructor(
             settingsClient.checkLocationSettings(locationSettingsRequest)
         task.addOnCompleteListener {
             if (task.isSuccessful) {
-                
+
             } else {
                 // Handle exception?
                 val e = task.exception
+            }
+        }
+    }
+
+    private fun createLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                locationState = locationResult
             }
         }
     }
