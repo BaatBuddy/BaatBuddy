@@ -43,6 +43,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,6 +55,7 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
+    profileViewModel: ProfileViewModel,
 ) {
 
     val context = LocalContext.current
@@ -71,9 +73,6 @@ fun HomeScreen(
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var showBottomSheetButton by remember { mutableStateOf(true) }
-
 
     // foreground location setup
     val locationService = LocationService()
@@ -82,6 +81,10 @@ fun HomeScreen(
     var showAlert by remember { mutableStateOf(false) }
     var generateRoute by remember { mutableStateOf(false) }
     var createdRoute by remember { mutableStateOf(false) }
+
+    if (mapboxUIState.routeData is APIStatus.Success && !homeScreenUIState.showBottomSheetInitialized) {
+        homeViewModel.showBottomSheet()
+    }
 
     Scaffold(
 
@@ -113,13 +116,12 @@ fun HomeScreen(
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
-                    if (showBottomSheetButton) {
+                    if (homeScreenUIState.showBottomSheetInitialized) {
                         ExtendedFloatingActionButton(
                             text = { Text("Show bottom sheet") },
                             icon = { Icon(Icons.Filled.Add, contentDescription = "") },
                             onClick = {
-                                showBottomSheet = true
-                                showBottomSheetButton = !showBottomSheetButton
+                                homeViewModel.showBottomSheet()
                             },
                             modifier = Modifier
                                 .padding(4.dp)
@@ -127,7 +129,6 @@ fun HomeScreen(
                     }
                     Row {
                         if (generateRoute) {
-                            showBottomSheetButton = false
                             ExtendedFloatingActionButton(
                                 text = { Text(text = "Generer rute") },
                                 icon = {
@@ -142,6 +143,7 @@ fun HomeScreen(
                                     createdRoute = true
                                     mapboxViewModel.generateRoute()
                                     mapboxViewModel.toggleRouteClicking()
+                                    homeViewModel.resetBottomSheet()
                                 })
 
                             //Back-knapp
@@ -211,12 +213,11 @@ fun HomeScreen(
             )
 
 
-            if (showBottomSheet) {
+            if (homeScreenUIState.showBottomSheet) {
+
                 ModalBottomSheet(
                     onDismissRequest = {
-                        // TODO move into UI state
-                        showBottomSheet = false
-                        showBottomSheetButton = true
+                        homeViewModel.hideBottomSheet()
                     },
                     sheetState = sheetState
                 ) {
@@ -224,12 +225,13 @@ fun HomeScreen(
                         locationForecastViewModel.loadWeekdayForecastRoute(
                             mapboxUIState.routePoints
                         )
-                        showBottomSheet = true
                     }
-
-                    SwipeUpContent(locationForecastUIState)
-
-
+                    SwipeUpContent(
+                        locationForecastUIState.weekdayForecastRoute,
+                        profileViewModel = profileViewModel,
+                        mainViewModel = mainViewModel,
+                        mapboxViewModel = mapboxViewModel,
+                    )
                 }
             }
             if (mapboxUIState.routeData is APIStatus.Loading) {

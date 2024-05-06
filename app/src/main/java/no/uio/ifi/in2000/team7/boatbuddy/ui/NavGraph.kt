@@ -26,7 +26,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
@@ -187,6 +186,7 @@ fun NavGraph(
                         homeViewModel = homeViewModel,
                         mainViewModel = mainViewModel,
                         navController = navController,
+                        profileViewModel = profileViewModel,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -232,6 +232,7 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
+                        mapboxViewModel = mapboxViewModel,
                     )
                 }
                 composable(route = "routeinfo") {

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.points
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
@@ -92,7 +91,6 @@ class LocationForecastViewModel @Inject constructor(
                 it.copy(
                     weekdayForecastRoute = weekdayForecast,
                     selectedDayRoute = weekdayForecast.days.toList()[0].second,
-
                     fetchedWeekDayRoute = true,
                 )
             }

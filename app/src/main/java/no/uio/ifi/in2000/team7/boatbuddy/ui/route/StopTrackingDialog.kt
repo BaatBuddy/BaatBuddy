@@ -40,8 +40,6 @@ fun StopTrackingDialog(
             mainViewModel.hideDialog()
         },
     ) {
-        // TODO MUST BE FIXED, TOO BIG BUTTON
-        // TODO navigate to new screen with the list of points, later create a route with name and ditt og datt
         Card(
             modifier = Modifier
                 .padding(4.dp)
@@ -98,7 +96,6 @@ fun StopTrackingDialog(
                             mainViewModel.hideDialog()
 
                             profileViewModel.updateCurrentRouteTime()
-                            profileViewModel.updateCurrentRoute()
                         },
                         modifier = Modifier
                             .size(100.dp),

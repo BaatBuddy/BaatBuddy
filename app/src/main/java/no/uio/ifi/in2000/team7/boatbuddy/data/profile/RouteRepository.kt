@@ -2,11 +2,13 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
 import android.content.Context
 import android.util.Log
+import com.mapbox.geojson.Point
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.RouteDao
+import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.finishTime
 import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.points
 import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.AlertNotificationCache.sdf
@@ -33,8 +35,8 @@ class RouteRepository @Inject constructor(
         boatname: String,
         routename: String,
         routeDescription: String,
+        route: List<Point>? = null,
     ) {
-        Log.i("ASDASD", points.toString() + "AJFBUEWBUHJEWBFG")
         routeDao.insertRoute(
             Route(
                 username = username,
@@ -42,12 +44,14 @@ class RouteRepository @Inject constructor(
                 routeID = getLastIDUsername(username = username, boatname = boatname)?.plus(1) ?: 0,
                 routename = routename,
                 routeDescription = routeDescription,
-                route = points,
+                route = route ?: points,
                 start = startTime,
                 finish = finishTime,
             )
         )
-        points = mutableListOf()
+        if (route == null) {
+            points = mutableListOf()
+        }
     }
 
     suspend fun getAllRoutesUsername(username: String): List<RouteMap> {
@@ -74,7 +78,7 @@ class RouteRepository @Inject constructor(
         finishTime = sdf.format(Date())
     }
 
-    suspend fun getTemporaryRouteView(): String {
-        return mapRepo.generateMapURI(points = points)
+    suspend fun getTemporaryRouteView(points: List<Point>?): String {
+        return mapRepo.generateMapURI(points = points ?: AlertNotificationCache.points)
     }
 }

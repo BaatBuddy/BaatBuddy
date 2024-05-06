@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +51,7 @@ fun AddRouteScreen(
     profileViewModel: ProfileViewModel,
     navController: NavController,
     mainViewModel: MainViewModel,
+    mapboxViewModel: MapboxViewModel,
 ) {
 
     var loading by remember { mutableStateOf(true) }
@@ -57,6 +59,7 @@ fun AddRouteScreen(
 
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
     val profileUIState by profileViewModel.profileUIState.collectAsState()
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
     profileViewModel.updateCurrentRouteTime()
 
@@ -207,7 +210,8 @@ fun AddRouteScreen(
                                 username = profileUIState.selectedUser!!.username,
                                 boatname = profileUIState.selectedBoat!!.boatname,
                                 routename = routeScreenUIState.routeName,
-                                routeDescription = routeScreenUIState.routeDescription
+                                routeDescription = routeScreenUIState.routeDescription,
+                                route = mapboxUIState.routePath
                             )
                             mainViewModel.showBottomBar()
                             navController.popBackStack()
