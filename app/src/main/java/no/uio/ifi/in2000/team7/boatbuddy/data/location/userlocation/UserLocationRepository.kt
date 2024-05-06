@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
@@ -16,14 +17,18 @@ class UserLocationRepository @Inject constructor(
     fun getFusedLocationClient() = fusedLocationClient
     fun getContext() = context
 
-    fun checkPermissions(): Boolean {
+    fun hasPermissions(): Boolean {
         return ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_COARSE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED
 
+    }
+
+    fun showLocationRequest(): Boolean {
+        return false
     }
 }

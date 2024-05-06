@@ -11,6 +11,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -82,6 +83,12 @@ class MapboxViewModel @Inject constructor(
         )
         mapboxUIState = _mapboxUIState
 
+    }
+
+    fun panToUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            mapboxRepository.panToUserOnMap()
+        }
     }
 
     fun toggleAlertVisibility() {

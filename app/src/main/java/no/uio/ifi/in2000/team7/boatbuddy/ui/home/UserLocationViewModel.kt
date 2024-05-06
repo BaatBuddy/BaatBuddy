@@ -36,7 +36,7 @@ class UserLocationViewModel @Inject constructor(
     fun getFineLocation() {
         Log.i("ASDASD", "ASDASDASD")
         viewModelScope.launch(Dispatchers.IO) {
-            if (userLocationRepository.checkPermissions()) {
+            if (userLocationRepository.hasPermissions()) {
                 try {
                     Log.i("ASDASD", "ASDASDASD")
                     // Call await in an IO dispatcher

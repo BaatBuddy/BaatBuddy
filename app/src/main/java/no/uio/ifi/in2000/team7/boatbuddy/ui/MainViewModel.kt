@@ -1,12 +1,10 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
-import android.Manifest
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.provider.Settings
-import androidx.core.content.ContextCompat
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
@@ -17,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog
@@ -41,7 +40,8 @@ data class MainScreenUIState(
 class MainViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
     private val profileRepository: ProfileRepository,
-    application: Application
+    application: Application,
+    private val userLocationRepository: UserLocationRepository,
 ) : AndroidViewModel(application) {
 
     private val _mainScreenUIState = MutableStateFlow(MainScreenUIState())
@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
 
     init {
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             delay(1500L)
             _mainScreenUIState.update {
                 it.copy(
@@ -69,6 +69,14 @@ class MainViewModel @Inject constructor(
                     putBoolean("firstStart", false)
                     apply()
                 }
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _mainScreenUIState.update {
+                it.copy(
+                    showLocationDialog = userLocationRepository.showLocationRequest()
+                )
             }
         }
 
@@ -104,18 +112,6 @@ class MainViewModel @Inject constructor(
                 mapboxRepository.startFollowUserOnMap()
             }*/
         }
-    }
-
-    // TODO check if this is allowed
-    fun hasLocationPermission(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
     }
 
 
@@ -223,6 +219,7 @@ class MainViewModel @Inject constructor(
                     showLocationDialog = false
                 )
             }
+            Log.i("ASDASD", "IKKE UIHEI")
         }
     }
 

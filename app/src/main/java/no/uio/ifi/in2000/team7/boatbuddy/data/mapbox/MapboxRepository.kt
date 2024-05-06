@@ -19,7 +19,11 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
@@ -151,6 +155,22 @@ class MapboxRepository(
             addOnIndicatorBearingChangedListener(
                 onIndicatorBearingChangedListener
             )
+        }
+    }
+
+    private val initializationMutex = Mutex()
+    val scope = CoroutineScope(Dispatchers.IO)
+    suspend fun panToUserOnMap() {
+        scope.launch {
+            initializationMutex.withLock {
+                if (::mapView.isInitialized) {
+                    with(mapView.location) {
+                        addOnIndicatorPositionChangedListener(
+                            onIndicatorPositionChangedListener
+                        )
+                    }
+                }
+            }
         }
     }
 
