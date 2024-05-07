@@ -23,13 +23,15 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.secondaryContainerLight
 
 @Composable
 fun BottomBar(
-    navController: NavController
+    navController: NavController,
+    modifier: Modifier = Modifier
 ) {
     var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
     NavigationBar(
+        modifier = Modifier
     ) {
         listOf(
             Screen.HomeScreen,
