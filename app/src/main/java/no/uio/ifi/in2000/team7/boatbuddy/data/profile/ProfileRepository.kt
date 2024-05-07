@@ -6,7 +6,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
-import no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import javax.inject.Inject
 

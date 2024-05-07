@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
-import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,10 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
@@ -34,6 +38,10 @@ fun SwipeUpContent(
     profileViewModel: ProfileViewModel,
     mainViewModel: MainViewModel,
     mapboxViewModel: MapboxViewModel,
+    navController: NavController,
+    infoScreenViewModel: InfoScreenViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
 ) {
 
     val profileUIState by profileViewModel.profileUIState.collectAsState()
@@ -72,20 +80,27 @@ fun SwipeUpContent(
                     .padding(8.dp)
             )
             // save route
-            // TODO check if selected user
             Button(onClick = {
                 if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null && mapboxUIState.routeData is APIStatus.Success) {
-                    Log.i("ASDASD", mapboxUIState.routePath.toString())
-                    profileViewModel.updateCurrentRoute(mapboxUIState.routePath)
-                    mainViewModel.showFinishDialog()
+                    profileViewModel.updateCurrentRoute(mapboxUIState.generatedRoute?.route?.route)
+                    navController.navigate("saveroute")
+                    mainViewModel.hideBottomBar()
                 }
             }) {
-
+                Text(text = "Lagre rute")
             }
         }
 
         if (weekdayForecastRoute != null) {
-            DayWeatherTable(weekForecast = weekdayForecastRoute)
+            DayWeatherTable(
+                weekForecast = weekdayForecastRoute,
+                navController = navController,
+                infoScreenViewModel = infoScreenViewModel,
+                profileViewModel = profileViewModel,
+                mapboxViewModel = mapboxViewModel,
+                homeViewModel = homeViewModel,
+                locationForecastViewModel = locationForecastViewModel,
+            )
         } else {
             Row(
                 modifier = Modifier
@@ -100,7 +115,15 @@ fun SwipeUpContent(
 
 
 @Composable
-fun DayWeatherTable(weekForecast: WeekForecast) {
+fun DayWeatherTable(
+    weekForecast: WeekForecast,
+    navController: NavController,
+    infoScreenViewModel: InfoScreenViewModel,
+    profileViewModel: ProfileViewModel,
+    mapboxViewModel: MapboxViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,19 +140,60 @@ fun DayWeatherTable(weekForecast: WeekForecast) {
             Text(text = "")
         }
         weekForecast.days.toList().map { it.second }.sortedBy { it.date }.forEach { dayForecast ->
-            DayWeatherRow(dayForecast = dayForecast)
+            HorizontalDivider(
+                modifier = Modifier
+                    .padding(2.dp)
+            )
+            DayWeatherRow(
+                dayForecast = dayForecast,
+                navController = navController,
+                infoScreenViewModel = infoScreenViewModel,
+                profileViewModel = profileViewModel,
+                mapboxViewModel = mapboxViewModel,
+                homeViewModel = homeViewModel,
+                locationForecastViewModel = locationForecastViewModel
+            )
         }
     }
 }
 
 @Composable
-fun DayWeatherRow(dayForecast: DayForecast) {
+fun DayWeatherRow(
+    dayForecast: DayForecast,
+    navController: NavController,
+    infoScreenViewModel: InfoScreenViewModel,
+    profileViewModel: ProfileViewModel,
+    mapboxViewModel: MapboxViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel
+) {
     val middayWeatherData = dayForecast.middayWeatherData
+
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .height(32.dp)
             .fillMaxWidth()
+            .clickable {
+                // navigate to weather info screen with route selected
+                profileViewModel.updatePickedRoute(mapboxUIState.generatedRoute)
+                infoScreenViewModel.selectTab(1)
+                homeViewModel.hideBottomSheet()
+                locationForecastViewModel.updateSelectedDayRoute(dayForecast = dayForecast)
+
+                navController.navigate(Screen.InfoScreen.route) {
+
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+
+                    launchSingleTop = true
+                    restoreState = true
+                }
+
+            }
     ) {
         Text(text = dayForecast.day)
         Row(
@@ -144,7 +208,7 @@ fun DayWeatherRow(dayForecast: DayForecast) {
             Text(text = "${middayWeatherData.airTemperature}℃")
         }
         Text(text = "%.1f".format(dayForecast.dayScore?.score))
-        Text(text = "") // TODO add a clickable element that takes user to a new screen with more detailed info (bring dayForecast data to the next screen since it contains weather for the whole day)
+        Text(text = ">  ")
 
     }
 }

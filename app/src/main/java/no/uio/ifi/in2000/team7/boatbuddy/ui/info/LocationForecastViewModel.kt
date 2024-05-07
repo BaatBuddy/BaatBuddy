@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -102,7 +101,6 @@ class LocationForecastViewModel @Inject constructor(
     fun loadWeekdayForecastUser(point: Point) {
         viewModelScope.launch {
             val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
-            Log.i("ASDASD", point.toString())
             _locationForecastUIState.update {
                 it.copy(
                     weekdayForecastUser = weekdayForecast,

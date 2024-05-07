@@ -49,6 +49,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
@@ -187,6 +188,7 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                         navController = navController,
                         profileViewModel = profileViewModel,
+                        infoScreenViewModel = infoScreenViewModel,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -243,6 +245,15 @@ fun NavGraph(
                         locationForecastViewModel = locationForecastViewModel,
 
                         )
+                }
+                composable(route = "saveroute") {
+                    SaveRouteScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
+                        mapboxViewModel = mapboxViewModel
+
+                    )
                 }
             }
             if (mainScreenUIState.showDialog == ShowStartDialog) {

@@ -384,6 +384,16 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun updatePickedRoute(routeMap: RouteMap?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _routeScreenUIState.update {
+                it.copy(
+                    pickedRouteMap = routeMap
+                )
+            }
+        }
+    }
+
     fun updateCurrentRoute(points: List<Point>? = null) {
         viewModelScope.launch {
             _routeScreenUIState.update {

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.foreground_location
+package no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location
 
 import android.annotation.SuppressLint
 import com.mapbox.geojson.Point

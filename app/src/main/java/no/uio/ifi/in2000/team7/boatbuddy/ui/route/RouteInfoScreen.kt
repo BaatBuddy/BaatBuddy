@@ -92,6 +92,7 @@ fun RouteInfoScreen(
                                 // TODO show it on the main map with a function or something
                                 locationForecastViewModel.deselectWeekDayForecastRoute()
                                 mainViewModel.displayRouteOnMap(route.route)
+                                profileViewModel.updatePickedRoute(routeUIState.selectedRouteMap)
                                 navController.navigate(Screen.HomeScreen.route)
                                 mainViewModel.selectScreen(0) // select homescreen
 

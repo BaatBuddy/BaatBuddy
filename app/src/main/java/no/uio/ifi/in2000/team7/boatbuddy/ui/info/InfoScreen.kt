@@ -119,11 +119,11 @@ fun InfoScreen(
                         userLocationViewModel = userLocationViewModel,
                     )
                 } else {
-                    if (routeScreenUIState.selectedRouteMap == null) {
+                    if (routeScreenUIState.pickedRouteMap == null) {
                         Text(text = "Må velge en rute")
                     } else {
                         RouteWeatherInfo(
-                            routeMap = routeScreenUIState.selectedRouteMap!!,
+                            routeMap = routeScreenUIState.pickedRouteMap!!,
                             locationForecastViewModel = locationForecastViewModel
                         )
                     }

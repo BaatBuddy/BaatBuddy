@@ -10,11 +10,9 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
-import kotlin.time.times
 
 object WeatherScore {
 
@@ -95,7 +93,7 @@ object WeatherScore {
         return sumScore / (factors + listOf(
             timeWeatherData.precipitationAmount,
             timeWeatherData.fogAreaFraction
-        ).count { it != 0.0 }) // takes down the score if they are not equal to 0.0 which is ideal
+        ).count { it != 0.0 } * 2) // takes down the score if they are not equal to 0.0 which is ideal
     }
 
     fun calculateDate(
@@ -128,11 +126,15 @@ object WeatherScore {
         }
     }
 
-    // pick out points based on the length of the path and distance between each point
-    fun selectPointsFromPath(points: List<Point>): List<Point> {
+    // pick out points based on the length of the path and distance between each point (40km default)
+    fun selectPointsFromPath(points: List<Point>, distanceBetweenPoint: Double): List<Point> {
+        if (points.size in 1..2) return points
         val distance = distanceInPath(points)
         val nBetweenPoints =
-            max(distance.div(40).toInt(), 2) // at least 1 point between start and end
+            max(
+                distance.div(distanceBetweenPoint).toInt(),
+                2
+            ) // at least 1 point between start and end
         val distanceBetweenPoints = distance / nBetweenPoints
         val outPoints = mutableListOf(points.first())
 

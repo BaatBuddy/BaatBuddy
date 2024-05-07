@@ -47,7 +47,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddRouteScreen(
+fun SaveRouteScreen(
     profileViewModel: ProfileViewModel,
     navController: NavController,
     mainViewModel: MainViewModel,
@@ -61,8 +61,6 @@ fun AddRouteScreen(
     val profileUIState by profileViewModel.profileUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
-    profileViewModel.updateCurrentRouteTime()
-
     val context = LocalContext.current
 
     BackHandler {
@@ -74,7 +72,7 @@ fun AddRouteScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "")
+                    Text(text = "Lagre generert rute")
                 },
                 navigationIcon = {
                     IconButton(
@@ -89,18 +87,6 @@ fun AddRouteScreen(
                         )
                     }
                 },
-                actions = {
-                    Button(
-                        onClick = {
-                            mainViewModel.showBottomBar()
-                            mainViewModel.stopFollowUserOnMap()
-                            mainViewModel.stopTrackingUser()
-                            navController.popBackStack()
-                        }
-                    ) {
-                        Text(text = "FORKAST")
-                    }
-                }
             )
         }
     ) { paddingValue ->
@@ -135,9 +121,6 @@ fun AddRouteScreen(
                         )
                     }
                 )
-
-                // text to display times
-                Text(text = "Tid: ${routeScreenUIState.startTime} - ${routeScreenUIState.finishTime}")
 
                 // box with route so far
                 routeScreenUIState.currentRouteView?.let {
@@ -176,7 +159,6 @@ fun AddRouteScreen(
                         onClick = {
                             navController.popBackStack()
                             mainViewModel.showBottomBar()
-                            mainViewModel.startFollowUserOnMap()
                         },
                         modifier = Modifier
                             .size(120.dp)
@@ -191,7 +173,7 @@ fun AddRouteScreen(
                                 .size(25.dp)
                         )
                         Text(
-                            text = "FORTSETT",
+                            text = "AVBRYT",
                             maxLines = 1,
                             fontSize = 16.sp
                         )
@@ -199,8 +181,6 @@ fun AddRouteScreen(
                     // finish button
                     Button(
                         onClick = {
-                            // check if route is long enough
-                            mapboxViewModel.resetRoutePath()
 
                             Intent(context, LocationService::class.java).apply {
                                 action = LocationService.ACTION_STOP
@@ -212,11 +192,11 @@ fun AddRouteScreen(
                                 boatname = profileUIState.selectedBoat!!.boatname,
                                 routename = routeScreenUIState.routeName,
                                 routeDescription = routeScreenUIState.routeDescription,
-                                route = mapboxUIState.routePath
+                                route = mapboxUIState.generatedRoute?.route?.route
                             )
+
                             mainViewModel.showBottomBar()
                             navController.popBackStack()
-                            mainViewModel.stopTrackingUser()
                         },
                         modifier = Modifier
                             .size(120.dp)
