@@ -16,27 +16,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.Screen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.ExtendedColorScheme
-import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.extendedDarkHighContrast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.primaryContainerLight
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.primaryLight
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.secondaryContainerLight
-import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.triadic1ContainerDarkHighContrast
-import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.triadic1ContainerLight
+
 
 @Composable
 fun BottomBar(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ) {
     var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
     NavigationBar(
-        modifier = modifier,
-
-
     ) {
         listOf(
             Screen.HomeScreen,
