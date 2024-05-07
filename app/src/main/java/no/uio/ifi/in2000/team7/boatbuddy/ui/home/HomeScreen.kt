@@ -227,6 +227,9 @@ fun HomeScreen(
                         locationForecastViewModel.loadWeekdayForecastRoute(
                             mapboxUIState.routePoints
                         )
+                        if (!metAlertsUIState.fetched && mapboxUIState.generatedRoute?.route?.route != null) {
+                            metalertsViewModel.getAlerts(mapboxUIState.generatedRoute!!.route.route)
+                        }
                     }
                     SwipeUpContent(
                         locationForecastUIState.weekdayForecastRoute,
@@ -237,6 +240,7 @@ fun HomeScreen(
                         infoScreenViewModel = infoScreenViewModel,
                         homeViewModel = homeViewModel,
                         locationForecastViewModel = locationForecastViewModel,
+                        metalertsViewModel = metalertsViewModel,
                     )
                 }
             }

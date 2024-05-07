@@ -29,6 +29,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
@@ -42,10 +43,12 @@ fun SwipeUpContent(
     infoScreenViewModel: InfoScreenViewModel,
     homeViewModel: HomeViewModel,
     locationForecastViewModel: LocationForecastViewModel,
+    metalertsViewModel: MetAlertsViewModel,
 ) {
 
     val profileUIState by profileViewModel.profileUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val metalertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
 
 
     Column(
@@ -73,7 +76,15 @@ fun SwipeUpContent(
                 .height(32.dp)
         ) {
             //alerts
-            //TODO make weather alert thing
+            metalertsUIState.alerts.forEach {
+                AlertIcon(
+                    event = it.event,
+                    riskMatrixColor = it.riskMatrixColor,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(end = 8.dp)
+                )
+            }
             VerticalDivider(
                 thickness = 2.dp,
                 modifier = Modifier
