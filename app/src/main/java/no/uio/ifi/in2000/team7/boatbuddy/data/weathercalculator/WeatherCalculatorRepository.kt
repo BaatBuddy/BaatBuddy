@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
@@ -21,6 +22,7 @@ class WeatherCalculatorRepository {
 
 
     suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
+        Log.i("ASDASD", "UFEYFGVEWUBGFUIEWGBOIWEGUIGI")
         return points.mapNotNull { point ->
             val lat = point.latitude().toString()
             val lon = point.longitude().toString()
@@ -33,11 +35,12 @@ class WeatherCalculatorRepository {
                 point
             )
 
-            locationData?.timeseries?.mapNotNull { ld ->
+            locationData?.timeseries?.map { ld ->
                 // finds corresponding ocean data
                 val od = oceanData?.timeseries?.firstOrNull { tod ->
                     tod.time == ld.time
                 }
+                Log.i("ASDASD", "SISTE DRITT")
 
                 if (od != null) {
                     TimeWeatherData(
@@ -56,13 +59,28 @@ class WeatherCalculatorRepository {
                         symbolCode = ld.symbol_code
                     )
                 } else {
-                    null
+                    TimeWeatherData(
+                        lat = lat.toDouble(),
+                        lon = lon.toDouble(),
+                        time = ld.time,
+                        waveHeight = null,
+                        waterTemperature = null,
+                        windSpeed = ld.wind_speed,
+                        windSpeedOfGust = ld.wind_speed_of_gust,
+                        airTemperature = ld.air_temperature,
+                        cloudAreaFraction = ld.cloud_area_fraction,
+                        fogAreaFraction = ld.fog_area_fraction,
+                        relativeHumidity = ld.relative_humidity,
+                        precipitationAmount = ld.precipitation_amount,
+                        symbolCode = ld.symbol_code
+                    )
                 }
             }
         }.flatten().groupBy { twd ->
             twd.time.substring(0, 10)
         }.map {
             val lastPoint = points.last()
+            Log.i("ASDASD", "SISTE DRITT")
             PathWeatherData(
                 date = it.key,
                 //sunsetAtLastPoint = sunriseRepository.getSunriseData(
@@ -76,6 +94,7 @@ class WeatherCalculatorRepository {
     suspend fun getWeekdayForecastData(
         points: List<Point>
     ): WeekForecast {
+        Log.i("ASDASD", "ASDASDASDASDASD")
         val weekWeatherData = fetchPathWeatherData(points = points)
 
         // TODO get weather preferences from database

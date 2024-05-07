@@ -72,10 +72,12 @@ object WeatherScore {
             timeWeatherData.cloudAreaFraction,
             weatherPreferences.cloudAreaFraction
         )
-        sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+        if (timeWeatherData.waveHeight != null) {
+            sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+        }
 
 
-        if (weatherPreferences.waterTemperature != null) {
+        if (weatherPreferences.waterTemperature != null && timeWeatherData.waterTemperature != null) {
             sumScore += calculateTemp(
                 timeWeatherData.waterTemperature,
                 weatherPreferences.waterTemperature

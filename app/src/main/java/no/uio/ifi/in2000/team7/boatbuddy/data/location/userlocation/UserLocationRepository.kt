@@ -80,7 +80,6 @@ class UserLocationRepository @Inject constructor(
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                 .setMinUpdateIntervalMillis(1000)
                 .build()
-            Log.i("ASDASD", "noe annet")
         }
         // If coarse location is granted
         else if (ContextCompat.checkSelfPermission(

@@ -265,13 +265,6 @@ class LocationService : Service() {
         }
         return inside
     }
-
-    fun createEdgesFromPoints(points: List<List<Double>>): List<Pair<List<Double>, List<Double>>> {
-        return points.mapIndexed { i, point ->
-            Pair(point, points[(i + 1) % points.size])
-        }
-    }
-
 }
 
 
