@@ -1,3 +1,5 @@
+package no.uio.ifi.in2000.team7.boatbuddy.ui.home
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,6 +18,7 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.Task
+
 
 class UserLocationViewModel : ViewModel() {
 

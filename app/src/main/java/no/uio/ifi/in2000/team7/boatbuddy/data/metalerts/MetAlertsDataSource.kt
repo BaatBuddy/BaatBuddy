@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 
 import io.ktor.client.call.body
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
@@ -59,7 +60,8 @@ class MetAlertsDataSource {
             e: UnknownHostException
         ) {
             null
-
+        } catch (e: ConnectTimeoutException) {
+            null
         }
 
     }
