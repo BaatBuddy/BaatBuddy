@@ -1,19 +1,15 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
-import com.mapbox.maps.MapView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
-import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
@@ -50,6 +46,7 @@ data class RouteScreenUIState(
     val finishTime: String = "",
 
     val selectedRouteMap: RouteMap? = null,
+    val pickedRouteMap: RouteMap? = null, // user picks to have on map / have weather info on
 )
 
 @HiltViewModel
@@ -325,6 +322,7 @@ class ProfileViewModel @Inject constructor(
         boatname: String,
         routename: String,
         routeDescription: String,
+        route: List<Point>?
     ) {
         viewModelScope.launch {
             routeRepository.addRouteUsername(
@@ -332,6 +330,7 @@ class ProfileViewModel @Inject constructor(
                 boatname = boatname,
                 routename = routename,
                 routeDescription = routeDescription,
+                route = route,
             )
             _routeScreenUIState.update {
                 it.copy(
@@ -385,11 +384,21 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentRoute() {
+    fun updatePickedRoute(routeMap: RouteMap?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _routeScreenUIState.update {
+                it.copy(
+                    pickedRouteMap = routeMap
+                )
+            }
+        }
+    }
+
+    fun updateCurrentRoute(points: List<Point>? = null) {
         viewModelScope.launch {
             _routeScreenUIState.update {
                 it.copy(
-                    currentRouteView = routeRepository.getTemporaryRouteView()
+                    currentRouteView = routeRepository.getTemporaryRouteView(points = points)
                 )
             }
         }

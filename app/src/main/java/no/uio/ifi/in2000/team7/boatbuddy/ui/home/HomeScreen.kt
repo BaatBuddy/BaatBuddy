@@ -1,12 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +16,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -37,7 +31,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +38,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
-import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -63,21 +56,15 @@ fun HomeScreen(
     homeViewModel: HomeViewModel,
     mainViewModel: MainViewModel,
     navController: NavController,
+    profileViewModel: ProfileViewModel,
+    infoScreenViewModel: InfoScreenViewModel,
 ) {
 
     val context = LocalContext.current
 
     // fetches all alerts (no arguments)
     metalertsViewModel.initialize()
-    mapboxViewModel.initialize(
-        context = context,
-        cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(10.20449, 59.74389))
-            .zoom(10.0)
-            .bearing(0.0)
-            .pitch(0.0)
-            .build()
-    )
+
 
     mainViewModel.selectScreen(0)
 
@@ -88,42 +75,6 @@ fun HomeScreen(
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var showBottomSheetButton by remember { mutableStateOf(true) }
-
-
-    // notification setup
-    val settingsActivityResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { _ ->
-        /*if (result.resultCode == Activity.RESULT_OK) {
-            // Handle the result if needed
-        }*/
-    }
-
-    // Show the dialog if required
-    if (homeScreenUIState.showNotificationDialog) {
-        NotificationOptInDialog(
-            navigateToSettings = {
-                homeViewModel.navigateToNotificationSettings()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    settingsActivityResultLauncher.launch(
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                        }
-                    )
-                } else {
-                    settingsActivityResultLauncher.launch(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                    )
-                }
-            },
-            onDismiss = { homeViewModel.hideNotificationDialog() }
-        )
-    }
 
     // foreground location setup
     val locationService = LocationService()
@@ -133,7 +84,12 @@ fun HomeScreen(
     var generateRoute by remember { mutableStateOf(false) }
     var createdRoute by remember { mutableStateOf(false) }
 
+    if (mapboxUIState.routeData is APIStatus.Success && !homeScreenUIState.showBottomSheetInitialized) {
+        homeViewModel.showBottomSheet()
+    }
+
     Scaffold(
+
         topBar = {
             TopBar(
                 navController = navController,
@@ -162,13 +118,12 @@ fun HomeScreen(
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
-                    if (showBottomSheetButton) {
+                    if (homeScreenUIState.showBottomSheetInitialized) {
                         ExtendedFloatingActionButton(
                             text = { Text("Show bottom sheet") },
                             icon = { Icon(Icons.Filled.Add, contentDescription = "") },
                             onClick = {
-                                showBottomSheet = true
-                                showBottomSheetButton = !showBottomSheetButton
+                                homeViewModel.showBottomSheet()
                             },
                             modifier = Modifier
                                 .padding(4.dp)
@@ -176,7 +131,6 @@ fun HomeScreen(
                     }
                     Row {
                         if (generateRoute) {
-                            showBottomSheetButton = false
                             ExtendedFloatingActionButton(
                                 text = { Text(text = "Generer rute") },
                                 icon = {
@@ -185,11 +139,13 @@ fun HomeScreen(
                                         contentDescription = ""
                                     )
                                 },
+                                // TODO move into UIstate and collect weather data on click
                                 onClick = {
                                     generateRoute = false
                                     createdRoute = true
                                     mapboxViewModel.generateRoute()
                                     mapboxViewModel.toggleRouteClicking()
+                                    homeViewModel.resetBottomSheet()
                                 })
 
                             //Back-knapp
@@ -229,6 +185,7 @@ fun HomeScreen(
                                 )
                             },
                             onClick = {
+                                // TODO move into UIstate
                                 generateRoute = !generateRoute
                                 if (createdRoute || !generateRoute) {
                                     mapboxViewModel.refreshRoute()
@@ -257,59 +214,44 @@ fun HomeScreen(
                 }
             )
 
-            if (showBottomSheet) {
+
+            if (homeScreenUIState.showBottomSheet) {
+
                 ModalBottomSheet(
                     onDismissRequest = {
-                        showBottomSheet = false
-                        showBottomSheetButton = true
+                        homeViewModel.hideBottomSheet()
                     },
                     sheetState = sheetState
                 ) {
                     if (mapboxUIState.routePoints.isNotEmpty()) {
-                        locationForecastViewModel.loadWeekdayForecast(mapboxUIState.routePoints)
-                        showBottomSheet = true
-                    }
-
-                    SwipeUpContent(locationForecastUIState)
-
-                    Column {
-                        Row {
-
-                            Button(onClick = {
-                                scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                    if (!sheetState.isVisible) {
-                                        showBottomSheet = false
-                                    }
-                                }
-                            }) {
-                                Text("Hide bottom sheet")
-                            }
-                            Button(onClick = { mapboxViewModel.toggleAlertVisibility() }) {
-                                Text(text = "Toggle alert visibility")
-                            }
-                        }
-
-                        Row {
-                            Button(onClick = {
-
-
-                            }
-                            ) {
-                                Text(text = "Start")
-                            }
-
-                            Button(onClick = {
-                                Intent(context, locationService::class.java).apply {
-                                    action = LocationService.ACTION_STOP
-                                    context.startService(this)
-                                }
-
-                            }
-                            ) {
-                                Text(text = "Stop")
-                            }
+                        locationForecastViewModel.loadWeekdayForecastRoute(
+                            mapboxUIState.routePoints
+                        )
+                        if (!metAlertsUIState.fetched && mapboxUIState.generatedRoute?.route?.route != null) {
+                            metalertsViewModel.getAlerts(mapboxUIState.generatedRoute!!.route.route)
                         }
                     }
+                    SwipeUpContent(
+                        locationForecastUIState.weekdayForecastRoute,
+                        profileViewModel = profileViewModel,
+                        mainViewModel = mainViewModel,
+                        mapboxViewModel = mapboxViewModel,
+                        navController = navController,
+                        infoScreenViewModel = infoScreenViewModel,
+                        homeViewModel = homeViewModel,
+                        locationForecastViewModel = locationForecastViewModel,
+                        metalertsViewModel = metalertsViewModel,
+                    )
+                }
+            }
+            if (mapboxUIState.routeData is APIStatus.Loading) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         }

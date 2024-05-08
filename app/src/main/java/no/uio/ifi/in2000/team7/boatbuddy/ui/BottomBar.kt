@@ -52,6 +52,7 @@ fun BottomBar(
                             if (item == Screen.TrackingScreen && !mainScreenUIState.isTrackingUser) {
                                 mainViewModel.showStartDialog()
                             } else if (item == Screen.TrackingScreen) {
+                                profileViewModel.updateCurrentRoute()
                                 mainViewModel.showFinishDialog()
                             }
                         } else {

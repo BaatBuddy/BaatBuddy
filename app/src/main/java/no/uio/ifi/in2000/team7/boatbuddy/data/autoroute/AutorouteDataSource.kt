@@ -1,10 +1,11 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute
+package no.uio.ifi.in2000.team7.boatbuddy.data.autoroute
 
 import android.util.Log
 import com.mapbox.geojson.Point
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
 import java.net.UnknownHostException
 
@@ -15,7 +16,7 @@ class AutorouteDataSource {
         safetyDepth: String,
         safetyHeight: String,
         boatSpeed: String
-    ): AutorouteData? {
+    ): APIStatus {
 
         var path: String = ""
         Log.d("Autoroute", "AutorouteDataSource ")
@@ -64,19 +65,16 @@ class AutorouteDataSource {
         return try {
             val results = client.get(path)
 
-            
-            if (results.status.value in 500..599) return null
+
+            if (results.status.value in 500..599) return APIStatus.Failed
 
             val data: AutorouteData = results.body()
-            AutorouteData(
-                geometry = data.geometry,
-                properties = data.properties,
-                wayPoints = data.wayPoints
-            )
+
+            APIStatus.Success(data)
 
 
         } catch (e: UnknownHostException) {
-            null
+            APIStatus.Failed
         }
 
 

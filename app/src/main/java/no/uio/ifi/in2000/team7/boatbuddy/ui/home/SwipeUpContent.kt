@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,23 +8,48 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastUIState
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwipeUpContent(locationForecastUIState: LocationForecastUIState) {
+fun SwipeUpContent(
+    weekdayForecastRoute: WeekForecast?,
+    profileViewModel: ProfileViewModel,
+    mainViewModel: MainViewModel,
+    mapboxViewModel: MapboxViewModel,
+    navController: NavController,
+    infoScreenViewModel: InfoScreenViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
+    metalertsViewModel: MetAlertsViewModel,
+) {
+
+    val profileUIState by profileViewModel.profileUIState.collectAsState()
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val metalertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,57 +69,72 @@ fun SwipeUpContent(locationForecastUIState: LocationForecastUIState) {
             modifier = Modifier
                 .padding(8.dp)
         )
-
-        locationForecastUIState.weekdayForecast?.let { DayWeatherTable(weekForecast = it) }
-    }
-
-
-    /*var start by remember { mutableStateOf("") }
-    var end by remember { mutableStateOf("") }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = "Din reise",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+        // weather alerts
+        Row(
             modifier = Modifier
-                .padding(4.dp)
-        )
-        HorizontalDivider(
-            thickness = 2.dp,
-            modifier = Modifier
-                .padding(8.dp)
-        )
-        Row {
-            Column {
-                OutlinedTextField(
-                    value = start,
-                    onValueChange = { start = it },
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp
-                    )
-                )
-                OutlinedTextField(
-                    value = end,
-                    onValueChange = { end = it },
-                    shape = RoundedCornerShape(
-                        bottomStart = 16.dp,
-                        bottomEnd = 16.dp
-                    )
+                .fillMaxWidth()
+                .height(32.dp)
+        ) {
+            //alerts
+            metalertsUIState.alerts.forEach {
+                AlertIcon(
+                    event = it.event,
+                    riskMatrixColor = it.riskMatrixColor,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(end = 8.dp)
                 )
             }
+            VerticalDivider(
+                thickness = 2.dp,
+                modifier = Modifier
+                    .padding(8.dp)
+            )
+            // save route
+            Button(onClick = {
+                if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null && mapboxUIState.routeData is APIStatus.Success) {
+                    profileViewModel.updateCurrentRoute(mapboxUIState.generatedRoute?.route?.route)
+                    navController.navigate("saveroute")
+                    mainViewModel.hideBottomBar()
+                }
+            }) {
+                Text(text = "Lagre rute")
+            }
         }
-    }*/
+
+        if (weekdayForecastRoute != null) {
+            DayWeatherTable(
+                weekForecast = weekdayForecastRoute,
+                navController = navController,
+                infoScreenViewModel = infoScreenViewModel,
+                profileViewModel = profileViewModel,
+                mapboxViewModel = mapboxViewModel,
+                homeViewModel = homeViewModel,
+                locationForecastViewModel = locationForecastViewModel,
+            )
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
 }
 
 
 @Composable
-fun DayWeatherTable(weekForecast: WeekForecast) {
+fun DayWeatherTable(
+    weekForecast: WeekForecast,
+    navController: NavController,
+    infoScreenViewModel: InfoScreenViewModel,
+    profileViewModel: ProfileViewModel,
+    mapboxViewModel: MapboxViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -110,19 +151,60 @@ fun DayWeatherTable(weekForecast: WeekForecast) {
             Text(text = "")
         }
         weekForecast.days.toList().map { it.second }.sortedBy { it.date }.forEach { dayForecast ->
-            DayWeatherRow(dayForecast = dayForecast)
+            HorizontalDivider(
+                modifier = Modifier
+                    .padding(2.dp)
+            )
+            DayWeatherRow(
+                dayForecast = dayForecast,
+                navController = navController,
+                infoScreenViewModel = infoScreenViewModel,
+                profileViewModel = profileViewModel,
+                mapboxViewModel = mapboxViewModel,
+                homeViewModel = homeViewModel,
+                locationForecastViewModel = locationForecastViewModel
+            )
         }
     }
 }
 
 @Composable
-fun DayWeatherRow(dayForecast: DayForecast) {
+fun DayWeatherRow(
+    dayForecast: DayForecast,
+    navController: NavController,
+    infoScreenViewModel: InfoScreenViewModel,
+    profileViewModel: ProfileViewModel,
+    mapboxViewModel: MapboxViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel
+) {
     val middayWeatherData = dayForecast.middayWeatherData
+
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .height(32.dp)
             .fillMaxWidth()
+            .clickable {
+                // navigate to weather info screen with route selected
+                profileViewModel.updatePickedRoute(mapboxUIState.generatedRoute)
+                infoScreenViewModel.selectTab(1)
+                homeViewModel.hideBottomSheet()
+                locationForecastViewModel.updateSelectedDayRoute(dayForecast = dayForecast)
+
+                navController.navigate(Screen.InfoScreen.route) {
+
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+
+                    launchSingleTop = true
+                    restoreState = true
+                }
+
+            }
     ) {
         Text(text = dayForecast.day)
         Row(
@@ -137,7 +219,7 @@ fun DayWeatherRow(dayForecast: DayForecast) {
             Text(text = "${middayWeatherData.airTemperature}℃")
         }
         Text(text = "%.1f".format(dayForecast.dayScore?.score))
-        Text(text = "") // TODO add a clickable element that takes user to a new screen with more detailed info (bring dayForecast data to the next screen since it contains weather for the whole day)
+        Text(text = ">  ")
 
     }
 }

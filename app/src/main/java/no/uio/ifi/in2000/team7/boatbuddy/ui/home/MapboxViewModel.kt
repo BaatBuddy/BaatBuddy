@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,15 +10,19 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
+import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
+import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import javax.inject.Inject
 
 
@@ -30,8 +33,13 @@ data class MapboxUIState(
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
     val alertVisible: Boolean = false,
 
+    val lastRouteData: APIStatus = APIStatus.Failed,
+    val routeData: APIStatus = APIStatus.Failed,
+
     val routePoints: List<Point> = mutableListOf(),
     val routePath: List<Point>? = null,
+
+    val generatedRoute: RouteMap? = null,
 )
 
 @HiltViewModel
@@ -80,6 +88,12 @@ class MapboxViewModel @Inject constructor(
 
     }
 
+    fun panToUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            mapboxRepository.panToUserOnMap()
+        }
+    }
+
     fun toggleAlertVisibility() {
         viewModelScope.launch {
             mapboxRepository.toggleAlertVisibility()
@@ -96,6 +110,16 @@ class MapboxViewModel @Inject constructor(
             _mapboxUIState.update {
                 it.copy(
                     cameraOptions = cameraOptions
+                )
+            }
+        }
+    }
+
+    fun resetRoutePath() {
+        viewModelScope.launch {
+            _mapboxUIState.update {
+                it.copy(
+                    routePath = null
                 )
             }
         }
@@ -149,12 +173,6 @@ class MapboxViewModel @Inject constructor(
 
             val pathWeatherData =
                 weatherCalculatorRepository.fetchPathWeatherData(points)
-            Log.i(
-                "ASDASD", WeatherScore.calculatePath(
-                    pathWeatherData = pathWeatherData,
-                    weatherPreferences = weatherPreferences
-                ).toString()
-            )
         }
     }
 
@@ -164,7 +182,7 @@ class MapboxViewModel @Inject constructor(
         }
     }
 
-    fun updateRoute() {
+    private fun updateRoute() {
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(
@@ -177,11 +195,65 @@ class MapboxViewModel @Inject constructor(
     fun generateRoute() {
         updateRoute()
         viewModelScope.launch {
-            val route = mapboxRepository.generateRoute()
+            // init Loading
             _mapboxUIState.update {
                 it.copy(
-                    routePath = route
+                    lastRouteData = APIStatus.Failed,
+                    routeData = APIStatus.Loading
                 )
+            }
+            // fetch data from autoroute api and handle the data
+            when (val routeData = mapboxRepository.fetchRouteData()) {
+                APIStatus.Failed -> {
+                    _mapboxUIState.update {
+                        it.copy(
+                            lastRouteData = _mapboxUIState.value.routeData,
+                            routeData = APIStatus.Failed
+                        )
+                    }
+                }
+
+                // do nothing if loading
+                APIStatus.Loading -> {}
+
+                // draw route on map
+                is APIStatus.Success -> {
+                    _mapboxUIState.update {
+                        it.copy(
+                            routeData = routeData,
+                            generatedRoute = when (val data = routeData.data) {
+                                is AutorouteData -> {
+                                    val convertedPath = mapboxRepository.convertListToPoint(
+                                        data.geometry.coordinates
+                                    )
+
+                                    mapboxRepository.createRoute(
+                                        convertedPath
+                                    )
+
+                                    RouteMap(
+                                        // dummy Route
+                                        route = Route(
+                                            username = "",
+                                            boatname = "",
+                                            routeID = -1,
+                                            routename = "",
+                                            routeDescription = "",
+                                            route = convertedPath,
+                                            start = "",
+                                            finish = ""
+                                        ),
+                                        mapURL = mapboxRepository.generateMapURI(convertedPath)
+                                    )
+
+
+                                }
+
+                                else -> null
+                            }
+                        )
+                    }
+                }
             }
         }
     }
