@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
@@ -218,7 +219,10 @@ fun DayWeatherRow(
             )
             Text(text = "${middayWeatherData.airTemperature}℃")
         }
-        Text(text = "%.1f".format(dayForecast.dayScore?.score))
+        Text(
+            text = "%.1f".format(dayForecast.dayScore?.score),
+            color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+        )
         Text(text = ">  ")
 
     }

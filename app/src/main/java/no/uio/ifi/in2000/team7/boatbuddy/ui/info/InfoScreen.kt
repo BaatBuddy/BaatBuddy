@@ -182,17 +182,19 @@ fun LocationCard(
 
 @Composable
 fun LocationTable(dayForecast: DayForecast) {
-    val df = dayForecast
     Column(
         modifier = Modifier
             .padding(8.dp)
     ) {
-        Text(
-            text = df.day,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W400,
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
+        Row {
+            Text(
+                text = dayForecast.day,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W400,
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+            Text(text = "Score : ${dayForecast.dayScore?.score ?: "land"}")
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -204,8 +206,8 @@ fun LocationTable(dayForecast: DayForecast) {
             Text(text = "Vind(kast)")
         }
         LazyColumn {
-            items(df.weatherData) { tld ->
-                val nextItem = df.weatherData.zipWithNext().firstOrNull { pair ->
+            items(dayForecast.weatherData) { tld ->
+                val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
                     pair.first == tld
                 }?.second
                 var time = tld.time.substring(11, 13)
