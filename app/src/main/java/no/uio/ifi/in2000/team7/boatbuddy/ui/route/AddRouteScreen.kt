@@ -55,7 +55,7 @@ fun AddRouteScreen(
 ) {
 
     var loading by remember { mutableStateOf(true) }
-    var failed by remember { mutableStateOf(true) }
+    var failed by remember { mutableStateOf(false) }
 
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
     val profileUIState by profileViewModel.profileUIState.collectAsState()

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
@@ -166,6 +167,10 @@ fun LocationCard(
                 modifier = Modifier
                     .fillMaxSize(0.15f)
             )
+            Text(
+                text = String.format("%.1f", dayForecast.dayScore?.score),
+                color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+            )
 
 //            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)
 //            if (showMore) {
@@ -193,7 +198,6 @@ fun LocationTable(dayForecast: DayForecast) {
                 fontWeight = FontWeight.W400,
                 modifier = Modifier.padding(bottom = 10.dp)
             )
-            Text(text = "Score : ${dayForecast.dayScore?.score ?: "land"}")
         }
         Row(
             modifier = Modifier
