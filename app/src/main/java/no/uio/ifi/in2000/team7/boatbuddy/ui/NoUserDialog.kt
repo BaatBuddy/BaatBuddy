@@ -35,7 +35,7 @@ fun NoUserDialog(
                     onConfirmation()
                 }
             ) {
-                Text("Confirm")
+                Text("Lag bruker")
             }
         },
         dismissButton = {
@@ -44,7 +44,7 @@ fun NoUserDialog(
                     onDismissRequest()
                 }
             ) {
-                Text("Dismiss")
+                Text("Avbryt")
             }
         }
     )

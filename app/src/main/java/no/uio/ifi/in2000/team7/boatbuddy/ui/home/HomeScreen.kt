@@ -243,7 +243,7 @@ fun HomeScreen(
                         homeViewModel = homeViewModel,
                         locationForecastViewModel = locationForecastViewModel,
                         metalertsViewModel = metalertsViewModel,
-                        snackbarHostState = snackbarHostState
+
                     )
                 }
             }
