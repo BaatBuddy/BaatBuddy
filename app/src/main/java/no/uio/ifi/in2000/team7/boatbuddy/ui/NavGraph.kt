@@ -10,6 +10,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -156,6 +158,21 @@ fun NavGraph(
         )
     }
 
+    if (mainScreenUIState.showNoUserDialog){
+        NoUserDialog(
+            onDismissRequest = { mainViewModel.hideNoUserDialog()},
+            onConfirmation = {
+                navController.navigate("createUser")
+                mainViewModel.hideBottomBar()
+                mainViewModel.hideNoUserDialog()
+
+                             },
+            dialogTitle = "Ingen bruker",
+            dialogText = "Du må lage en bruker for å kunne lagre rute",
+            icon = Icons.Default.Info
+        )
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -189,6 +206,7 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
+                        snackbarHostState = snackbarHostState
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {

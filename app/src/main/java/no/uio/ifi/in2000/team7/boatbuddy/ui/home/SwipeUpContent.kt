@@ -1,31 +1,46 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
+import no.uio.ifi.in2000.team7.boatbuddy.ui.MainScreenUIState
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.NoUserDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
@@ -33,6 +48,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SwipeUpContent(
     weekdayForecastRoute: WeekForecast?,
@@ -44,11 +60,15 @@ fun SwipeUpContent(
     homeViewModel: HomeViewModel,
     locationForecastViewModel: LocationForecastViewModel,
     metalertsViewModel: MetAlertsViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
 
     val profileUIState by profileViewModel.profileUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val metalertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
+    val scope = rememberCoroutineScope()
+
+
 
 
     Column(
@@ -97,9 +117,16 @@ fun SwipeUpContent(
                     navController.navigate("saveroute")
                     mainViewModel.hideBottomBar()
                 }
+                else{
+                    Log.d("SwipeUpContent", "Ingen bruker lagret")
+                    mainViewModel.showNoUserDialog()
+                }
             }) {
                 Text(text = "Lagre rute")
             }
+
+
+
         }
 
         if (weekdayForecastRoute != null) {
@@ -121,7 +148,14 @@ fun SwipeUpContent(
                 CircularProgressIndicator()
             }
         }
+
+
+
+
+
+
     }
+
 }
 
 
