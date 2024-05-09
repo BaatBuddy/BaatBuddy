@@ -181,7 +181,7 @@ object WeatherScore {
     }
 
     // converts distance between two geopoints to km (gpt / website)
-    private fun distanceBetweenPoints(first: Point, second: Point): Double {
+     fun distanceBetweenPoints(first: Point, second: Point): Double {
         val R = 6371.0 // Radius of the Earth in kilometers
 
         val lat1Rad = Math.toRadians(first.latitude())
@@ -199,7 +199,7 @@ object WeatherScore {
     }
 
     // gets total distance in a list of points
-    private fun distanceInPath(points: List<Point>): Double {
+    fun distanceInPath(points: List<Point>): Double {
         return points.zipWithNext().sumOf { (current, next) ->
             distanceBetweenPoints(current, next)
         }
