@@ -31,12 +31,10 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.fi
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.points
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sdf
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.startTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunriseDf
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunsetToday
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import java.util.Date
-import javax.inject.Inject
 
 
 class LocationService : Service() {

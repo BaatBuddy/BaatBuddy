@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.TimeCalculator.isWithinOneHour
 import org.junit.Test
 
 class IsWithinOneHourUnitTest {
