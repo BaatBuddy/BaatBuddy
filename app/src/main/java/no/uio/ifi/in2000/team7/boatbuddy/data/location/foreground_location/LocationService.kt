@@ -25,14 +25,18 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.enteredAlerts
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.finishTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.sdf
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunriseDf
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunsetToday
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import java.util.Date
+import javax.inject.Inject
 
 
 class LocationService : Service() {
@@ -132,6 +136,8 @@ class LocationService : Service() {
                 }
                 finishTime = sdf.format(Date())
 
+                Log.i("ASDASD", sunsetToday)
+
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
                     .build()
@@ -160,6 +166,7 @@ class LocationService : Service() {
                         notificationManager
                     )
                 }
+
             }.launchIn(serviceScope)
     }
 

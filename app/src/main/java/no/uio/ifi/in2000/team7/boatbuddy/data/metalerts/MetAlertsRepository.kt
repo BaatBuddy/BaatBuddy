@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 

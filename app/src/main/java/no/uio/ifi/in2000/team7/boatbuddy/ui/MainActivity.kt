@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,7 @@ import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -110,11 +112,11 @@ class MainActivity : ComponentActivity() {
             .build()
 
 
-        val uploadWorkRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<UpdateDataWorker>()
-                .setInitialDelay(10, TimeUnit.SECONDS)
+        val uploadWorkRequest: PeriodicWorkRequest =
+            PeriodicWorkRequest.Builder(UpdateDataWorker::class.java, 15, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
+
 
         WorkManager
             .getInstance(this)
