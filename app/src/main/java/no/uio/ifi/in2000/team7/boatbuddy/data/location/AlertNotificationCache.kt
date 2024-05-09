@@ -21,4 +21,6 @@ object AlertNotificationCache {
 
     var startTime: String = ""
     var finishTime: String = ""
+
+    
 }
