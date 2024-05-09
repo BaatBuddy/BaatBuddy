@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -58,6 +59,7 @@ fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
     infoScreenViewModel: InfoScreenViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
 
     val context = LocalContext.current
@@ -241,6 +243,7 @@ fun HomeScreen(
                         homeViewModel = homeViewModel,
                         locationForecastViewModel = locationForecastViewModel,
                         metalertsViewModel = metalertsViewModel,
+
                     )
                 }
             }
