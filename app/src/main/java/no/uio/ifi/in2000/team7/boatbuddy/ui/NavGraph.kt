@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.Manifest
+import android.app.Activity
+import android.app.Notification
+import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -24,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -109,13 +113,13 @@ fun NavGraph(
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { _ ->
-        /*if (result.resultCode == Activity.RESULT_OK) {
-            // Handle the result if needed
-        }*/
     }
 
+
     // Show the dialog if required
-    if (mainScreenUIState.showNotificationDialog) {
+    if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
+            .areNotificationsEnabled()
+    ) {
         NotificationDialog(
             navigateToSettings = {
                 mainViewModel.navigateToNotificationSettings()

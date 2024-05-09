@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
+
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
@@ -60,15 +61,11 @@ fun SwipeUpContent(
     homeViewModel: HomeViewModel,
     locationForecastViewModel: LocationForecastViewModel,
     metalertsViewModel: MetAlertsViewModel,
-    snackbarHostState: SnackbarHostState
 ) {
 
     val profileUIState by profileViewModel.profileUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val metalertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
-    val scope = rememberCoroutineScope()
-
-
 
 
     Column(
@@ -124,9 +121,6 @@ fun SwipeUpContent(
             }) {
                 Text(text = "Lagre rute")
             }
-
-
-
         }
 
         if (weekdayForecastRoute != null) {
@@ -148,14 +142,7 @@ fun SwipeUpContent(
                 CircularProgressIndicator()
             }
         }
-
-
-
-
-
-
     }
-
 }
 
 
@@ -252,7 +239,10 @@ fun DayWeatherRow(
             )
             Text(text = "${middayWeatherData.airTemperature}℃")
         }
-        Text(text = "%.1f".format(dayForecast.dayScore?.score))
+        Text(
+            text = "%.1f".format(dayForecast.dayScore?.score),
+            color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+        )
         Text(text = ">  ")
 
     }
