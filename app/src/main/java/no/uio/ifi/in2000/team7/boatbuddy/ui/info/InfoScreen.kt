@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
@@ -166,6 +167,10 @@ fun LocationCard(
                 modifier = Modifier
                     .fillMaxSize(0.15f)
             )
+            Text(
+                text = String.format("%.1f", dayForecast.dayScore?.score),
+                color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+            )
 
 //            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)
 //            if (showMore) {
@@ -182,17 +187,18 @@ fun LocationCard(
 
 @Composable
 fun LocationTable(dayForecast: DayForecast) {
-    val df = dayForecast
     Column(
         modifier = Modifier
             .padding(8.dp)
     ) {
-        Text(
-            text = df.day,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W400,
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
+        Row {
+            Text(
+                text = dayForecast.day,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W400,
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -204,8 +210,8 @@ fun LocationTable(dayForecast: DayForecast) {
             Text(text = "Vind(kast)")
         }
         LazyColumn {
-            items(df.weatherData) { tld ->
-                val nextItem = df.weatherData.zipWithNext().firstOrNull { pair ->
+            items(dayForecast.weatherData) { tld ->
+                val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
                     pair.first == tld
                 }?.second
                 var time = tld.time.substring(11, 13)
