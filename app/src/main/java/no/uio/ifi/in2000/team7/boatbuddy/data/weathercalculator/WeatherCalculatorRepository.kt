@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
@@ -24,6 +25,9 @@ class WeatherCalculatorRepository {
 
 
     suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
+        Log.i("ASDASD", "FETCH PATH WEATHER")
+        Log.i("ASDASD", points.toString())
+        
         return selectPointsFromPath(points, 40.0).mapNotNull { point ->
             val lat = point.latitude().toString()
             val lon = point.longitude().toString()

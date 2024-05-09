@@ -12,11 +12,19 @@ import androidx.activity.viewModels
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Configuration
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.AndroidEntryPoint
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
@@ -29,6 +37,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -83,22 +92,33 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
                 mapboxViewModel.panToUser()
-                Log.i("ASDASD", "Given")
-
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this, Manifest.permission.ACCESS_FINE_LOCATION
             ) -> {
                 mainViewModel.showLocationDialog()
-                Log.i("ASDASD", "Show")
             }
 
             else -> {
                 mainViewModel.showLocationDialog()
-                Log.i("ASDASD", "Else")
             }
         }
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+
+        val uploadWorkRequest: WorkRequest =
+            OneTimeWorkRequestBuilder<UpdateDataWorker>()
+                .setInitialDelay(10, TimeUnit.SECONDS)
+                .setConstraints(constraints)
+                .build()
+
+        WorkManager
+            .getInstance(this)
+            .enqueue(uploadWorkRequest)
     }
 }
 

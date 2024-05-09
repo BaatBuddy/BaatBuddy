@@ -10,6 +10,7 @@ object AlertNotificationCache {
     var enteredAlerts: MutableSet<String> = mutableSetOf() // contains events
 
     var points: MutableList<Point> = mutableListOf()
+    var alertedSunset: Boolean = false
 
     @SuppressLint("SimpleDateFormat")
     val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")

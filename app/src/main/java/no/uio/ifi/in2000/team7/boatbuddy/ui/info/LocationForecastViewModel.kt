@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -85,28 +86,32 @@ class LocationForecastViewModel @Inject constructor(
     }
 
     fun loadWeekdayForecastRoute(points: List<Point>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(points)
-            _locationForecastUIState.update {
-                it.copy(
-                    weekdayForecastRoute = weekdayForecast,
-                    selectedDayRoute = weekdayForecast.days.toList()[0].second,
-                    fetchedWeekDayRoute = true,
-                )
+        if (!_locationForecastUIState.value.fetchedWeekDayRoute) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(points)
+                _locationForecastUIState.update {
+                    it.copy(
+                        weekdayForecastRoute = weekdayForecast,
+                        selectedDayRoute = weekdayForecast.days.toList()[0].second,
+                        fetchedWeekDayRoute = true,
+                    )
+                }
             }
         }
-
     }
 
     fun loadWeekdayForecastUser(point: Point) {
-        viewModelScope.launch {
-            val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
-            _locationForecastUIState.update {
-                it.copy(
-                    weekdayForecastUser = weekdayForecast,
-                    selectedDayUser = weekdayForecast.days.toList()[0].second,
-                    fetchedWeekDayUser = true,
-                )
+        if (!_locationForecastUIState.value.fetchedWeekDayUser) {
+            viewModelScope.launch {
+                val weekdayForecast =
+                    weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
+                _locationForecastUIState.update {
+                    it.copy(
+                        weekdayForecastUser = weekdayForecast,
+                        selectedDayUser = weekdayForecast.days.toList()[0].second,
+                        fetchedWeekDayUser = true,
+                    )
+                }
             }
         }
     }

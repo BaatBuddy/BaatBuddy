@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.sunrise
 
+import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
@@ -35,7 +36,8 @@ class SunriseDataSource {
     }
 
     suspend fun getSunriseData(lat: String, lon: String, date: String): SunriseData? {
-
+        Log.i("ASDASD", "Sunrise")
+        
         var url: String = "weatherapi/sunrise/3.0/sun?lat=%s&lon=%s".format(lat, lon)
         if (date.isNotBlank()) {
             url += "&date=%s&offset=+01:00".format(date)

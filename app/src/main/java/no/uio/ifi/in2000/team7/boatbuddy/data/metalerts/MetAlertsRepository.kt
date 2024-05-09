@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 
@@ -39,8 +40,12 @@ class MetAlertsRepository(
                 )
             }?.let { it2 -> fds.addAll(it2) }
         }
-        Log.i("ASDASD", fds.toString())
         return fds.toList()
+    }
+
+    suspend fun updateAlertData() {
+        val metalertData = dataSource.getMetAlertsData("", "")
+        AlertNotificationCache.featureData = metalertData?.features!!
     }
 
 
