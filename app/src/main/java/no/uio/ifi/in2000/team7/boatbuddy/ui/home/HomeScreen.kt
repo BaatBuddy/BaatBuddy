@@ -71,18 +71,6 @@ fun HomeScreen(
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
-    /*// Internet connectivity
-    val connectivityObserver = NetworkConnectivityObserver(context)
-    val status by connectivityObserver.observe().collectAsState(
-        initial = NetworkConnectivityObserver.Status.Available
-    )
-    var internetAccess by remember { mutableStateOf(false) }*/
-    /*if (status == NetworkConnectivityObserver.Status.Available) {
-        internetAccess = true
-    } else if (status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing || status == NetworkConnectivityObserver.Status.Lost) {
-        internetAccess = false
-    }*/
-    //Log.d("InternetStatus", "$status")
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
