@@ -92,11 +92,6 @@ fun HomeScreen(
 
     Scaffold(
 
-        topBar = {
-            TopBar(
-                navController = navController,
-            )
-        },
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,

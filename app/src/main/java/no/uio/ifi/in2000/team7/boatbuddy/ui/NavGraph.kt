@@ -164,17 +164,19 @@ fun NavGraph(
 
     if (mainScreenUIState.showNoUserDialog){
         NoUserDialog(
-            onDismissRequest = { mainViewModel.hideNoUserDialog()},
+            onDismissRequest = { mainViewModel.hideNoUserDialog()
+                               },
             onConfirmation = {
-                navController.navigate("createUser")
-                mainViewModel.hideBottomBar()
+                navController.navigate("profileScreen")
+
                 mainViewModel.hideNoUserDialog()
 
                              },
-            dialogTitle = "Ingen bruker",
-            dialogText = "Du må lage en bruker for å kunne lagre rute",
+            dialogTitle = "Ingen bruker valgt",
+            dialogText = "Du må lage eller velge en bruker",
             icon = Icons.Default.Info
         )
+
     }
 
     Scaffold(
