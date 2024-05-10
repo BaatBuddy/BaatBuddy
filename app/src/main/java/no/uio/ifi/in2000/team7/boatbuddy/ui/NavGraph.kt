@@ -88,6 +88,23 @@ fun NavGraph(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // Internet connectivity
+    val connectivityObserver = NetworkConnectivityObserver(context)
+    val status by connectivityObserver.observe().collectAsState(
+        initial = NetworkConnectivityObserver.Status.Available
+    )
+
+    LaunchedEffect(status) {
+        if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Du er ikke koblet til Internett",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
+
     // if route is either too long or points is not close enough to the water
     LaunchedEffect(mapboxUIState.lastRouteData) {
         if (mapboxUIState.routeData is APIStatus.Failed

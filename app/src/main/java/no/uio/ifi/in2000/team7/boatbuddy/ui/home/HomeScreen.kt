@@ -41,7 +41,6 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
@@ -66,24 +65,23 @@ fun HomeScreen(
     // fetches all alerts (no arguments)
     metalertsViewModel.initialize()
 
-
     mainViewModel.selectScreen(0)
 
     val metAlertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
-    // Internet connectivity
+    /*// Internet connectivity
     val connectivityObserver = NetworkConnectivityObserver(context)
     val status by connectivityObserver.observe().collectAsState(
         initial = NetworkConnectivityObserver.Status.Available
     )
-    var internetAccess by remember { mutableStateOf(false) }
-    if (status == NetworkConnectivityObserver.Status.Available) {
+    var internetAccess by remember { mutableStateOf(false) }*/
+    /*if (status == NetworkConnectivityObserver.Status.Available) {
         internetAccess = true
     } else if (status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing || status == NetworkConnectivityObserver.Status.Lost) {
         internetAccess = false
-    }
+    }*/
     //Log.d("InternetStatus", "$status")
 
     // bottom sheet setup
