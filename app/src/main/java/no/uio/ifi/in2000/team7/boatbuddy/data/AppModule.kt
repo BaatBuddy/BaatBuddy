@@ -2,6 +2,9 @@ package no.uio.ifi.in2000.team7.boatbuddy.data
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.ListenableWorker
+import androidx.work.WorkerFactory
+import androidx.work.WorkerParameters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +21,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
+import no.uio.ifi.in2000.team7.boatbuddy.ui.UpdateDataWorker
 import javax.inject.Singleton
 
 @Module

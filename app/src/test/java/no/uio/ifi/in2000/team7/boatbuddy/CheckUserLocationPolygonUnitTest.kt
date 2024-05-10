@@ -10,8 +10,6 @@ class CheckUserLocationPolygonUnitTest {
     @Test
     fun checkIfUserLocationIsInsideConvexPolygon_givesTrue() {
         // arrange
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -29,8 +27,6 @@ class CheckUserLocationPolygonUnitTest {
     @Test
     fun checkIfUserLocationIsOutsideConvexPolygon_givesTrue() {
         // arrange
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -48,8 +44,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOnEdgeOfConvexPolygon_givesTrue() {
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -66,8 +60,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsRightNextToEdgeOfConvexPolygon_givesTrue() {
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -84,8 +76,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOnCornerOfPolygon_givesTrue() {
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -102,8 +92,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsInsideOfNotConvexPolygon_givesTrue() {
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(5.0, 5.0),
@@ -142,8 +130,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationRightNextToSlantedEdgeOfNotConvexPolygon_givesTrue() {
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(5.0, 5.0),
@@ -161,8 +147,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOutsideOfNotConvexPolygon_givesFalse() {
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(5.0, 5.0),

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
@@ -175,8 +176,7 @@ object WeatherScore {
             }
         }
         outPoints.add(points.last())
-
-        return outPoints.toList()
+        return listOf(outPoints.first())
 
     }
 

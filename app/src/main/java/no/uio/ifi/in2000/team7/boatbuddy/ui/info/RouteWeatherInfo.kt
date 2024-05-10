@@ -30,11 +30,10 @@ fun RouteWeatherInfo(
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
     var loading by remember { mutableStateOf(true) }
 
-    if (!locationForecastUIState.fetchedWeekDayRoute) {
-        locationForecastViewModel.loadWeekdayForecastRoute(
-            routeMap.route.route
-        )
-    }
+
+    locationForecastViewModel.loadWeekdayForecastRoute(
+        routeMap.route.route
+    )
 
     val scrollState = rememberScrollState()
 
