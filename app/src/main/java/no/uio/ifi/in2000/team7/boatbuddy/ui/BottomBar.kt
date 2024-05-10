@@ -57,6 +57,7 @@ fun BottomBar(
                             }
                         } else {
                             // TODO snackbar: "need to select a profile"
+                            mainViewModel.showNoUserDialog()
                         }
                     }
 

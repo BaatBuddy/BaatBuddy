@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
@@ -175,13 +176,12 @@ object WeatherScore {
             }
         }
         outPoints.add(points.last())
-
-        return outPoints.toList()
+        return listOf(outPoints.first())
 
     }
 
     // converts distance between two geopoints to km (gpt / website)
-    private fun distanceBetweenPoints(first: Point, second: Point): Double {
+     fun distanceBetweenPoints(first: Point, second: Point): Double {
         val R = 6371.0 // Radius of the Earth in kilometers
 
         val lat1Rad = Math.toRadians(first.latitude())
@@ -199,7 +199,7 @@ object WeatherScore {
     }
 
     // gets total distance in a list of points
-    private fun distanceInPath(points: List<Point>): Double {
+    fun distanceInPath(points: List<Point>): Double {
         return points.zipWithNext().sumOf { (current, next) ->
             distanceBetweenPoints(current, next)
         }

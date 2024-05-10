@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -121,6 +122,15 @@ class UserLocationRepository @Inject constructor(
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 locationState = locationResult
+            }
+
+            override fun onLocationAvailability(p0: LocationAvailability) {
+                super.onLocationAvailability(p0)
+                if (!p0.isLocationAvailable) {
+                    Log.i("ASDASD", " FIKK IKKE TILGANG")
+                    return
+                }
+                Log.i("ASDASD", " FIKK TILGANG")
             }
         }
     }

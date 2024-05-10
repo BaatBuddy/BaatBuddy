@@ -5,10 +5,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
-class BoatApp : Application() {
+class BoatApp() : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -22,4 +27,11 @@ class BoatApp : Application() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory = workerFactory)
+            .build()
 }

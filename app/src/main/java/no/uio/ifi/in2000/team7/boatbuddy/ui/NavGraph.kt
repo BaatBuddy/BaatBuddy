@@ -13,6 +13,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -160,6 +162,23 @@ fun NavGraph(
         )
     }
 
+    if (mainScreenUIState.showNoUserDialog){
+        NoUserDialog(
+            onDismissRequest = { mainViewModel.hideNoUserDialog()
+                               },
+            onConfirmation = {
+                navController.navigate("profileScreen")
+
+                mainViewModel.hideNoUserDialog()
+
+                             },
+            dialogTitle = "Ingen bruker valgt",
+            dialogText = "Du må lage eller velge en bruker",
+            icon = Icons.Default.Info
+        )
+
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -193,6 +212,7 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
+                        snackbarHostState = snackbarHostState
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
