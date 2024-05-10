@@ -48,6 +48,5 @@ class NetworkConnectivityObserver(val context: Context) {
             }
         }.distinctUntilChanged()
     }
-
-
+    
 }
