@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -31,15 +30,16 @@ fun RouteWeatherInfo(
     val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
     var loading by remember { mutableStateOf(true) }
 
-    if (!locationForecastUIState.fetchedWeekDayRoute) {
-        locationForecastViewModel.loadWeekdayForecastRoute(
-            routeMap.route.route
-        )
-    }
+
+    locationForecastViewModel.loadWeekdayForecastRoute(
+        routeMap.route.route
+    )
+
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+//            .verticalScroll(rememberScrollState())
     ) {
         AsyncImage(
             model = routeMap.mapURL,
@@ -53,42 +53,47 @@ fun RouteWeatherInfo(
                 loading = false
             }
         )
-        if (locationForecastUIState.weekdayForecastRoute != null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
 
-                locationForecastUIState.weekdayForecastRoute?.days?.let {
-                    it.toList().sortedBy { pair ->
-                        pair.second.date
-                    }.forEach { tld ->
-                        LocationCard(
-                            dayForecast = tld.second,
-                            selectedDay = locationForecastUIState.selectedDayRoute,
-                            changeDay = { locationForecastViewModel.updateSelectedDayRoute(tld.second) },
-                        )
+            if (locationForecastUIState.weekdayForecastRoute != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(scrollState)
+                ) {
 
+                    locationForecastUIState.weekdayForecastRoute?.days?.let {
+                        it.toList().sortedBy { pair ->
+                            pair.second.date
+                        }.forEach { tld ->
+                            LocationCard(
+                                dayForecast = tld.second,
+                                selectedDay = locationForecastUIState.selectedDayRoute,
+                                changeDay = { locationForecastViewModel.updateSelectedDayRoute(tld.second) },
+                            )
+
+                        }
                     }
                 }
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    locationForecastUIState.selectedDayRoute?.let { LocationTable(dayForecast = it) }
+                }
             }
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-            ) {
-                locationForecastUIState.selectedDayRoute?.let { LocationTable(dayForecast = it) }
-            }
-        }
 
+        }
     }
 
 
     if (locationForecastUIState.weekdayForecastRoute == null) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {

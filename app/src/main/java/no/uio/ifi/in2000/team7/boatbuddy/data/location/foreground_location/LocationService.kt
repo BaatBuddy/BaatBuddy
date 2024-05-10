@@ -25,11 +25,16 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.enteredAlerts
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.finishTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.sdf
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.alertedSunset
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunsetToday
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.TimeCalculator.isWithinOneHour
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.TimeCalculator.sunriseDf
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import java.util.Date
@@ -68,6 +73,7 @@ class LocationService : Service() {
     //
     private fun start() {
         val locationNotificationId = 1
+        alertedSunset = false
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -90,7 +96,7 @@ class LocationService : Service() {
         val locationNotificationBuilder = NotificationCompat.Builder(this, "location")
             .setContentTitle("Sporer lokasjon...")
             .setContentText("Lokasjon: ")
-            .setSmallIcon(R.drawable.avd_boat)
+            .setSmallIcon(R.drawable.avd_logosplash)
             .setOngoing(true)
             .setContentIntent(pendingIntent)
 
@@ -132,6 +138,8 @@ class LocationService : Service() {
                 }
                 finishTime = sdf.format(Date())
 
+                Log.i("ASDASD", sunsetToday)
+
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
                     .build()
@@ -160,6 +168,32 @@ class LocationService : Service() {
                         notificationManager
                     )
                 }
+                if (isWithinOneHour(
+                        currentTime = sunriseDf.format(Date()),
+                        sunsetTime = sunsetToday
+                    ) && !alertedSunset
+                ) {
+                    val bitmapIcon =
+                        bitmapFromDrawableRes(this, R.drawable.night_warning_icon)
+                    val alertNotification = NotificationCompat.Builder(this, "alert")
+                        .setContentTitle("Snart solnedgang")
+                        .setContentText("Det nærmer seg solnedgang")
+                        .setStyle(
+                            NotificationCompat.BigTextStyle()
+                                .bigText("Anbefaler å komme seg trygt inn mot land")
+                        )
+                        .setSmallIcon(R.drawable.night_warning_icon)
+                        .setLargeIcon(bitmapIcon)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .build()
+
+                    // Use unique IDs for entry/exit to manage separate notifications.
+                    val notificationId = 3
+                    notificationManager.notify(notificationId, alertNotification)
+                    alertedSunset = true
+                }
+
             }.launchIn(serviceScope)
     }
 

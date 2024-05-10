@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -22,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -40,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
@@ -78,17 +82,21 @@ fun InfoScreen(
                     Text(text = "Været")
                 }
             )
-        }
+        },
+        contentColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
         Box(
             modifier = Modifier
                 .padding(contentPadding)
+
+
         ) {
             Column {
                 TabRow(
                     selectedTabIndex = infoScreenUIState.selectedTab,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
                 ) {
                     val modifier = Modifier
                         .height(40.dp)
@@ -166,6 +174,10 @@ fun LocationCard(
                 modifier = Modifier
                     .fillMaxSize(0.15f)
             )
+            Text(
+                text = String.format("%.1f", dayForecast.dayScore?.score),
+                color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+            )
 
 //            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)
 //            if (showMore) {
@@ -182,17 +194,18 @@ fun LocationCard(
 
 @Composable
 fun LocationTable(dayForecast: DayForecast) {
-    val df = dayForecast
     Column(
         modifier = Modifier
             .padding(8.dp)
     ) {
-        Text(
-            text = df.day,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.W400,
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
+        Row {
+            Text(
+                text = dayForecast.day,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W400,
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -204,8 +217,8 @@ fun LocationTable(dayForecast: DayForecast) {
             Text(text = "Vind(kast)")
         }
         LazyColumn {
-            items(df.weatherData) { tld ->
-                val nextItem = df.weatherData.zipWithNext().firstOrNull { pair ->
+            items(dayForecast.weatherData) { tld ->
+                val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
                     pair.first == tld
                 }?.second
                 var time = tld.time.substring(11, 13)

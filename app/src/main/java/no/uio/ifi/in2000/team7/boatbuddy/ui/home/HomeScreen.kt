@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,12 +60,15 @@ fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
     infoScreenViewModel: InfoScreenViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
 
     val context = LocalContext.current
 
     // fetches all alerts (no arguments)
     metalertsViewModel.initialize()
+
+
 
     mainViewModel.selectScreen(0)
 
@@ -89,11 +94,6 @@ fun HomeScreen(
 
     Scaffold(
 
-        topBar = {
-            TopBar(
-                navController = navController,
-            )
-        },
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -240,6 +240,7 @@ fun HomeScreen(
                         homeViewModel = homeViewModel,
                         locationForecastViewModel = locationForecastViewModel,
                         metalertsViewModel = metalertsViewModel,
+
                     )
                 }
             }

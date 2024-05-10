@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast
 
+import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
@@ -11,6 +12,7 @@ import java.net.UnknownHostException
 class OceanForecastDataSource {
 
     suspend fun getOceanForecastData(lat: String, lon: String): OceanForecastData? {
+        Log.i("ASDASD", "Ocean")
 
         return try {
             var path: String = "weatherapi/oceanforecast/2.0/complete"

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
+import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
@@ -11,13 +12,14 @@ import java.net.UnknownHostException
 class LocationForecastDataSource {
     // https://gw-uio.intark.uh-it.no/in2000/weatherapi/locationforecast/2.0/compact?lat=59.93&lon=10.72&altitude=90
 
-
     //Tar imot Lat, lon og altitude
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
         altitude: String
     ): LocationForecastData? {
+
+        Log.i("ASDASD", "Location")
 
 
         var path = "weatherapi/locationforecast/2.0/complete"
@@ -76,3 +78,4 @@ class LocationForecastDataSource {
 
     }
 }
+

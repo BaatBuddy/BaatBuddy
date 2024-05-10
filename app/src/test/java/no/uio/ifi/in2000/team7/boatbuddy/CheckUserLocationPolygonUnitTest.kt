@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition.checkUserLocationPolygon
 import org.junit.Test
 
 class CheckUserLocationPolygonUnitTest {
@@ -9,7 +9,6 @@ class CheckUserLocationPolygonUnitTest {
     @Test
     fun checkIfUserLocationIsInsideConvexPolygon_givesTrue() {
         // arrange
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -19,7 +18,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 5.0, 5.0)
+        val result = checkUserLocationPolygon(polygon, 5.0, 5.0)
 
         // assert
         assert(result)
@@ -28,8 +27,6 @@ class CheckUserLocationPolygonUnitTest {
     @Test
     fun checkIfUserLocationIsOutsideConvexPolygon_givesTrue() {
         // arrange
-        val locationService = LocationService()
-
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -38,7 +35,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 50000.0, 5.0)
+        val result = checkUserLocationPolygon(polygon, 50000.0, 5.0)
 
         // assert
         assert(!result)
@@ -47,7 +44,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOnEdgeOfConvexPolygon_givesTrue() {
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -57,7 +53,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 5.0, 0.0)
+        val result = checkUserLocationPolygon(polygon, 5.0, 0.0)
 
         // assert
         assert(result)
@@ -65,7 +61,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsRightNextToEdgeOfConvexPolygon_givesTrue() {
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -75,7 +70,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 5.0, 10.0000000000001)
+        val result = checkUserLocationPolygon(polygon, 5.0, 10.0000000000001)
 
         // assert
         assert(!result)
@@ -83,7 +78,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOnCornerOfPolygon_givesTrue() {
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -93,7 +87,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 0.0, 0.0)
+        val result = checkUserLocationPolygon(polygon, 0.0, 0.0)
 
         // assert
         assert(result)
@@ -101,7 +95,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsInsideOfNotConvexPolygon_givesTrue() {
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -112,8 +105,8 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 5.0, 7.5)
-                && locationService.checkUserLocationPolygon(polygon, 1.0, 2.0)
+        val result = checkUserLocationPolygon(polygon, 5.0, 7.5)
+                && checkUserLocationPolygon(polygon, 1.0, 2.0)
 
         // assert
         assert(result)
@@ -141,7 +134,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationRightNextToSlantedEdgeOfNotConvexPolygon_givesTrue() {
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -152,7 +144,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 0.999999999, 1.0)
+        val result = checkUserLocationPolygon(polygon, 0.999999999, 1.0)
 
         // assert
         assert(result)
@@ -160,7 +152,6 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOutsideOfNotConvexPolygon_givesFalse() {
-        val locationService = LocationService()
 
         val polygon = listOf(
             listOf(0.0, 0.0),
@@ -171,7 +162,7 @@ class CheckUserLocationPolygonUnitTest {
         )
 
         // act
-        val result = locationService.checkUserLocationPolygon(polygon, 5.0, 2.5)
+        val result = checkUserLocationPolygon(polygon, 5.0, 2.5)
 
         // assert
         assert(!result)

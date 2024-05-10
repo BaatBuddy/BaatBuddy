@@ -97,6 +97,7 @@ dependencies {
     //mapbox
     implementation("com.mapbox.maps:android:11.3.0")
     implementation("com.mapbox.extension:maps-compose:11.3.0")
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:7.0.0")
 
     //for dotenv variable
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
@@ -117,8 +118,10 @@ dependencies {
     kapt("androidx.room:room-compiler:$room_version")
 
     // hilt
-    implementation("com.google.dagger:hilt-android:2.46.1")
+    implementation("com.google.dagger:hilt-android:2.49")
     kapt("com.google.dagger:hilt-android-compiler:2.46")
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
 
     // For instrumentation tests
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.46.1")
@@ -128,7 +131,9 @@ dependencies {
     testImplementation("com.google.dagger:hilt-android-testing:2.46.1")
     kaptTest("com.google.dagger:hilt-compiler:2.46.1")
 
-    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:7.0.0")
+    // Worker
+    val work_version = "2.9.0"
+    implementation("androidx.work:work-runtime-ktx:$work_version")
 
 
 }

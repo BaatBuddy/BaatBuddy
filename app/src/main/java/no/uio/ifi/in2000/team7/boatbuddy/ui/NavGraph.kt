@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.Manifest
+import android.app.Activity
+import android.app.Notification
+import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -10,6 +13,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -22,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -130,13 +136,13 @@ fun NavGraph(
     val settingsActivityResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { _ ->
-        /*if (result.resultCode == Activity.RESULT_OK) {
-            // Handle the result if needed
-        }*/
     }
 
+
     // Show the dialog if required
-    if (mainScreenUIState.showNotificationDialog) {
+    if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
+            .areNotificationsEnabled()
+    ) {
         NotificationDialog(
             navigateToSettings = {
                 mainViewModel.navigateToNotificationSettings()
@@ -179,6 +185,23 @@ fun NavGraph(
         )
     }
 
+    if (mainScreenUIState.showNoUserDialog){
+        NoUserDialog(
+            onDismissRequest = { mainViewModel.hideNoUserDialog()
+                               },
+            onConfirmation = {
+                navController.navigate("profileScreen")
+
+                mainViewModel.hideNoUserDialog()
+
+                             },
+            dialogTitle = "Ingen bruker valgt",
+            dialogText = "Du må lage eller velge en bruker",
+            icon = Icons.Default.Info
+        )
+
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -212,6 +235,7 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
+                        snackbarHostState = snackbarHostState
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {

@@ -20,6 +20,7 @@ data class MetAlertsUIState(
     val metalerts: MetAlertsData?,
     val alerts: List<FeatureData> = emptyList(),
     val fetched: Boolean = false,
+    val isTracking: Boolean = false,
 )
 
 @HiltViewModel
@@ -62,16 +63,6 @@ class MetAlertsViewModel @Inject constructor(
                 it.copy(
                     alerts = repository.getAlertsForPoints(points = points),
                     fetched = true,
-                )
-            }
-        }
-    }
-
-    fun refreshFetched() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _metalertsUIState.update {
-                it.copy(
-                    fetched = false,
                 )
             }
         }
