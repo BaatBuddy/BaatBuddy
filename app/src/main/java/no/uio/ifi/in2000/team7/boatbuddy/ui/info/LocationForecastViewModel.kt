@@ -107,7 +107,7 @@ class LocationForecastViewModel @Inject constructor(
         Log.i("ASDASD", "GJØR KALL")
         if (userInit) return
         userInit = true
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             Log.i("ASDASD", "FAKTISK KALL")
             val weekdayForecast =
                 weatherCalculatorRepository.getWeekdayForecastData(listOf(point))

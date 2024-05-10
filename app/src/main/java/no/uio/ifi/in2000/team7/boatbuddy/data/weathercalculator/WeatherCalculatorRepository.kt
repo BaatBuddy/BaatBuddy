@@ -2,13 +2,14 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
 import android.util.Log
 import com.mapbox.geojson.Point
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculatePath
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.selectPointsFromPath
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import java.math.RoundingMode
@@ -16,11 +17,14 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import javax.inject.Inject
 
 
-class WeatherCalculatorRepository {
-    private val oceanForecastRepository = OceanForecastRepository()
-    private val locationForecastRepository = LocationForecastRepository()
+class WeatherCalculatorRepository @Inject constructor(
+    private val oceanForecastRepository: OceanForecastRepository,
+    private val locationForecastRepository: LocationForecastRepository,
+    private val userDao: UserProfileDao,
+) {
     // val sunriseRepository = SunriseRepository()
 
 
@@ -128,14 +132,17 @@ class WeatherCalculatorRepository {
         val weekWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
 
         // TODO get weather preferences from database
+        val weatherPreferences = userDao.getSelectedUser()?.preferences
+
         val dateScores = calculatePath(
-            pathWeatherData = weekWeatherData, weatherPreferences = WeatherPreferences(
-                windSpeed = 0.0,
-                airTemperature = 0.0,
-                cloudAreaFraction = 0.0,
+            pathWeatherData = weekWeatherData,
+            weatherPreferences = weatherPreferences ?: WeatherPreferences(
+                windSpeed = 4.0,
+                airTemperature = 20.0,
+                cloudAreaFraction = 20.0,
                 waterTemperature = null,
                 relativeHumidity = null,
-            )
+            ) // use default values if no user selected
         )
 
         // List<PathWeatherData>

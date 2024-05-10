@@ -10,9 +10,11 @@ import dagger.hilt.components.SingletonComponent
 import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.ProfileDatabase
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastDataSource
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastDataSource
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
@@ -58,8 +60,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchWeatherCalculatorRepository(): WeatherCalculatorRepository =
-        WeatherCalculatorRepository()
+    fun fetchWeatherCalculatorRepository(db: ProfileDatabase): WeatherCalculatorRepository =
+        WeatherCalculatorRepository(
+            userDao = db.userDao(),
+            oceanForecastRepository = OceanForecastRepository(),
+            locationForecastRepository = LocationForecastRepository(),
+        )
 
     @Singleton
     @Provides

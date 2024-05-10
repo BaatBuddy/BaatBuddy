@@ -97,6 +97,9 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                     fontSize = 32.sp,
                     fontWeight = FontWeight.W900
                 )
+                profileUIState.selectedUser?.let {
+                    WeatherPreferencesCard(weatherPreferences = it.preferences)
+                }
 
             }
         }
