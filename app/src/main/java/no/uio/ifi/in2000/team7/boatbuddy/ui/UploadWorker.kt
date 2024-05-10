@@ -23,14 +23,16 @@ class UpdateDataWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        metAlertsRepository.updateAlertData()
         val userLocation = userLocationRepository.fetchUserLocation()
         if (userLocation != null) {
+            metAlertsRepository.updateAlertData()
             sunriseRepository.updateSunriseData(userLocation)
             Log.i("ASDASD", "HAR LOKASJON")
         } else {
-            Log.i("ASDASD", "Bruh moment")
+            Log.i("ASDASD", "HAR IKKE LOKASJON?")
+            return Result.retry()
         }
+        Log.i("ASDASD", "WORK BITCH WORK!")
 
         return Result.success()
     }

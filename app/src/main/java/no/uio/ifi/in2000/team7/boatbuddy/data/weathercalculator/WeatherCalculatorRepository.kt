@@ -27,7 +27,7 @@ class WeatherCalculatorRepository {
     suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
         Log.i("ASDASD", "FETCH PATH WEATHER")
         Log.i("ASDASD", points.toString())
-        
+
         return selectPointsFromPath(points, 40.0).mapNotNull { point ->
             val lat = point.latitude().toString()
             val lon = point.longitude().toString()
@@ -125,7 +125,7 @@ class WeatherCalculatorRepository {
     suspend fun getWeekdayForecastData(
         points: List<Point>
     ): WeekForecast {
-        val weekWeatherData = fetchPathWeatherData(points = points)
+        val weekWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
 
         // TODO get weather preferences from database
         val dateScores = calculatePath(

@@ -33,7 +33,7 @@ fun UserLocationWeatherInfo(
 
     if (userLocationUIState.userLocation == null) {
         userLocationViewModel.fetchUserLocation()
-    } else if (!locationForecastUIState.fetchedWeekDayUser) {
+    } else {
         locationForecastViewModel.loadWeekdayForecastUser(
             userLocationUIState.userLocation!!
         )

@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.Configuration
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
@@ -106,21 +107,6 @@ class MainActivity : ComponentActivity() {
                 mainViewModel.showLocationDialog()
             }
         }
-
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-
-        val uploadWorkRequest: PeriodicWorkRequest =
-            PeriodicWorkRequest.Builder(UpdateDataWorker::class.java, 15, TimeUnit.MINUTES)
-                .setConstraints(constraints)
-                .build()
-
-
-        WorkManager
-            .getInstance(this)
-            .enqueue(uploadWorkRequest)
     }
 }
 

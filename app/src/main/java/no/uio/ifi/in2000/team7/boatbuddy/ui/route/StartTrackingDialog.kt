@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,10 +29,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.UpdateDataWorker
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun StartTrackingDialog(
@@ -105,6 +113,28 @@ fun StartTrackingDialog(
                                 action = LocationService.ACTION_START
                                 context.startService(this)
                             }
+
+                            val constraints = Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build()
+
+
+                            val uploadWorkRequest: PeriodicWorkRequest =
+                                PeriodicWorkRequest.Builder(
+                                    UpdateDataWorker::class.java,
+                                    15,
+                                    TimeUnit.MINUTES
+                                )
+                                    .setConstraints(constraints)
+                                    .build()
+
+                            val workManager = WorkManager.getInstance(context)
+                            workManager
+                                .enqueueUniquePeriodicWork(
+                                    "test",
+                                    ExistingPeriodicWorkPolicy.KEEP,
+                                    uploadWorkRequest,
+                                )
                         },
                         modifier = Modifier
                             .size(100.dp)
