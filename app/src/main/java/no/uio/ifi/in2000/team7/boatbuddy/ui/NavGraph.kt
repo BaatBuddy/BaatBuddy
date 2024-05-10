@@ -78,7 +78,7 @@ fun NavGraph(
     // Internet connectivity
     val connectivityObserver = NetworkConnectivityObserver(context)
     val status by connectivityObserver.observe().collectAsState(
-        initial = NetworkConnectivityObserver.Status.Unavailable
+        initial = NetworkConnectivityObserver.Status.Available
     )
     //Log.d("InternetStatus", "$status")
 
