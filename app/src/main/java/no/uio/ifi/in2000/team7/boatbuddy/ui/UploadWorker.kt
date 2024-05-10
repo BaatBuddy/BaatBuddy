@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.core.app.JobIntentService.enqueueWork
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters

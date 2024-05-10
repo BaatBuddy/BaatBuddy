@@ -45,7 +45,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -241,7 +240,7 @@ fun HomeScreen(
                         locationForecastViewModel = locationForecastViewModel,
                         metalertsViewModel = metalertsViewModel,
 
-                    )
+                        )
                 }
             }
             if (mapboxUIState.routeData is APIStatus.Loading) {

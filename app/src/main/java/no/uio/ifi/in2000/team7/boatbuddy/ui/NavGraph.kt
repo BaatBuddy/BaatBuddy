@@ -1,9 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.Manifest
-import android.app.Activity
-import android.app.Notification
-import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -185,16 +182,17 @@ fun NavGraph(
         )
     }
 
-    if (mainScreenUIState.showNoUserDialog){
+    if (mainScreenUIState.showNoUserDialog) {
         NoUserDialog(
-            onDismissRequest = { mainViewModel.hideNoUserDialog()
-                               },
+            onDismissRequest = {
+                mainViewModel.hideNoUserDialog()
+            },
             onConfirmation = {
                 navController.navigate("profileScreen")
 
                 mainViewModel.hideNoUserDialog()
 
-                             },
+            },
             dialogTitle = "Ingen bruker valgt",
             dialogText = "Du må lage eller velge en bruker",
             icon = Icons.Default.Info
