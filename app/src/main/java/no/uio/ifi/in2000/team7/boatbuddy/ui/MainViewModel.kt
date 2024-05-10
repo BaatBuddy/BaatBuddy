@@ -35,6 +35,7 @@ data class MainScreenUIState(
 
     val showLocationDialog: Boolean = false,
     val showNotificationDialog: Boolean = false,
+    val showNoUserDialog: Boolean = false
 )
 
 @HiltViewModel
@@ -233,6 +234,26 @@ class MainViewModel @Inject constructor(
             _mainScreenUIState.update {
                 it.copy(
                     showLocationDialog = true
+                )
+            }
+        }
+    }
+
+    fun showNoUserDialog(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _mainScreenUIState.update {
+                it.copy(
+                    showNoUserDialog = true
+                )
+            }
+        }
+    }
+
+    fun hideNoUserDialog(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _mainScreenUIState.update {
+                it.copy(
+                    showNoUserDialog = false
                 )
             }
         }

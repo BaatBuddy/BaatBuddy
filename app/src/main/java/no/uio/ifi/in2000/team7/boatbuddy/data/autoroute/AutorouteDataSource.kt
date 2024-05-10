@@ -57,13 +57,14 @@ class AutorouteDataSource {
             }
 
             path = base + middle + end
-            Log.d("Autoroute", "Autoroute api call: $path") //Why is this not showing in logcat
+            //Log.d("Autoroute", "Autoroute api call: $path") //Why is this not showing in logcat
 
 
         }
 
         return try {
             val results = client.get(path)
+            Log.d("Autoroute", "Autoroute api call")
 
 
             if (results.status.value in 500..599) return APIStatus.Failed

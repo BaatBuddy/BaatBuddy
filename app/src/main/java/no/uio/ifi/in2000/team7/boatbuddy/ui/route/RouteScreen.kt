@@ -53,6 +53,12 @@ fun RouteScreen(
                         profileViewModel = profileViewModel,
                     )
                 }
+                if (routeScreenUIState.routeMaps.isEmpty()){
+                    item{
+                        Text(text = "Ingen lagrede ruter")
+                    }
+
+                }
             }
         }
     }
