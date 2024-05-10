@@ -100,19 +100,26 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                ElevatedFilterChip(
-                    selected = showAlert,
-                    onClick = { mapboxViewModel.toggleAlertVisibility(); showAlert = !showAlert },
-                    label = {
-                        Icon(
-                            imageVector = Icons.Filled.Warning,
-                            contentDescription = ""
-                        )
-                        Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
-                    },
-                    modifier = Modifier
-                        .padding(top = 80.dp, end = 48.dp)
-                )
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
+
+                    ElevatedFilterChip(
+                        selected = showAlert,
+                        onClick = {
+                            mapboxViewModel.toggleAlertVisibility(); showAlert = !showAlert
+                        },
+                        label = {
+                            Icon(
+                                imageVector = Icons.Filled.Warning,
+                                contentDescription = ""
+                            )
+                            Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
+                        },
+                        modifier = Modifier
+                            .padding(top = 12.dp, end = 40.dp)
+                    )
+                }
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
