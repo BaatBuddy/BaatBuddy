@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route
+package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -29,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 
@@ -114,7 +113,7 @@ fun StartTrackingDialog(
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.Filled.PlayArrow,
                             contentDescription = "",
                             modifier = Modifier
                                 .size(25.dp)

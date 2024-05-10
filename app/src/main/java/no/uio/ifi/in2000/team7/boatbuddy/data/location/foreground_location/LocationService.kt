@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking
+package no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -21,15 +21,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.enteredAlerts
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.featureData
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.finishTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.sdf
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.AlertNotificationCache.startTime
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import java.util.Date
@@ -117,7 +117,11 @@ class LocationService : Service() {
                 val lat = location.latitude
                 val lon = location.longitude
                 val currentAlerts =
-                    checkUserLocationAlertAreas(lon = lon, lat = lat)
+                    PolygonPosition.checkUserLocationAlertAreas(
+                        lon = lon,
+                        lat = lat,
+                        AlertNotificationCache.featureData
+                    )
 
                 points.add(Point.fromLngLat(lon, lat))
 
@@ -222,55 +226,6 @@ class LocationService : Service() {
         AlertNotificationCache.featureData = featureData
     }
 
-    // checks if a geopoint is inside a alert polygon
-    private fun checkUserLocationAlertAreas(
-        lon: Double,
-        lat: Double
-    ): List<FeatureData> {
-        val asd = featureData.filter { featureData ->
-            featureData.affected_area.any { area ->
-                area.any { polygon ->
-                    checkUserLocationPolygon(points = polygon, lon = lon, lat = lat)
-                }
-            }
-        }
-        return asd
-    }
-
-    // http://www.philliplemons.com/posts/ray-casting-algorithm#:~:text=The%20algorithm%20starts%20with%20P,as%20seen%20in%20Figure%202 + gpt
-    fun checkUserLocationPolygon(
-        points: List<List<Double>>,
-        lon: Double,
-        lat: Double
-    ): Boolean {
-
-        if (points.size < 3) return false // Not a polygon
-        if (points.any { it[0] == lon && it[1] == lat }) return true
-
-        var inside = false
-        var prevPoint = points.last()
-        for (point in points) {
-            val x1 = prevPoint[0]
-            val y1 = prevPoint[1]
-            val x2 = point[0]
-            val y2 = point[1]
-
-            if ((y1 > lat) != (y2 > lat) &&
-                (lon < (x2 - x1) * (lat - y1) / (y2 - y1) + x1)
-            ) {
-                inside = !inside
-            }
-
-            prevPoint = point
-        }
-        return inside
-    }
-
-    fun createEdgesFromPoints(points: List<List<Double>>): List<Pair<List<Double>, List<Double>>> {
-        return points.mapIndexed { i, point ->
-            Pair(point, points[(i + 1) % points.size])
-        }
-    }
 
 }
 

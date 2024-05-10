@@ -1,21 +1,47 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
+import android.Manifest
+import android.app.Activity
+import android.app.Notification
+import android.app.NotificationManager
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
+import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
@@ -24,13 +50,15 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.AddRouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteInfoScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route.StopTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -41,12 +69,101 @@ fun NavGraph(
     oceanforecastViewModel: OceanForecastViewModel,
     profileViewModel: ProfileViewModel,
     sunriseViewModel: SunriseViewModel,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    infoScreenViewModel: InfoScreenViewModel,
+    userLocationViewModel: UserLocationViewModel,
 ) {
 
+    val context = LocalContext.current
+
+    mapboxViewModel.initialize(
+        context = context,
+        cameraOptions = CameraOptions.Builder()
+            .center(Point.fromLngLat(10.20449, 59.74389))
+            .zoom(10.0)
+            .bearing(0.0)
+            .pitch(0.0)
+            .build()
+    )
+
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // if route is either too long or points is not close enough to the water
+    LaunchedEffect(mapboxUIState.lastRouteData) {
+        if (mapboxUIState.routeData is APIStatus.Failed
+            && mapboxUIState.lastRouteData is APIStatus.Loading
+        ) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Ruten er for lang eller inneholder punkter på land",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+
+    }
+
+    // notification setup
+    val settingsActivityResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { _ ->
+    }
+
+
+    // Show the dialog if required
+    if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
+            .areNotificationsEnabled()
+    ) {
+        NotificationDialog(
+            navigateToSettings = {
+                mainViewModel.navigateToNotificationSettings()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
+                    )
+                } else {
+                    settingsActivityResultLauncher.launch(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                    )
+                }
+            },
+            onDismiss = {
+                mainViewModel.hideNotificationDialog()
+            }
+        )
+    }
+
+    val permissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                userLocationViewModel.requestLocationPermission()
+                userLocationViewModel.fetchUserLocation()
+                mapboxViewModel.panToUser()
+            }
+        }
+
+    if (mainScreenUIState.showLocationDialog) {
+        Log.i("ASDASD", "ASDASDASDASD")
+        LocationDialog(
+            launchRequest = {
+                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            },
+            onDismiss = { mainViewModel.hideLocationDialog() }
+        )
+    }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             if (mainScreenUIState.showBottomBar) {
                 BottomBar(
@@ -74,6 +191,8 @@ fun NavGraph(
                         homeViewModel = homeViewModel,
                         mainViewModel = mainViewModel,
                         navController = navController,
+                        profileViewModel = profileViewModel,
+                        infoScreenViewModel = infoScreenViewModel,
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -83,6 +202,9 @@ fun NavGraph(
                         oceanForecastViewModel = oceanforecastViewModel,
                         sunriseViewModel = sunriseViewModel,
                         mainViewModel = mainViewModel,
+                        infoScreenViewModel = infoScreenViewModel,
+                        userLocationViewModel = userLocationViewModel,
+                        profileViewModel = profileViewModel,
                     )
                 }
                 composable(route = Screen.SettingsScreen.route) {
@@ -116,6 +238,7 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
+                        mapboxViewModel = mapboxViewModel,
                     )
                 }
                 composable(route = "routeinfo") {
@@ -123,8 +246,18 @@ fun NavGraph(
                         navController = navController,
                         mainViewModel = mainViewModel,
                         profileViewModel = profileViewModel,
+                        locationForecastViewModel = locationForecastViewModel,
 
                         )
+                }
+                composable(route = "saveroute") {
+                    SaveRouteScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
+                        mapboxViewModel = mapboxViewModel
+
+                    )
                 }
             }
             if (mainScreenUIState.showDialog == ShowStartDialog) {

@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
@@ -10,13 +11,21 @@ import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
-import kotlin.time.times
 
 object WeatherScore {
+
+    fun mapValue(v: Double, A: Double, B: Double, a: Double, b: Double): Double {
+        return a + (v - A) * (b - a) / (B - A)
+    }
+
+    fun getColor(score: Double): Color {
+        val scaledValue = (mapValue(score, 0.0, 100.0, 255.0, 0.0) * 1.5).toInt().coerceIn(0, 255)
+
+        return Color(scaledValue, 255 - scaledValue, 0)
+    }
 
     fun calculateWaves(realData: Double, preferredData: Double): Double {
         // set ratio between difference of data to score -> 0.01m = 1score
@@ -63,7 +72,7 @@ object WeatherScore {
         // isEndpoint: Boolean,
     ): Double {
 
-        var sumScore = 0.0
+        var sumScore = 0.0 // compensation for weather at night
         var factors = 4
 
         sumScore += calculateSpeed(timeWeatherData.windSpeed, weatherPreferences.windSpeed)
@@ -72,10 +81,12 @@ object WeatherScore {
             timeWeatherData.cloudAreaFraction,
             weatherPreferences.cloudAreaFraction
         )
-        sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+        if (timeWeatherData.waveHeight != null) {
+            sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+        }
 
 
-        if (weatherPreferences.waterTemperature != null) {
+        if (weatherPreferences.waterTemperature != null && timeWeatherData.waterTemperature != null) {
             sumScore += calculateTemp(
                 timeWeatherData.waterTemperature,
                 weatherPreferences.waterTemperature
@@ -90,10 +101,13 @@ object WeatherScore {
             factors += 1
         }
 
-        return sumScore / (factors + listOf(
+        return ((sumScore / (factors + listOf(
             timeWeatherData.precipitationAmount,
             timeWeatherData.fogAreaFraction
-        ).count { it != 0.0 }) // takes down the score if they are not equal to 0.0 which is ideal
+        ).count { it != 0.0 } * 2)) + 20).coerceIn(
+            0.0,
+            100.0
+        ) // takes down the score if they are not equal to 0.0 which is ideal
     }
 
     fun calculateDate(
@@ -126,11 +140,15 @@ object WeatherScore {
         }
     }
 
-    // pick out points based on the length of the path and distance between each point
-    fun selectPointsFromPath(points: List<Point>): List<Point> {
+    // pick out points based on the length of the path and distance between each point (40km default)
+    fun selectPointsFromPath(points: List<Point>, distanceBetweenPoint: Double): List<Point> {
+        if (points.size in 1..2) return points
         val distance = distanceInPath(points)
         val nBetweenPoints =
-            max(distance.div(40).toInt(), 2) // at least 1 point between start and end
+            max(
+                distance.div(distanceBetweenPoint).toInt(),
+                2
+            ) // at least 1 point between start and end
         val distanceBetweenPoints = distance / nBetweenPoints
         val outPoints = mutableListOf(points.first())
 
@@ -221,3 +239,6 @@ object WeatherScore {
 
 
 }
+
+
+
