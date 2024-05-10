@@ -45,7 +45,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,19 +100,26 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                ElevatedFilterChip(
-                    selected = showAlert,
-                    onClick = { mapboxViewModel.toggleAlertVisibility(); showAlert = !showAlert },
-                    label = {
-                        Icon(
-                            imageVector = Icons.Filled.Warning,
-                            contentDescription = ""
-                        )
-                        Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
-                    },
-                    modifier = Modifier
-                        .padding(top = 80.dp, end = 48.dp)
-                )
+                Column(
+                    horizontalAlignment = Alignment.Start
+                ) {
+
+                    ElevatedFilterChip(
+                        selected = showAlert,
+                        onClick = {
+                            mapboxViewModel.toggleAlertVisibility(); showAlert = !showAlert
+                        },
+                        label = {
+                            Icon(
+                                imageVector = Icons.Filled.Warning,
+                                contentDescription = ""
+                            )
+                            Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
+                        },
+                        modifier = Modifier
+                            .padding(top = 12.dp, end = 40.dp)
+                    )
+                }
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {
@@ -241,7 +247,7 @@ fun HomeScreen(
                         locationForecastViewModel = locationForecastViewModel,
                         metalertsViewModel = metalertsViewModel,
 
-                    )
+                        )
                 }
             }
             if (mapboxUIState.routeData is APIStatus.Loading) {

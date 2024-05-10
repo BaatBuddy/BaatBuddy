@@ -30,10 +30,6 @@ fun SelectUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
                 title = { Text(text = "Velg profil") }
             )
         }

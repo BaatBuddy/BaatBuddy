@@ -74,16 +74,13 @@ fun InfoScreen(
     mainViewModel.selectScreen(1)
 
     Scaffold(
-        modifier = Modifier
-            .padding(8.dp),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(text = "Været")
                 }
             )
-        },
-        contentColor = MaterialTheme.colorScheme.background
+        }
     ) { contentPadding ->
         Box(
             modifier = Modifier
@@ -96,7 +93,6 @@ fun InfoScreen(
                     selectedTabIndex = infoScreenUIState.selectedTab,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
                 ) {
                     val modifier = Modifier
                         .height(40.dp)

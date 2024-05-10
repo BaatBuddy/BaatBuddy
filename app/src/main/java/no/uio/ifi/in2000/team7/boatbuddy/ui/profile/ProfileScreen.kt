@@ -36,7 +36,7 @@ fun ProfileScreen(
     mainViewModel.selectScreen(4)
     val profileUIState by profileViewModel.profileUIState.collectAsState()
 
-    Scaffold() { paddingValue ->
+    Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .fillMaxSize()

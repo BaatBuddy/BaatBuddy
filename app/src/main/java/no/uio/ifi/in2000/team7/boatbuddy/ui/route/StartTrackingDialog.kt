@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,7 +37,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.UpdateDataWorker
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.UpdateDataWorker
 import java.util.concurrent.TimeUnit
 
 @Composable
