@@ -96,7 +96,7 @@ class LocationService : Service() {
         val locationNotificationBuilder = NotificationCompat.Builder(this, "location")
             .setContentTitle("Sporer lokasjon...")
             .setContentText("Lokasjon: ")
-            .setSmallIcon(R.drawable.avd_boat)
+            .setSmallIcon(R.drawable.avd_logosplash)
             .setOngoing(true)
             .setContentIntent(pendingIntent)
 

@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
 import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition.checkUserLocationPolygon
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import org.junit.Test
 
 class CheckUserLocationPolygonUnitTest {
@@ -10,6 +9,7 @@ class CheckUserLocationPolygonUnitTest {
     @Test
     fun checkIfUserLocationIsInsideConvexPolygon_givesTrue() {
         // arrange
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -44,6 +44,7 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOnEdgeOfConvexPolygon_givesTrue() {
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -60,6 +61,7 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsRightNextToEdgeOfConvexPolygon_givesTrue() {
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -76,6 +78,7 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOnCornerOfPolygon_givesTrue() {
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(10.0, 0.0),
@@ -92,6 +95,7 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsInsideOfNotConvexPolygon_givesTrue() {
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(5.0, 5.0),
@@ -130,6 +134,7 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationRightNextToSlantedEdgeOfNotConvexPolygon_givesTrue() {
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(5.0, 5.0),
@@ -147,6 +152,7 @@ class CheckUserLocationPolygonUnitTest {
 
     @Test
     fun checkIfUserLocationIsOutsideOfNotConvexPolygon_givesFalse() {
+
         val polygon = listOf(
             listOf(0.0, 0.0),
             listOf(5.0, 5.0),
