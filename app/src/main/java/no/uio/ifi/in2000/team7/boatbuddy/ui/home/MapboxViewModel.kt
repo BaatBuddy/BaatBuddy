@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -54,11 +52,11 @@ class MapboxViewModel @Inject constructor(
 
     private var initialized = false
 
-    private val _undoClick = MutableLiveData(false)
+    /*private val _undoClick = MutableLiveData(false)
     val undoClick: LiveData<Boolean> = _undoClick
 
     private val _redoClick = MutableLiveData(false)
-    val redoClick: LiveData<Boolean> = _redoClick
+    val redoClick: LiveData<Boolean> = _redoClick*/
 
     @MainThread
     fun initialize(context: Context, cameraOptions: CameraOptions) {

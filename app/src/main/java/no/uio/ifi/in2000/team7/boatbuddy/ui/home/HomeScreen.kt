@@ -209,7 +209,7 @@ fun HomeScreen(
         ) {
             AndroidView(
                 factory = { _ ->
-                    mapboxUIState.mapView
+                    mapboxUIState.mapView // Her lages kartet
                 }
             )
 
@@ -257,3 +257,4 @@ fun HomeScreen(
         }
     }
 }
+

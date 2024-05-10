@@ -78,6 +78,13 @@ fun NavGraph(
 
     val context = LocalContext.current
 
+    // Internet connectivity
+    val connectivityObserver = NetworkConnectivityObserver(context)
+    val status by connectivityObserver.observe().collectAsState(
+        initial = NetworkConnectivityObserver.Status.Unavailable
+    )
+    //Log.d("InternetStatus", "$status")
+
     mapboxViewModel.initialize(
         context = context,
         cameraOptions = CameraOptions.Builder()
@@ -94,6 +101,18 @@ fun NavGraph(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // If user does not have internet access, show snackbar
+    LaunchedEffect(status) {
+        if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Du er ikke koblet til Internett",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
+
     // if route is either too long or points is not close enough to the water
     LaunchedEffect(mapboxUIState.lastRouteData) {
         if (mapboxUIState.routeData is APIStatus.Failed
@@ -101,7 +120,11 @@ fun NavGraph(
         ) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = "Ruten er for lang eller inneholder punkter på land",
+                    message = if (status == NetworkConnectivityObserver.Status.Available) {
+                        "Ruten er for lang eller inneholder punkter på land"
+                    } else {
+                        "Kan ikke generere rute uten tilgang til Internett"
+                    },
                     duration = SnackbarDuration.Short
                 )
             }
