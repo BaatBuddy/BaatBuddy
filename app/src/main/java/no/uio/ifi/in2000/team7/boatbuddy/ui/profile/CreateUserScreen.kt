@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
@@ -75,17 +76,13 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
                 title = { Text(text = "Lag profil") },
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = ""
                         )
                     }
@@ -120,9 +117,9 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.name,
                     onValueChange = {
-                        if (it.length > 20) return@OutlinedTextField
-                        profileViewModel.updateCreateName(it)
-
+                        if (it.length <= 20) {
+                            profileViewModel.updateCreateName(it)
+                        }
                     },
                     maxLines = 1,
                     label = { Text(text = "Navn") },
@@ -146,9 +143,9 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.username,
                     onValueChange = {
-                        if (it.length > 20) return@OutlinedTextField
-                        profileViewModel.updateCreateUsername(it)
-
+                        if (it.length <= 20) {
+                            profileViewModel.updateCreateUsername(it)
+                        }
                     },
                     maxLines = 1,
                     label = { Text(text = "Brukernavn") },
@@ -181,9 +178,9 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.boatname,
                     onValueChange = {
-                        if (it.length > 20) return@OutlinedTextField
-                        profileViewModel.updateBoatName(it)
-
+                        if (it.length <= 20) {
+                            profileViewModel.updateBoatName(it)
+                        }
                     },
                     maxLines = 1,
                     label = { Text(text = "Båt navn") },
@@ -291,14 +288,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.boatSpeed,
                     onValueChange = {
-                        if (it.length > 20 || !it.isDigitsOnly()) {
-                            return@OutlinedTextField
-                        }
-                        else{
+                        if (it.length <= 20 && it.isDigitsOnly()) {
                             profileViewModel.updateBoatSpeed(it)
                             text = it
                         }
-
                     },
                     maxLines = 1,
                     label = { Text(text = "Båt hastighet i knop") },
@@ -321,14 +314,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.safetyHeight,
                     onValueChange = {
-                        if (it.length > 20 || !it.isDigitsOnly()) {
-                            return@OutlinedTextField
-                        }
-                        else{
+                        if (it.length <= 20 && it.isDigitsOnly()) {
                             profileViewModel.updateBoatSpeed(it)
                             text = it
                         }
-
                     },
                     maxLines = 1,
                     label = { Text(text = "Sikkerhets høyde på båten") },
@@ -351,10 +340,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.safetyDepth,
                     onValueChange = {
-                        if (it.length > 20 || !it.isDigitsOnly()) {
-                            return@OutlinedTextField
-                        }
-                        else{
+                        if (it.length <= 20 && it.isDigitsOnly()) {
                             profileViewModel.updateBoatSpeed(it)
                             text = it
                         }

@@ -1,10 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import kotlin.math.PI
@@ -181,7 +180,7 @@ object WeatherScore {
     }
 
     // converts distance between two geopoints to km (gpt / website)
-     fun distanceBetweenPoints(first: Point, second: Point): Double {
+    fun distanceBetweenPoints(first: Point, second: Point): Double {
         val R = 6371.0 // Radius of the Earth in kilometers
 
         val lat1Rad = Math.toRadians(first.latitude())
