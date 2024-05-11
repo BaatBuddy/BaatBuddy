@@ -156,7 +156,7 @@ fun InfoScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
 
                                 Text(
-                                    text = "Du må velge en rute for å kunne se værvarselet for din rute. \nBruk funksjonen på hjemskjermen for å velge en rute.",
+                                    text = "Du må velge en rute for å kunne se værvarselet for din rute. \n Bruk funksjonen på hjemskjermen for å velge en rute.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     textAlign = TextAlign.Center,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
