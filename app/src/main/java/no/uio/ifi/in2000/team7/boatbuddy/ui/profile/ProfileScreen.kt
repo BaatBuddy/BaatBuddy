@@ -199,12 +199,20 @@ fun WeatherPreferencesCard(
             modifier = Modifier
                 .padding(8.dp)
         ) {
+            Text(text = "Luft temperatur:")
+            Text(text = weatherPreferences.airTemperature.toString() + "℃")
             Text(text = "Vind hastighet:")
             Text(text = weatherPreferences.windSpeed.toString() + "m/s")
             Text(text = "Prosent skyer:")
             Text(text = weatherPreferences.cloudAreaFraction.toString() + "%")
-            Text(text = "Luft temperatur:")
-            Text(text = weatherPreferences.airTemperature.toString() + "C")
+            if (weatherPreferences.waterTemperature != null) {
+                Text(text = "Vann temperatur:")
+                Text(text = weatherPreferences.waterTemperature.toString() + "℃")
+            }
+            if (weatherPreferences.relativeHumidity != null) {
+                Text(text = "Relativ fuktighet:")
+                Text(text = weatherPreferences.relativeHumidity.toString() + "%")
+            }
         }
     }
 }

@@ -1,14 +1,22 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,6 +70,19 @@ fun SelectWeatherScreen(
                             contentDescription = ""
                         )
                     }
+                },
+                actions = {
+                    Button(
+                        onClick = {
+                            if (profileUIState.selectedWeather != null) {
+                                profileViewModel.replaceWeatherPreference(profileUIState.selectedWeather!!)
+
+                            }
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Text(text = "Lagre rute")
+                    }
                 }
             )
         }
@@ -73,64 +94,84 @@ fun SelectWeatherScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                if (profileUIState.selectedWeather != null) {
-                    WeatherSlider(
-                        from = 10.0,
-                        to = 30.0,
-                        value = profileUIState.selectedWeather!!.airTemperature,
-                        weatherType = "Luft temperatur: ${profileUIState.selectedWeather!!.airTemperature}℃",
-                        changeValue = { airTemperature: Double ->
-                            profileViewModel.updateWeatherPreference(
-                                profileUIState.selectedWeather!!.copy(
-                                    airTemperature = airTemperature
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (profileUIState.selectedWeather != null) {
+                        WeatherSlider(
+                            from = 10.0,
+                            to = 30.0,
+                            value = profileUIState.selectedWeather!!.airTemperature,
+                            weatherType = "Luft temperatur: ${profileUIState.selectedWeather!!.airTemperature}℃",
+                            changeValue = { airTemperature: Double ->
+                                profileViewModel.updateWeatherPreference(
+                                    profileUIState.selectedWeather!!.copy(
+                                        airTemperature = airTemperature
+                                    )
                                 )
-                            )
-                        }
-                    )
-                    WeatherSlider(
-                        from = 0.0,
-                        to = 12.0,
-                        value = profileUIState.selectedWeather!!.windSpeed,
-                        weatherType = "Vind hastighet: ${profileUIState.selectedWeather!!.windSpeed}m/s",
-                        changeValue = { windSpeed: Double ->
-                            profileViewModel.updateWeatherPreference(
-                                profileUIState.selectedWeather!!.copy(
-                                    windSpeed = windSpeed
+                            }
+                        )
+                        WeatherSlider(
+                            from = 0.0,
+                            to = 12.0,
+                            value = profileUIState.selectedWeather!!.windSpeed,
+                            weatherType = "Vind hastighet: ${profileUIState.selectedWeather!!.windSpeed}m/s",
+                            changeValue = { windSpeed: Double ->
+                                profileViewModel.updateWeatherPreference(
+                                    profileUIState.selectedWeather!!.copy(
+                                        windSpeed = windSpeed
+                                    )
                                 )
-                            )
-                        }
-                    )
-                    WeatherSlider(
-                        from = 0.0,
-                        to = 100.0,
-                        value = profileUIState.selectedWeather!!.cloudAreaFraction,
-                        weatherType = "Skydekke: ${profileUIState.selectedWeather!!.cloudAreaFraction}%",
-                        changeValue = { cloudAreaFraction: Double ->
-                            profileViewModel.updateWeatherPreference(
-                                profileUIState.selectedWeather!!.copy(
-                                    cloudAreaFraction = cloudAreaFraction
+                            }
+                        )
+                        WeatherSlider(
+                            from = 0.0,
+                            to = 100.0,
+                            value = profileUIState.selectedWeather!!.cloudAreaFraction,
+                            weatherType = "Skydekke: ${profileUIState.selectedWeather!!.cloudAreaFraction}%",
+                            changeValue = { cloudAreaFraction: Double ->
+                                profileViewModel.updateWeatherPreference(
+                                    profileUIState.selectedWeather!!.copy(
+                                        cloudAreaFraction = cloudAreaFraction
+                                    )
                                 )
-                            )
-                        }
-                    )
-                    OptionalWeatherSlider(
-                        from = 10.0,
-                        to = 25.0,
-                        value = profileUIState.selectedWeather!!.waterTemperature,
-                        weatherType = "Vann temperatur: ${profileUIState.selectedWeather!!.waterTemperature}℃",
-                        changeValue = { waterTemperature: Double ->
-                            profileViewModel.updateWeatherPreference(
-                                profileUIState.selectedWeather!!.copy(
-                                    waterTemperature = waterTemperature
+                            }
+                        )
+                        OptionalWeatherSlider(
+                            from = 10.0,
+                            to = 25.0,
+                            value = profileUIState.selectedWeather!!.waterTemperature,
+                            weatherType = "Vann temperatur: ${profileUIState.selectedWeather!!.waterTemperature}℃",
+                            changeValue = { waterTemperature: Double? ->
+                                profileViewModel.updateWeatherPreference(
+                                    profileUIState.selectedWeather!!.copy(
+                                        waterTemperature = waterTemperature
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            }
+                        )
 
+                        OptionalWeatherSlider(
+                            from = 0.0,
+                            to = 100.0,
+                            value = profileUIState.selectedWeather!!.relativeHumidity,
+                            weatherType = "Relativ fuktighet: ${profileUIState.selectedWeather!!.relativeHumidity}%",
+                            changeValue = { relativeHumidity: Double? ->
+                                profileViewModel.updateWeatherPreference(
+                                    profileUIState.selectedWeather!!.copy(
+                                        relativeHumidity = relativeHumidity
+                                    )
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -176,7 +217,7 @@ fun OptionalWeatherSlider(
     to: Double,
     value: Double?,
     weatherType: String,
-    changeValue: (Double) -> Unit,
+    changeValue: (Double?) -> Unit,
 ) {
     var enabled by remember { mutableStateOf(value != null) }
     Column(
@@ -200,6 +241,8 @@ fun OptionalWeatherSlider(
                 weatherType = weatherType,
                 changeValue = changeValue,
             )
+        } else {
+            changeValue(null)
         }
     }
 

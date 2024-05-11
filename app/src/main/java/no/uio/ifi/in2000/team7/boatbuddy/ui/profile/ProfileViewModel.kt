@@ -251,6 +251,7 @@ class ProfileViewModel @Inject constructor(
                 safetyHeight = safetyHeight
 
             )
+            getAllBoatsUsername()
         }
     }
 
@@ -439,6 +440,13 @@ class ProfileViewModel @Inject constructor(
                     selectedWeather = weatherPreferences
                 )
             }
+        }
+    }
+
+    fun replaceWeatherPreference(weatherPreferences: WeatherPreferences) {
+        viewModelScope.launch(Dispatchers.IO) {
+            profileRepository.replaceWeatherPreference(weatherPreferences = weatherPreferences)
+            updateSelectedUser()
         }
     }
 

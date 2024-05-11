@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 
 @Dao
 interface UserProfileDao {
@@ -49,5 +50,9 @@ interface UserProfileDao {
 
     @Query("UPDATE userprofile SET isTracking = false WHERE username LIKE :username")
     fun stopTrackingUsername(username: String)
+
+    // weather
+    @Query("UPDATE userprofile SET preferences = :weatherPreferences WHERE isSelected")
+    fun replaceWeatherPreferences(weatherPreferences: WeatherPreferences)
 
 }
