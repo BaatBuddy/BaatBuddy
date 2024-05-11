@@ -29,23 +29,37 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavController) {
 
     val createUserUIState by profileViewModel.createUserUIState.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+    var (text, setText) = remember {
+        mutableStateOf("Close keyboard on done ime action")
+    }
+
+
 
     val invalidMap = remember {
         mutableMapOf(
@@ -91,7 +105,8 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Text(text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge inn minst en båt for å lage en rute.")
+                Text(text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge " +
+                        "inn minst en båt for å lage en rute.")
                 Text(
                     text = "Bruker profil",
                     fontSize = 20.sp,
@@ -107,10 +122,12 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     onValueChange = {
                         if (it.length > 20) return@OutlinedTextField
                         profileViewModel.updateCreateName(it)
+
                     },
+                    maxLines = 1,
                     label = { Text(text = "Navn") },
                     isError = invalidMap["name"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -118,7 +135,11 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             profileViewModel,
                             navController
                         )
-                    })
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+
                 )
 
                 // username
@@ -129,9 +150,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         profileViewModel.updateCreateUsername(it)
 
                     },
+                    maxLines = 1,
                     label = { Text(text = "Brukernavn") },
                     isError = invalidMap["username"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -139,7 +161,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             profileViewModel,
                             navController
                         )
-                    })
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
                 )
 
                 Text(
@@ -160,20 +185,24 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         profileViewModel.updateBoatName(it)
 
                     },
+                    maxLines = 1,
                     label = { Text(text = "Båt navn") },
                     isError = invalidMap["boatname"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
                             invalidMap,
                             profileViewModel,
-                            navController
-                        )
-                    })
+                            navController )
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
                 )
+
                 //size
-                Text(text = "Trykk på et av ikonene for å få raske verdier")
+                Text(text = "Trykk på et av ikonene for å få standard verdier")
                 Row(
                     modifier = Modifier
                         .padding(4.dp)
@@ -262,13 +291,19 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 OutlinedTextField(
                     value = createUserUIState.boatSpeed,
                     onValueChange = {
-                        if (it.length > 20 && !it.isDigitsOnly()) return@OutlinedTextField
-                        profileViewModel.updateBoatSpeed(it)
+                        if (it.length > 20 || !it.isDigitsOnly()) {
+                            return@OutlinedTextField
+                        }
+                        else{
+                            profileViewModel.updateBoatSpeed(it)
+                            text = it
+                        }
 
                     },
-                    label = { Text(text = "Båt hastighet") },
+                    maxLines = 1,
+                    label = { Text(text = "Båt hastighet i knop") },
                     isError = invalidMap["boatSpeed"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -276,19 +311,29 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             profileViewModel,
                             navController
                         )
-                    })
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
                 )
+
 
                 OutlinedTextField(
                     value = createUserUIState.safetyHeight,
                     onValueChange = {
-                        if (it.length > 20 && !it.isDigitsOnly()) return@OutlinedTextField
-                        profileViewModel.updateBoatHeight(it)
+                        if (it.length > 20 || !it.isDigitsOnly()) {
+                            return@OutlinedTextField
+                        }
+                        else{
+                            profileViewModel.updateBoatSpeed(it)
+                            text = it
+                        }
 
                     },
+                    maxLines = 1,
                     label = { Text(text = "Sikkerhets høyde på båten") },
                     isError = invalidMap["safetyHeight"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -296,19 +341,29 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             profileViewModel,
                             navController
                         )
-                    })
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
                 )
+
 
                 OutlinedTextField(
                     value = createUserUIState.safetyDepth,
                     onValueChange = {
-                        if (it.length > 20 && it.isDigitsOnly()) return@OutlinedTextField
-                        profileViewModel.updateBoatDepth(it)
+                        if (it.length > 20 || !it.isDigitsOnly()) {
+                            return@OutlinedTextField
+                        }
+                        else{
+                            profileViewModel.updateBoatSpeed(it)
+                            text = it
+                        }
 
                     },
+                    maxLines = 1,
                     label = { Text(text = "Sikkerhets dybde på båten") },
                     isError = invalidMap["safetyDepth"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -316,7 +371,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             profileViewModel,
                             navController
                         )
-                    })
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
                 )
 
 
