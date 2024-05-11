@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
+import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,11 +12,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.MetAlertsData
 import javax.inject.Inject
 
 data class MetAlertsUIState(
-    val metalerts: MetAlertsData?
+    val metalerts: MetAlertsData?,
+    val alerts: List<FeatureData> = emptyList(),
+    val fetched: Boolean = false,
+    val isTracking: Boolean = false,
 )
 
 @HiltViewModel
@@ -50,5 +55,16 @@ class MetAlertsViewModel @Inject constructor(
 
         }
 
+    }
+
+    fun getAlerts(points: List<Point>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _metalertsUIState.update {
+                it.copy(
+                    alerts = repository.getAlertsForPoints(points = points),
+                    fetched = true,
+                )
+            }
+        }
     }
 }

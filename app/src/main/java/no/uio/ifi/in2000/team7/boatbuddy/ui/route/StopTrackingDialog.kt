@@ -1,6 +1,5 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route
+package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,8 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,10 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import androidx.work.WorkManager
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
@@ -42,13 +37,13 @@ fun StopTrackingDialog(
     mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
 ) {
+    val context = LocalContext.current
+
     Dialog(
         onDismissRequest = {
             mainViewModel.hideDialog()
         },
     ) {
-        // TODO MUST BE FIXED, TOO BIG BUTTON
-        // TODO navigate to new screen with the list of points, later create a route with name and ditt og datt
         Card(
             modifier = Modifier
                 .padding(4.dp)
@@ -105,7 +100,8 @@ fun StopTrackingDialog(
                             mainViewModel.hideDialog()
 
                             profileViewModel.updateCurrentRouteTime()
-                            profileViewModel.updateCurrentRoute()
+
+                            WorkManager.getInstance(context).cancelAllWork()
                         },
                         modifier = Modifier
                             .size(100.dp),

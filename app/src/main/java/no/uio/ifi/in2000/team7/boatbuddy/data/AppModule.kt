@@ -2,21 +2,26 @@ package no.uio.ifi.in2000.team7.boatbuddy.data
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.ListenableWorker
+import androidx.work.WorkerFactory
+import androidx.work.WorkerParameters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.ProfileDatabase
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
+import no.uio.ifi.in2000.team7.boatbuddy.ui.UpdateDataWorker
 import javax.inject.Singleton
 
 @Module
@@ -86,4 +91,11 @@ object AppModule {
         routeDao = db.routeDao(),
         mapRepo = MapboxRepository()
     )
+
+    @Singleton
+    @Provides
+    fun fetchUserLocationRepository(
+        @ApplicationContext context: Context
+    ): UserLocationRepository = UserLocationRepository(context = context)
+
 }

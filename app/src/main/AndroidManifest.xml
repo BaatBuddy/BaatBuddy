@@ -25,7 +25,7 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
         <service
-            android:name=".data.background_location_tracking.LocationService"
+            android:name=".data.location.foreground_location.LocationService"
             android:foregroundServiceType="location"
             tools:ignore="ForegroundServicePermission" />
         <activity
@@ -39,6 +39,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
     </application>
+
 
 </manifest>

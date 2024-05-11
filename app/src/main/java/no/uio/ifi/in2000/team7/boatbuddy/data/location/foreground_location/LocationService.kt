@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking
+package no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -21,15 +21,20 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.bitmapFromDrawableRes
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertAlertResId
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertLanguage
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.enteredAlerts
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.featureData
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.finishTime
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.points
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.sdf
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.alertedSunset
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.enteredAlerts
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.finishTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.points
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sdf
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.startTime
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunsetToday
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.TimeCalculator.isWithinOneHour
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.TimeCalculator.sunriseDf
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainActivity
 import java.util.Date
@@ -68,6 +73,7 @@ class LocationService : Service() {
     //
     private fun start() {
         val locationNotificationId = 1
+        alertedSunset = false
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -90,7 +96,7 @@ class LocationService : Service() {
         val locationNotificationBuilder = NotificationCompat.Builder(this, "location")
             .setContentTitle("Sporer lokasjon...")
             .setContentText("Lokasjon: ")
-            .setSmallIcon(R.drawable.avd_logosplash)
+            .setSmallIcon(R.drawable.boatlogo)
             .setOngoing(true)
             .setContentIntent(pendingIntent)
 
@@ -117,7 +123,11 @@ class LocationService : Service() {
                 val lat = location.latitude
                 val lon = location.longitude
                 val currentAlerts =
-                    checkUserLocationAlertAreas(lon = lon, lat = lat)
+                    PolygonPosition.checkUserLocationAlertAreas(
+                        lon = lon,
+                        lat = lat,
+                        AlertNotificationCache.featureData
+                    )
 
                 points.add(Point.fromLngLat(lon, lat))
 
@@ -127,6 +137,8 @@ class LocationService : Service() {
                     startTime = sdf.format(Date())
                 }
                 finishTime = sdf.format(Date())
+
+                Log.i("ASDASD", sunsetToday)
 
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
@@ -156,6 +168,32 @@ class LocationService : Service() {
                         notificationManager
                     )
                 }
+                if (isWithinOneHour(
+                        currentTime = sunriseDf.format(Date()),
+                        sunsetTime = sunsetToday
+                    ) && !alertedSunset
+                ) {
+                    val bitmapIcon =
+                        bitmapFromDrawableRes(this, R.drawable.night_warning_icon)
+                    val alertNotification = NotificationCompat.Builder(this, "alert")
+                        .setContentTitle("Snart solnedgang")
+                        .setContentText("Det nærmer seg solnedgang")
+                        .setStyle(
+                            NotificationCompat.BigTextStyle()
+                                .bigText("Anbefaler å komme seg trygt inn mot land")
+                        )
+                        .setSmallIcon(R.drawable.night_warning_icon)
+                        .setLargeIcon(bitmapIcon)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .build()
+
+                    // Use unique IDs for entry/exit to manage separate notifications.
+                    val notificationId = 3
+                    notificationManager.notify(notificationId, alertNotification)
+                    alertedSunset = true
+                }
+
             }.launchIn(serviceScope)
     }
 
@@ -222,55 +260,6 @@ class LocationService : Service() {
         AlertNotificationCache.featureData = featureData
     }
 
-    // checks if a geopoint is inside a alert polygon
-    private fun checkUserLocationAlertAreas(
-        lon: Double,
-        lat: Double
-    ): List<FeatureData> {
-        val asd = featureData.filter { featureData ->
-            featureData.affected_area.any { area ->
-                area.any { polygon ->
-                    checkUserLocationPolygon(points = polygon, lon = lon, lat = lat)
-                }
-            }
-        }
-        return asd
-    }
-
-    // http://www.philliplemons.com/posts/ray-casting-algorithm#:~:text=The%20algorithm%20starts%20with%20P,as%20seen%20in%20Figure%202 + gpt
-    fun checkUserLocationPolygon(
-        points: List<List<Double>>,
-        lon: Double,
-        lat: Double
-    ): Boolean {
-
-        if (points.size < 3) return false // Not a polygon
-        if (points.any { it[0] == lon && it[1] == lat }) return true
-
-        var inside = false
-        var prevPoint = points.last()
-        for (point in points) {
-            val x1 = prevPoint[0]
-            val y1 = prevPoint[1]
-            val x2 = point[0]
-            val y2 = point[1]
-
-            if ((y1 > lat) != (y2 > lat) &&
-                (lon < (x2 - x1) * (lat - y1) / (y2 - y1) + x1)
-            ) {
-                inside = !inside
-            }
-
-            prevPoint = point
-        }
-        return inside
-    }
-
-    fun createEdgesFromPoints(points: List<List<Double>>): List<Pair<List<Double>, List<Double>>> {
-        return points.mapIndexed { i, point ->
-            Pair(point, points[(i + 1) % points.size])
-        }
-    }
 
 }
 

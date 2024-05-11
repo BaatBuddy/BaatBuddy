@@ -1,11 +1,11 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast
 
+import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
 
 interface LocationForecastRepo {
     suspend fun getLocationForecastData(
-        lat: String,
-        lon: String,
+        point: Point,
         altitude: String = "0"
     ): LocationForecastData?
 }
@@ -14,10 +14,11 @@ class LocationForecastRepository(
     private val dataSource: LocationForecastDataSource = LocationForecastDataSource()
 ) : LocationForecastRepo {
     override suspend fun getLocationForecastData(
-        lat: String, lon: String, altitude: String
+        point: Point, altitude: String
 
     ): LocationForecastData? {
-
-        return dataSource.getLocationForecastData(lat, lon, altitude)
+        val lon = point.longitude().toString()
+        val lat = point.latitude().toString()
+        return dataSource.getLocationForecastData(lon = lon, lat = lat, altitude = altitude)
     }
 }

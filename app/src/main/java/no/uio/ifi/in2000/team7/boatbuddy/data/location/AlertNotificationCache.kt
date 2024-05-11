@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking
+package no.uio.ifi.in2000.team7.boatbuddy.data.location
 
 import android.annotation.SuppressLint
 import com.mapbox.geojson.Point
@@ -10,6 +10,8 @@ object AlertNotificationCache {
     var enteredAlerts: MutableSet<String> = mutableSetOf() // contains events
 
     var points: MutableList<Point> = mutableListOf()
+    var alertedSunset: Boolean = false
+    var sunsetToday: String = ""
 
     @SuppressLint("SimpleDateFormat")
     val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")

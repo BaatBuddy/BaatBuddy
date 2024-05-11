@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.profile.route
+package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -37,17 +37,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.AlertNotificationCache
-import no.uio.ifi.in2000.team7.boatbuddy.data.background_location_tracking.LocationService
+import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
-import org.jetbrains.annotations.Async
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,13 +53,15 @@ fun AddRouteScreen(
     profileViewModel: ProfileViewModel,
     navController: NavController,
     mainViewModel: MainViewModel,
+    mapboxViewModel: MapboxViewModel,
 ) {
 
     var loading by remember { mutableStateOf(true) }
-    var failed by remember { mutableStateOf(true) }
+    var failed by remember { mutableStateOf(false) }
 
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
     val profileUIState by profileViewModel.profileUIState.collectAsState()
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
     profileViewModel.updateCurrentRouteTime()
 
@@ -202,6 +202,7 @@ fun AddRouteScreen(
                     Button(
                         onClick = {
                             // check if route is long enough
+                            mapboxViewModel.resetRoutePath()
 
                             Intent(context, LocationService::class.java).apply {
                                 action = LocationService.ACTION_STOP
@@ -212,7 +213,8 @@ fun AddRouteScreen(
                                 username = profileUIState.selectedUser!!.username,
                                 boatname = profileUIState.selectedBoat!!.boatname,
                                 routename = routeScreenUIState.routeName,
-                                routeDescription = routeScreenUIState.routeDescription
+                                routeDescription = routeScreenUIState.routeDescription,
+                                route = mapboxUIState.routePath
                             )
                             mainViewModel.showBottomBar()
                             navController.popBackStack()
