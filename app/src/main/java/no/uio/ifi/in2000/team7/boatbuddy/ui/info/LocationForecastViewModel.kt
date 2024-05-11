@@ -78,7 +78,7 @@ class LocationForecastViewModel @Inject constructor(
 
     fun deselectWeekDayForecastRoute() {
         viewModelScope.launch(Dispatchers.IO) {
-
+            refreshInitRoute()
             _locationForecastUIState.update {
                 it.copy(
                     weekdayForecastRoute = null,
@@ -104,11 +104,9 @@ class LocationForecastViewModel @Inject constructor(
     }
 
     fun loadWeekdayForecastUser(point: Point) {
-        Log.i("ASDASD", "GJØR KALL")
         if (userInit) return
         userInit = true
         viewModelScope.launch(Dispatchers.IO) {
-            Log.i("ASDASD", "FAKTISK KALL")
             val weekdayForecast =
                 weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
             _locationForecastUIState.update {
@@ -143,6 +141,18 @@ class LocationForecastViewModel @Inject constructor(
                     selectedDayRoute = dayForecast
                 )
             }
+        }
+    }
+
+    fun refreshInitUser() {
+        viewModelScope.launch {
+            userInit = false
+        }
+    }
+
+    fun refreshInitRoute() {
+        viewModelScope.launch {
+            routeInit = false
         }
     }
 }

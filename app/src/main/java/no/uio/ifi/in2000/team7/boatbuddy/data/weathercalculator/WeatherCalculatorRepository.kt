@@ -129,13 +129,13 @@ class WeatherCalculatorRepository @Inject constructor(
     suspend fun getWeekdayForecastData(
         points: List<Point>
     ): WeekForecast {
-        val weekWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
+        val pathWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
 
         // TODO get weather preferences from database
         val weatherPreferences = userDao.getSelectedUser()?.preferences
 
         val dateScores = calculatePath(
-            pathWeatherData = weekWeatherData,
+            pathWeatherData = pathWeatherData,
             weatherPreferences = weatherPreferences ?: WeatherPreferences(
                 windSpeed = 4.0,
                 airTemperature = 20.0,
@@ -145,14 +145,8 @@ class WeatherCalculatorRepository @Inject constructor(
             ) // use default values if no user selected
         )
 
-        // List<PathWeatherData>
-        // PathWeatherData
-        //    val date: String,
-        //    // val sunsetAtLastPoint: String?,
-        //    val timeWeatherData: List<TimeWeatherData>,
-
         return WeekForecast(
-            days = weekWeatherData.mapNotNull {
+            days = pathWeatherData.mapNotNull {
                 if (it.timeWeatherData.any { tld ->
                         tld.time.substring(
                             11,
@@ -160,7 +154,7 @@ class WeatherCalculatorRepository @Inject constructor(
                         ) == "12" || tld.time.substring(
                             0,
                             10
-                        ) == weekWeatherData.minOf { pw ->
+                        ) == pathWeatherData.minOf { pw ->
                             pw.timeWeatherData.minOf { twd -> twd.time.substring(0, 10) }
                         }
                     }) {
