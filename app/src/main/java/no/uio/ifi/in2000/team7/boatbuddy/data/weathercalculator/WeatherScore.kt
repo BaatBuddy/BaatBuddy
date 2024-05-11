@@ -75,7 +75,7 @@ object WeatherScore {
     ): Double {
 
         var sumScore = 0.0 // compensation for weather at night
-        var factors = 4
+        var factors = 3
 
         sumScore += calculateSpeed(timeWeatherData.windSpeed, weatherPreferences.windSpeed)
         sumScore += calculateTemp(timeWeatherData.airTemperature, weatherPreferences.airTemperature)
@@ -85,6 +85,7 @@ object WeatherScore {
         )
         if (timeWeatherData.waveHeight != null) {
             sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+            factors += 1
         }
 
 
