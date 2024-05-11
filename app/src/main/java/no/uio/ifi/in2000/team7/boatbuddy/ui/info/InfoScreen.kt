@@ -3,8 +3,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,15 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -44,10 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
@@ -62,22 +54,21 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    metAlertsViewModel: MetAlertsViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    oceanForecastViewModel: OceanForecastViewModel,
-    sunriseViewModel: SunriseViewModel,
     mainViewModel: MainViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
     profileViewModel: ProfileViewModel,
 ) {
 
-    val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
-    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
-    val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
-    val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
+    val profileUIState by profileViewModel.profileUIState.collectAsState()
+
+    if (profileUIState.updateWeather) {
+        locationForecastViewModel.updateScore()
+        profileViewModel.stopUpdateWeather()
+    }
 
     mainViewModel.selectScreen(1)
 
@@ -153,40 +144,38 @@ fun InfoScreen(
                     if (routeScreenUIState.pickedRouteMap == null) {
 
 
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
 
 
-                                Icon(
-                                    imageVector = Icons.Outlined.Info,
-                                    contentDescription = "Empty Map Icon",
-                                    modifier = Modifier.size(120.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = "Empty Map Icon",
+                                modifier = Modifier.size(120.dp),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
 
-                                Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(24.dp))
 
-                                Text(
-                                    text = "Ingen rute valgt",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                            Text(
+                                text = "Ingen rute valgt",
+                                style = MaterialTheme.typography.headlineSmall,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
 
-                                Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                                Text(
-                                    text = "Du må velge en rute for å kunne se værvarselet for din rute. \n Bruk funksjonen på hjemskjermen for å velge en rute.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                                )
-                            }
-
-
+                            Text(
+                                text = "Du må velge en rute for å kunne se værvarselet for din rute. \n Bruk funksjonen på hjemskjermen for å velge en rute.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            )
+                        }
 
 
                     } else {
@@ -378,11 +367,6 @@ fun WeatherIcon(symbolCode: String, modifier: Modifier) {
 
     )
 }
-
-
-
-
-
 
 
 /*

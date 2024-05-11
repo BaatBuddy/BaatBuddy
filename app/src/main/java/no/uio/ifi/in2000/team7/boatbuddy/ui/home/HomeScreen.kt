@@ -74,7 +74,7 @@ fun HomeScreen(
     val metAlertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
-    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
+    val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()

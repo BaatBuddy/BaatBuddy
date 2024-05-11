@@ -240,10 +240,7 @@ fun NavGraph(
                 }
                 composable(route = Screen.InfoScreen.route) {
                     InfoScreen(
-                        metAlertsViewModel = metalertsViewModel,
                         locationForecastViewModel = locationForecastViewModel,
-                        oceanForecastViewModel = oceanforecastViewModel,
-                        sunriseViewModel = sunriseViewModel,
                         mainViewModel = mainViewModel,
                         infoScreenViewModel = infoScreenViewModel,
                         userLocationViewModel = userLocationViewModel,

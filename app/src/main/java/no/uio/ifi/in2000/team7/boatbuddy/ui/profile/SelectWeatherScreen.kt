@@ -76,7 +76,7 @@ fun SelectWeatherScreen(
                         onClick = {
                             if (profileUIState.selectedWeather != null) {
                                 profileViewModel.replaceWeatherPreference(profileUIState.selectedWeather!!)
-
+                                
                             }
                             navController.popBackStack()
                         }

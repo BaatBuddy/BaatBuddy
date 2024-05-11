@@ -5,7 +5,8 @@ import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculatePath
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScorePath
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScoreWeekDay
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.selectPointsFromPath
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
@@ -134,7 +135,7 @@ class WeatherCalculatorRepository @Inject constructor(
         // TODO get weather preferences from database
         val weatherPreferences = userDao.getSelectedUser()?.preferences
 
-        val dateScores = calculatePath(
+        val dateScores = calculateScorePath(
             pathWeatherData = pathWeatherData,
             weatherPreferences = weatherPreferences ?: WeatherPreferences(
                 windSpeed = 4.0,
@@ -176,6 +177,31 @@ class WeatherCalculatorRepository @Inject constructor(
                 }
             }.toMap()
 
+        )
+    }
+
+    suspend fun updateWeekForecastScore(weekForecast: WeekForecast): WeekForecast {
+        val weatherPreferences = userDao.getSelectedUser()?.preferences
+
+        val dateScores = calculateScoreWeekDay(
+            weekForecast = weekForecast,
+            weatherPreferences = weatherPreferences ?: WeatherPreferences(
+                windSpeed = 4.0,
+                airTemperature = 20.0,
+                cloudAreaFraction = 20.0,
+                waterTemperature = null,
+                relativeHumidity = null,
+            ) // use default values if no user selected
+        )
+
+        return weekForecast.copy(
+            days = weekForecast.days.map { entry ->
+                entry.key to entry.value.copy(
+                    dayScore = dateScores.firstOrNull { dateScore ->
+                        dateScore.date == entry.key
+                    }
+                )
+            }.toMap()
         )
     }
 
