@@ -1,15 +1,18 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -47,6 +50,7 @@ import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextAlign
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,8 +106,22 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Text(text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge " +
-                        "inn minst en båt for å lage en rute.")
+                Text(
+                    text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge inn minst en båt for å lage en rute.",
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.W400,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = 24.sp,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(16.dp)
+                )
                 Text(
                     text = "Bruker profil",
                     fontSize = 20.sp,
@@ -122,7 +140,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Navn") },
+                    label = { Text(text = "Navn", color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["name"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -148,7 +166,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Brukernavn") },
+                    label = { Text(text = "Brukernavn",color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["username"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -183,7 +201,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Båt navn") },
+                    label = { Text(text = "Båt navn", color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["boatname"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -294,7 +312,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Båt hastighet i knop") },
+                    label = { Text(text = "Båt hastighet i knop", color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["boatSpeed"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(onDone = {
@@ -320,7 +338,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Sikkerhets høyde på båten") },
+                    label = { Text(text = "Sikkerhets høyde på båten", color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["safetyHeight"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(onDone = {
@@ -347,7 +365,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
 
                     },
                     maxLines = 1,
-                    label = { Text(text = "Sikkerhets dybde på båten") },
+                    label = { Text(text = "Sikkerhets dybde på båten", color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["safetyDepth"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(onDone = {
