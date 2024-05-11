@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
@@ -31,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -80,7 +85,7 @@ fun InfoScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Været")
+                    Text(text = "Været", fontWeight = FontWeight.Bold)
                 }
             )
         }
@@ -95,29 +100,47 @@ fun InfoScreen(
                 TabRow(
                     selectedTabIndex = infoScreenUIState.selectedTab,
                     modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    val modifier = Modifier
-                        .height(40.dp)
-
-                    Tab(
-                        selected = infoScreenUIState.selectedTab == 0,
-                        onClick = {
-                            infoScreenViewModel.selectTab(0)
-                        },
-                        modifier = modifier,
-
-                    ) {
-                        Text(text = "For din posisjon", color = MaterialTheme.colorScheme.primaryContainer)
+                        .fillMaxWidth(),
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            Modifier.tabIndicatorOffset(tabPositions[infoScreenUIState.selectedTab])
+                        )
                     }
-                    Tab(
-                        selected = infoScreenUIState.selectedTab == 1,
-                        onClick = {
-                            infoScreenViewModel.selectTab(1)
-                        },
-                        modifier = modifier,
-                    ) {
-                        Text(text = "For din rute", color = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    val tabTitles = listOf("For din posisjon", "For din rute")
+
+                    tabTitles.forEachIndexed { index, title ->
+                        val selected = infoScreenUIState.selectedTab == index
+                        val textColor = if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+
+                        Tab(
+                            selected = selected,
+                            onClick = {
+                                infoScreenViewModel.selectTab(index)
+                            },
+                            modifier = Modifier
+                                .height(40.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .background(
+                                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                        ) {
+                            Text(
+                                text = title,
+                                color = textColor,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
                     }
                 }
 
@@ -233,28 +256,46 @@ fun LocationCard(
 fun LocationTable(dayForecast: DayForecast) {
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        Row {
+        Text(
+            text = dayForecast.day,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
-                text = dayForecast.day,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W400,
-                modifier = Modifier.padding(bottom = 10.dp),
+                text = "Tid",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "Temperatur",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "Nedbør",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "Vind(kast)",
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.SpaceBetween
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Tid",color = MaterialTheme.colorScheme.onPrimaryContainer)
-            Text(text = "Temperatur", color = MaterialTheme.colorScheme.onPrimaryContainer)
-            Text(text = "Nedbør", color = MaterialTheme.colorScheme.onPrimaryContainer)
-            Text(text = "Vind(kast)", color = MaterialTheme.colorScheme.onPrimaryContainer)
-        }
-        LazyColumn {
             items(dayForecast.weatherData) { tld ->
                 val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
                     pair.first == tld
@@ -284,36 +325,37 @@ fun LocationTable(dayForecast: DayForecast) {
                 }
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = time,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
-
                     )
-
-                    Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         WeatherIcon(
                             symbolCode = tld.symbolCode,
                             modifier = Modifier.size(32.dp)
                         )
                         Text(
-                            text = tld.airTemperature.toString() + "°",
+                            text = "${tld.airTemperature}°",
                             modifier = Modifier.padding(start = 8.dp),
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-
                     Text(
-                        text = tld.precipitationAmount.toString(), color = MaterialTheme.colorScheme.onPrimaryContainer,
-
+                        text = tld.precipitationAmount.toString(),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-
                     Text(
                         text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}",
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
+
                 }
             }
         }
@@ -337,6 +379,13 @@ fun WeatherIcon(symbolCode: String, modifier: Modifier) {
     )
 }
 
+
+
+
+
+
+
+/*
 @Composable
 fun NotificationCard( // må etterhvert hente inn posisjon
     awarenessSeriousness: String,
@@ -432,5 +481,7 @@ fun NotificationCard( // må etterhvert hente inn posisjon
         )
     }
 }
+
+ */
 
 
