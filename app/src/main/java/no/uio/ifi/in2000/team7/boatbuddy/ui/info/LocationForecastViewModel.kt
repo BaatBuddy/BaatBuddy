@@ -93,6 +93,9 @@ class LocationForecastViewModel @Inject constructor(
         routeInit = true
         viewModelScope.launch(Dispatchers.IO) {
             val weekdayForecast = weatherCalculatorRepository.getWeekdayForecastData(points)
+            if(weekdayForecast.days.isEmpty()){
+                return@launch
+            }
             _locationForecastUIState.update {
                 it.copy(
                     weekdayForecastRoute = weekdayForecast,
@@ -109,6 +112,9 @@ class LocationForecastViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val weekdayForecast =
                 weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
+            if(weekdayForecast.days.isEmpty()){
+                return@launch
+            }
             _locationForecastUIState.update {
                 it.copy(
                     weekdayForecastUser = weekdayForecast,
