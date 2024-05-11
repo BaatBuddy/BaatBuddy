@@ -27,7 +27,7 @@ fun RouteWeatherInfo(
     routeMap: RouteMap,
     locationForecastViewModel: LocationForecastViewModel
 ) {
-    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
+    val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
     var loading by remember { mutableStateOf(true) }
 
 

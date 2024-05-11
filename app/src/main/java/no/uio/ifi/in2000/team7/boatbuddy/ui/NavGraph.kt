@@ -242,8 +242,6 @@ fun NavGraph(
                     InfoScreen(
                         metAlertsViewModel = metalertsViewModel,
                         locationForecastViewModel = locationForecastViewModel,
-                        oceanForecastViewModel = oceanforecastViewModel,
-                        sunriseViewModel = sunriseViewModel,
                         mainViewModel = mainViewModel,
                         infoScreenViewModel = infoScreenViewModel,
                         userLocationViewModel = userLocationViewModel,

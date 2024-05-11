@@ -23,7 +23,7 @@ fun UserLocationWeatherInfo(
     locationForecastViewModel: LocationForecastViewModel,
     userLocationViewModel: UserLocationViewModel,
 ) {
-    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
+    val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
     val userLocationUIState by userLocationViewModel.userLocationUIState.collectAsState()
 
     if (userLocationUIState.userLocation == null) {

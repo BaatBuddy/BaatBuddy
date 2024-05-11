@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -38,7 +37,7 @@ class LocationForecastViewModel @Inject constructor(
 
     private val _locationForecastUIState =
         MutableStateFlow(LocationForecastUIState())
-    val locationForecastUiState: StateFlow<LocationForecastUIState> = _locationForecastUIState
+    val locationForecastUIState: StateFlow<LocationForecastUIState> = _locationForecastUIState
 
     private var initialized = false
     private var lastPos = ""
@@ -150,9 +149,33 @@ class LocationForecastViewModel @Inject constructor(
         }
     }
 
-    fun refreshInitRoute() {
+    private fun refreshInitRoute() {
         viewModelScope.launch {
             routeInit = false
+        }
+    }
+
+    fun updateScore() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (_locationForecastUIState.value.fetchedUser) {
+                _locationForecastUIState.update {
+                    it.copy(
+                        weekdayForecastUser = weatherCalculatorRepository.updateWeekForecastScore(
+                            _locationForecastUIState.value.weekdayForecastUser!!
+                        )
+                    )
+                }
+
+            }
+            if (_locationForecastUIState.value.fetchedRoute) {
+                _locationForecastUIState.update {
+                    it.copy(
+                        weekdayForecastRoute = weatherCalculatorRepository.updateWeekForecastScore(
+                            _locationForecastUIState.value.weekdayForecastRoute!!
+                        )
+                    )
+                }
+            }
         }
     }
 }

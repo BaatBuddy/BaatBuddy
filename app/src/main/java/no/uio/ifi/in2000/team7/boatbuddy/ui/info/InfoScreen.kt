@@ -1,9 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -24,7 +23,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -56,20 +54,20 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 fun InfoScreen(
     metAlertsViewModel: MetAlertsViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    oceanForecastViewModel: OceanForecastViewModel,
-    sunriseViewModel: SunriseViewModel,
     mainViewModel: MainViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
     profileViewModel: ProfileViewModel,
 ) {
-
-    val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
-    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
-    val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
-    val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
+    val profileUIState by profileViewModel.profileUIState.collectAsState()
+
+    if (profileUIState.updateWeather) {
+        Log.i("ASDASD", "OIOIOIOIOIOIOI")
+        locationForecastViewModel.updateScore()
+        profileViewModel.stopUpdateWeather()
+    }
 
     mainViewModel.selectScreen(1)
 

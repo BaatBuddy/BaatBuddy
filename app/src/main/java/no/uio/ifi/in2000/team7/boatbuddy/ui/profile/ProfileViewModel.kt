@@ -30,6 +30,7 @@ data class ProfileUIState(
     val isSelectingBoat: Boolean = false,
 
     val selectedWeather: WeatherPreferences? = null,
+    val updateWeather: Boolean = false,
 )
 
 data class CreateUserUIState(
@@ -447,6 +448,27 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.replaceWeatherPreference(weatherPreferences = weatherPreferences)
             updateSelectedUser()
+            startUpdateWeather()
+        }
+    }
+
+    fun startUpdateWeather() {
+        viewModelScope.launch {
+            _profileUIState.update {
+                it.copy(
+                    updateWeather = true
+                )
+            }
+        }
+    }
+
+    fun stopUpdateWeather() {
+        viewModelScope.launch {
+            _profileUIState.update {
+                it.copy(
+                    updateWeather = false
+                )
+            }
         }
     }
 
