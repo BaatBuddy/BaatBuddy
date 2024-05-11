@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -103,8 +106,9 @@ fun InfoScreen(
                             infoScreenViewModel.selectTab(0)
                         },
                         modifier = modifier,
+
                     ) {
-                        Text(text = "For din posisjon")
+                        Text(text = "For din posisjon", color = MaterialTheme.colorScheme.primaryContainer)
                     }
                     Tab(
                         selected = infoScreenUIState.selectedTab == 1,
@@ -113,7 +117,7 @@ fun InfoScreen(
                         },
                         modifier = modifier,
                     ) {
-                        Text(text = "For din rute")
+                        Text(text = "For din rute", color = MaterialTheme.colorScheme.primaryContainer)
                     }
                 }
 
@@ -124,7 +128,44 @@ fun InfoScreen(
                     )
                 } else {
                     if (routeScreenUIState.pickedRouteMap == null) {
-                        Text(text = "Må velge en rute")
+
+
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+
+                                Icon(
+                                    imageVector = Icons.Outlined.Info,
+                                    contentDescription = "Empty Map Icon",
+                                    modifier = Modifier.size(120.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                )
+
+                                Spacer(modifier = Modifier.height(24.dp))
+
+                                Text(
+                                    text = "Ingen rute valgt",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(
+                                    text = "Du må velge en rute for å kunne se værvarselet for din rute. \nBruk funksjonen på hjemskjermen for å velge en rute.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+
+
+
+
                     } else {
                         RouteWeatherInfo(
                             routeMap = routeScreenUIState.pickedRouteMap!!,
@@ -199,7 +240,8 @@ fun LocationTable(dayForecast: DayForecast) {
                 text = dayForecast.day,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W400,
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(bottom = 10.dp),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
         Row(
@@ -207,10 +249,10 @@ fun LocationTable(dayForecast: DayForecast) {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Absolute.SpaceBetween
         ) {
-            Text(text = "Tid")
-            Text(text = "Temperatur")
-            Text(text = "Nedbør")
-            Text(text = "Vind(kast)")
+            Text(text = "Tid",color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(text = "Temperatur", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(text = "Nedbør", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text(text = "Vind(kast)", color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         LazyColumn {
             items(dayForecast.weatherData) { tld ->
@@ -246,7 +288,9 @@ fun LocationTable(dayForecast: DayForecast) {
                     horizontalArrangement = Arrangement.Absolute.SpaceBetween
                 ) {
                     Text(
-                        text = time
+                        text = time,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+
                     )
 
                     Row {
@@ -256,16 +300,19 @@ fun LocationTable(dayForecast: DayForecast) {
                         )
                         Text(
                             text = tld.airTemperature.toString() + "°",
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
 
                     Text(
-                        text = tld.precipitationAmount.toString()
+                        text = tld.precipitationAmount.toString(), color = MaterialTheme.colorScheme.onPrimaryContainer,
+
                     )
 
                     Text(
-                        text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}"
+                        text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }
