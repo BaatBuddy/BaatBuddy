@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,13 +38,14 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                 title = { Text(text = "Profil") },
                 actions = {
                     IconButton(
+
                         onClick = {
                             // TODO prevent this if the user is currently tracking a route
                             profileViewModel.unselectUser()
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Close,
+                            imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
                             contentDescription = "",
                         )
                     }
