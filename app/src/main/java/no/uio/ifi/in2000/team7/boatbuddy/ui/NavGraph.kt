@@ -312,6 +312,7 @@ fun NavGraph(
                     SelectWeatherScreen(
                         profileViewModel = profileViewModel,
                         navController = navController,
+                        mainViewModel = mainViewModel,
                     )
                 }
             }
