@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
@@ -61,15 +62,28 @@ fun ProfileScreen(
 }
 
 @Composable
-fun BoatCards(boatProfile: BoatProfile, profileViewModel: ProfileViewModel) {
+fun BoatCards(
+    boatProfile: BoatProfile,
+    profileViewModel: ProfileViewModel,
+    navController: NavController
+) {
+
     val profileUIState by profileViewModel.profileUIState.collectAsState()
+
     ElevatedCard(
         onClick = {
-            profileUIState.selectedUser?.username?.let {
-                profileViewModel.selectBoat(
-                    boatname = boatProfile.boatname,
-                    username = it
-                )
+            if (!profileUIState.isSelectingBoat) {
+                navController.navigate("selectboat")
+                profileViewModel.startSelectingBoats()
+            } else {
+                profileUIState.selectedUser?.username?.let {
+                    profileViewModel.selectBoat(
+                        boatname = boatProfile.boatname,
+                        username = it
+                    )
+                }
+                profileViewModel.stopSelectingBoats()
+                navController.popBackStack()
             }
         },
         modifier = Modifier
@@ -169,7 +183,48 @@ fun UserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
 }
 
 @Composable
-fun WeatherPreferencesCard(weatherPreferences: WeatherPreferences) {
+fun WeatherPreferencesCard(
+    weatherPreferences: WeatherPreferences,
+    navController: NavController
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {
+                navController.navigate("selectweather")
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+        ) {
+            Text(text = "Luft temperatur:")
+            Text(text = weatherPreferences.airTemperature.toString() + "℃")
+            Text(text = "Vind hastighet:")
+            Text(text = weatherPreferences.windSpeed.toString() + "m/s")
+            Text(text = "Prosent skyer:")
+            Text(text = weatherPreferences.cloudAreaFraction.toString() + "%")
+            if (weatherPreferences.waterTemperature != null) {
+                Text(text = "Vann temperatur:")
+                Text(text = weatherPreferences.waterTemperature.toString() + "℃")
+            }
+            if (weatherPreferences.relativeHumidity != null) {
+                Text(text = "Relativ fuktighet:")
+                Text(text = weatherPreferences.relativeHumidity.toString() + "%")
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectedUserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
+    // Name
+    // Username
+    // Routes
+    // Boats
+
+
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,12 +234,7 @@ fun WeatherPreferencesCard(weatherPreferences: WeatherPreferences) {
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            Text(text = "Vind hastighet:")
-            Text(text = weatherPreferences.windSpeed.toString() + "m/s")
-            Text(text = "Prosent skyer:")
-            Text(text = weatherPreferences.cloudAreaFraction.toString() + "%")
-            Text(text = "Luft temperatur:")
-            Text(text = weatherPreferences.airTemperature.toString() + "C")
+            Text(text = "Navn")
         }
     }
 }

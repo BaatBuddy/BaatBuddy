@@ -49,6 +49,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectBoatScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
@@ -298,6 +300,19 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                         mapboxViewModel = mapboxViewModel
 
+                    )
+                }
+                composable(route = "selectboat") {
+                    SelectBoatScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController
+                    )
+                }
+                composable(route = "selectweather") {
+                    SelectWeatherScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
                     )
                 }
             }

@@ -25,7 +25,7 @@ class ProfileRepository @Inject constructor(
         boatname: String,
         boatSpeed: String,
         safetyDepth: String,
-        safetyHeight: String
+        safetyHeight: String,
     ) {
         userDao.insertUserProfile(
             UserProfile(
@@ -122,6 +122,10 @@ class ProfileRepository @Inject constructor(
 
     suspend fun unselectBoatUsername(username: String) {
         boatDao.unselectBoatUsername(username = username)
+    }
+
+    suspend fun replaceWeatherPreference(weatherPreferences: WeatherPreferences) {
+        userDao.replaceWeatherPreferences(weatherPreferences)
     }
 
 }

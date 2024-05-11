@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
@@ -59,17 +60,13 @@ fun CreateBoatScreen(profileViewModel: ProfileViewModel, navController: NavContr
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
                 title = { Text(text = "Lag båt") },
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = ""
                         )
                     }
@@ -303,6 +300,7 @@ fun checkInputsBoatProfile(
             safetyDepth = safetyDepth,
             safetyHeight = safetyHeight,
         )
+        profileViewModel.getAllBoatsUsername()
         profileViewModel.clearCreateProfile()
         navController.popBackStack()
     }

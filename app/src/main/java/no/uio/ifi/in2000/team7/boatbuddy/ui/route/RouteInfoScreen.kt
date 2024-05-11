@@ -94,14 +94,12 @@ fun RouteInfoScreen(
                                 mainViewModel.displayRouteOnMap(route.route)
                                 profileViewModel.updatePickedRoute(routeUIState.selectedRouteMap)
                                 navController.navigate(Screen.HomeScreen.route)
-                                mainViewModel.selectScreen(0) // select homescreen
-
                             }
                         ) {
                             Text(text = "Vis på hovedkart")
                         }
                         // route delete
-                        // TODO add a button that deletes the route, make it red or something and make it go down the viewmodels i profileviewmodel
+                        // TODO add a button that deletes the route, make it red or something and make it go down the viewmodels in profileviewmodel
                     }
                 }
 
