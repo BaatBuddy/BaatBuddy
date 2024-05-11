@@ -60,10 +60,6 @@ fun CreateBoatScreen(profileViewModel: ProfileViewModel, navController: NavContr
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
                 title = { Text(text = "Lag båt") },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -304,6 +300,7 @@ fun checkInputsBoatProfile(
             safetyDepth = safetyDepth,
             safetyHeight = safetyHeight,
         )
+        profileViewModel.getAllBoatsUsername()
         profileViewModel.clearCreateProfile()
         navController.popBackStack()
     }

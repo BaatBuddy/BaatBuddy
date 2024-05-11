@@ -90,6 +90,7 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                     BoatCards(
                         boatProfile = it,
                         profileViewModel = profileViewModel,
+                        navController = navController,
                     )
                 }
                 Text(
@@ -98,7 +99,10 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                     fontWeight = FontWeight.W900
                 )
                 profileUIState.selectedUser?.let {
-                    WeatherPreferencesCard(weatherPreferences = it.preferences)
+                    WeatherPreferencesCard(
+                        weatherPreferences = it.preferences,
+                        navController = navController,
+                    )
                 }
 
             }
