@@ -29,6 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -200,6 +203,8 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             profileViewModel.updateBoatName(it)
                         }
                     },
+                    //colors = TextFieldDefaults.colors(MaterialTheme.colorScheme.onPrimaryContainer),
+
                     maxLines = 1,
                     label = { Text(text = "Båt navn", color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     isError = invalidMap["boatname"] ?: false,

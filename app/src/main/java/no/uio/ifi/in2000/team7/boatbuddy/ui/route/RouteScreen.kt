@@ -103,7 +103,7 @@ fun RouteScreen(
                                 text = "Ingen lagrede ruter",
                                 style = MaterialTheme.typography.headlineSmall,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -112,7 +112,7 @@ fun RouteScreen(
                                 text = "Du har ingen lagrede ruter enda.\nBruk funksjonen på hjemskjermen for å lagre en rute.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                             )
                         }
                         }
