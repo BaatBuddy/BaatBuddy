@@ -38,6 +38,8 @@ data class MapboxUIState(
     val routePath: List<Point>? = null,
 
     val generatedRoute: RouteMap? = null,
+    val routeGenerated: Boolean = false,
+    val isDrawingRoute: Boolean = false,
 )
 
 @HiltViewModel
@@ -257,14 +259,45 @@ class MapboxViewModel @Inject constructor(
     }
 
     fun refreshRoute() {
-        mapboxRepository.refreshRoute()
+        viewModelScope.launch {
+            _mapboxUIState.update {
+                it.copy(
+                    routeGenerated = false
+                )
+            }
+            mapboxRepository.refreshRoute()
+        }
     }
 
     fun undoClick() {
-        mapboxRepository.undoClick()
+        viewModelScope.launch {
+            mapboxRepository.undoClick()
+        }
     }
 
     fun redoClick() {
-        mapboxRepository.redoClick()
+        viewModelScope.launch {
+            mapboxRepository.redoClick()
+        }
+    }
+
+    fun updateGeneratedRoute(state: Boolean) {
+        viewModelScope.launch {
+            _mapboxUIState.update {
+                it.copy(
+                    routeGenerated = state
+                )
+            }
+        }
+    }
+
+    fun updateIsDrawingRoute(state: Boolean) {
+        viewModelScope.launch {
+            _mapboxUIState.update {
+                it.copy(
+                    isDrawingRoute = state
+                )
+            }
+        }
     }
 }

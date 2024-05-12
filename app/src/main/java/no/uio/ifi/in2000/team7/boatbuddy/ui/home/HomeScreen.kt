@@ -83,10 +83,6 @@ fun HomeScreen(
     val locationService = LocationService()
     metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
 
-    var showAlert by remember { mutableStateOf(false) }
-    var generateRoute by remember { mutableStateOf(false) }
-    var createdRoute by remember { mutableStateOf(false) }
-
     if (mapboxUIState.routeData is APIStatus.Success && !homeScreenUIState.showBottomSheetInitialized) {
         homeViewModel.showBottomSheet()
     }
@@ -105,16 +101,16 @@ fun HomeScreen(
                 ) {
 
                     ElevatedFilterChip(
-                        selected = showAlert,
+                        selected = mapboxUIState.alertVisible,
                         onClick = {
-                            mapboxViewModel.toggleAlertVisibility(); showAlert = !showAlert
+                            mapboxViewModel.toggleAlertVisibility();
                         },
                         label = {
                             Icon(
                                 imageVector = Icons.Filled.Warning,
                                 contentDescription = ""
                             )
-                            Text(text = if (!showAlert) "Vis varsler" else "Skjul varsler")
+                            Text(text = if (!mapboxUIState.alertVisible) "Vis varsler" else "Skjul varsler")
                         },
                         modifier = Modifier
                             .padding(top = 12.dp, end = 40.dp)
@@ -135,7 +131,7 @@ fun HomeScreen(
                         )
                     }
                     Row {
-                        if (generateRoute) {
+                        if (mapboxUIState.isDrawingRoute) {
                             ExtendedFloatingActionButton(
                                 text = { Text(text = "Generer rute") },
                                 icon = {
@@ -144,10 +140,9 @@ fun HomeScreen(
                                         contentDescription = ""
                                     )
                                 },
-                                // TODO move into UIstate and collect weather data on click
                                 onClick = {
-                                    generateRoute = false
-                                    createdRoute = true
+                                    mapboxViewModel.updateGeneratedRoute(true)
+                                    mapboxViewModel.updateIsDrawingRoute(false)
                                     mapboxViewModel.generateRoute()
                                     mapboxViewModel.toggleRouteClicking()
                                     homeViewModel.resetBottomSheet()
@@ -179,22 +174,25 @@ fun HomeScreen(
                             }
                         }
                         ExtendedFloatingActionButton(
-                            text = { Text(text = if (!generateRoute) "Tegn rute" else "Avbryt") },
+                            text = { Text(text = if (!mapboxUIState.isDrawingRoute) "Tegn rute" else "Avbryt") },
                             icon = {
-                                if (!generateRoute) Icon(
-                                    imageVector = Icons.Filled.Create,
-                                    contentDescription = ""
-                                ) else Icon(
-                                    imageVector = Icons.Filled.Close,
-                                    contentDescription = ""
-                                )
+                                if (!mapboxUIState.isDrawingRoute) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Create,
+                                        contentDescription = ""
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = ""
+                                    )
+                                }
                             },
                             onClick = {
                                 // TODO move into UIstate
-                                generateRoute = !generateRoute
-                                if (createdRoute || !generateRoute) {
+                                mapboxViewModel.updateIsDrawingRoute(!mapboxUIState.isDrawingRoute)
+                                if (mapboxUIState.routeGenerated || !mapboxUIState.isDrawingRoute) {
                                     mapboxViewModel.refreshRoute()
-                                    createdRoute = false
                                 }
                                 mapboxViewModel.toggleRouteClicking()
                             },

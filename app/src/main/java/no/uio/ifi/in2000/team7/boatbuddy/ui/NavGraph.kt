@@ -175,7 +175,6 @@ fun NavGraph(
         }
 
     if (mainScreenUIState.showLocationDialog) {
-        Log.i("ASDASD", "ASDASDASDASD")
         LocationDialog(
             launchRequest = {
                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
