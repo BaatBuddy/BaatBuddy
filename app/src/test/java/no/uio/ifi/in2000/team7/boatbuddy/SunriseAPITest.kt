@@ -2,9 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
-import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.Sunrise
 import org.junit.Test
 
 class SunriseAPITest {

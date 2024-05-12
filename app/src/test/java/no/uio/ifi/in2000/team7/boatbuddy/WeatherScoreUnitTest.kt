@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import androidx.compose.ui.util.fastRoundToInt
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateDate
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateHour
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData

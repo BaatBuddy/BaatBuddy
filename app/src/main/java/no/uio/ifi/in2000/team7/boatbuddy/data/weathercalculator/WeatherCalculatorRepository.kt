@@ -9,8 +9,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.cal
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScoreWeekDay
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.selectPointsFromPath
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import java.math.RoundingMode
