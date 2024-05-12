@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -35,6 +38,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationCard
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
@@ -66,7 +70,7 @@ fun SwipeUpContent(
             .padding(4.dp)
     ) {
         Text(
-            text = "Været for din reise \uD83D\uDE0D",
+            text = "De 4 beste dagene for din reise",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -98,7 +102,7 @@ fun SwipeUpContent(
                 modifier = Modifier
                     .padding(8.dp)
             )
-            // save route
+
             Button(
                 onClick = {
                     if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null && mapboxUIState.routeData is APIStatus.Success) {
@@ -115,7 +119,7 @@ fun SwipeUpContent(
                     .padding(16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = Color.White,
                     contentColor = Color.White
                 ),
                 elevation = ButtonDefaults.buttonElevation(
@@ -124,24 +128,23 @@ fun SwipeUpContent(
                 )
             ) {
                 Text(
-                    text = "Lagre rute",
+                    text = "Lagre rute!",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.White
                 )
             }
         }
 
         if (weekdayForecastRoute != null) {
-            DayWeatherTable(
-                weekForecast = weekdayForecastRoute,
-                navController = navController,
-                infoScreenViewModel = infoScreenViewModel,
-                profileViewModel = profileViewModel,
-                mapboxViewModel = mapboxViewModel,
-                homeViewModel = homeViewModel,
-                locationForecastViewModel = locationForecastViewModel,
-            )
+            Row (modifier = Modifier.horizontalScroll(rememberScrollState())){
+                weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score}.take(4).forEach {
+                        LocationCard(dayForecast = it, selectedDay = it ) {
+                        }
+                }
+            }
+
+
         } else {
             Row(
                 modifier = Modifier
