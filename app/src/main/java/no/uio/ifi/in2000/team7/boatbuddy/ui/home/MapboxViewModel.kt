@@ -39,6 +39,7 @@ data class MapboxUIState(
 
     val generatedRoute: RouteMap? = null,
     val routeGenerated: Boolean = false,
+    val hasGeneratedRoute: Boolean = false,
     val isDrawingRoute: Boolean = false,
 )
 
@@ -285,7 +286,8 @@ class MapboxViewModel @Inject constructor(
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(
-                    routeGenerated = state
+                    routeGenerated = state,
+                    hasGeneratedRoute = true
                 )
             }
         }
@@ -295,7 +297,7 @@ class MapboxViewModel @Inject constructor(
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(
-                    isDrawingRoute = state
+                    isDrawingRoute = state,
                 )
             }
         }

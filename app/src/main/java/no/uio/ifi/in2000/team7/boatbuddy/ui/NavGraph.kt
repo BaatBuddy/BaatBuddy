@@ -87,8 +87,8 @@ fun NavGraph(
     mapboxViewModel.initialize(
         context = context,
         cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(10.20449, 59.74389))
-            .zoom(10.0)
+            .center(Point.fromLngLat(9.0, 61.5))
+            .zoom(4.0)
             .bearing(0.0)
             .pitch(0.0)
             .build()
