@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -54,7 +55,7 @@ fun SwipeUpContent(
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val metalertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
 
-
+    // TODO fix row with vertical divider, looks too goofy
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -86,14 +87,21 @@ fun SwipeUpContent(
                     .weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                metalertsUIState.alerts.forEach {
-                    AlertIcon(
-                        event = it.event,
-                        riskMatrixColor = it.riskMatrixColor,
+                metalertsUIState.alerts.forEach { featureData ->
+                    IconButton(
+                        onClick = {
+                            homeViewModel.updateShowWeatherAlertInfoCard(featureData)
+                        },
                         modifier = Modifier
-                            .height(IntrinsicSize.Max)
-                            .padding(end = 8.dp)
-                    )
+                            .height(IntrinsicSize.Max),
+                    ) {
+                        AlertIcon(
+                            event = featureData.event,
+                            riskMatrixColor = featureData.riskMatrixColor,
+                            modifier = Modifier
+                                .height(IntrinsicSize.Max)
+                        )
+                    }
                 }
             }
             VerticalDivider(
@@ -124,7 +132,6 @@ fun SwipeUpContent(
                 Text(
                     text = "Lagre rute!",
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(vertical = 4.dp),
                     fontWeight = FontWeight.Bold,
                 )
             }

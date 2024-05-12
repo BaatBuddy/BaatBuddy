@@ -46,7 +46,7 @@ fun FloatingMapButtons(
         // info button that explains how to use this screen
         FloatingActionButton(
             onClick = {
-                homeViewModel.updateShowInfoPopup(true)
+                homeViewModel.updateShowExplanationCard(true)
             },
             shape = CircleShape,
             containerColor = MaterialTheme.colorScheme.primaryContainer,
