@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
+import SaveRouteScreen
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -54,7 +55,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
