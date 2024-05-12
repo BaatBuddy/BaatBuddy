@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
+import SaveRouteScreen
 import android.Manifest
-import android.app.Activity
-import android.app.Notification
-import android.app.NotificationManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -52,10 +50,11 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectBoatScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
@@ -78,11 +77,18 @@ fun NavGraph(
 
     val context = LocalContext.current
 
+    // Internet connectivity
+    val connectivityObserver = NetworkConnectivityObserver(context)
+    val status by connectivityObserver.observe().collectAsState(
+        initial = NetworkConnectivityObserver.Status.Available
+    )
+    //Log.d("InternetStatus", "$status")
+
     mapboxViewModel.initialize(
         context = context,
         cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(10.20449, 59.74389))
-            .zoom(10.0)
+            .center(Point.fromLngLat(9.0, 61.5))
+            .zoom(4.0)
             .bearing(0.0)
             .pitch(0.0)
             .build()
@@ -94,6 +100,18 @@ fun NavGraph(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // If user does not have internet access, show snackbar
+    LaunchedEffect(status) {
+        if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Du er ikke koblet til Internett",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
+
     // if route is either too long or points is not close enough to the water
     LaunchedEffect(mapboxUIState.lastRouteData) {
         if (mapboxUIState.routeData is APIStatus.Failed
@@ -101,7 +119,11 @@ fun NavGraph(
         ) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = "Ruten er for lang eller inneholder punkter på land",
+                    message = if (status == NetworkConnectivityObserver.Status.Available) {
+                        "Ruten er for lang eller inneholder punkter på land"
+                    } else {
+                        "Kan ikke generere rute uten tilgang til Internett"
+                    },
                     duration = SnackbarDuration.Short
                 )
             }
@@ -153,7 +175,6 @@ fun NavGraph(
         }
 
     if (mainScreenUIState.showLocationDialog) {
-        Log.i("ASDASD", "ASDASDASDASD")
         LocationDialog(
             launchRequest = {
                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -162,16 +183,17 @@ fun NavGraph(
         )
     }
 
-    if (mainScreenUIState.showNoUserDialog){
+    if (mainScreenUIState.showNoUserDialog) {
         NoUserDialog(
-            onDismissRequest = { mainViewModel.hideNoUserDialog()
-                               },
+            onDismissRequest = {
+                mainViewModel.hideNoUserDialog()
+            },
             onConfirmation = {
                 navController.navigate("profileScreen")
 
                 mainViewModel.hideNoUserDialog()
 
-                             },
+            },
             dialogTitle = "Ingen bruker valgt",
             dialogText = "Du må lage eller velge en bruker",
             icon = Icons.Default.Info
@@ -212,15 +234,11 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
-                        snackbarHostState = snackbarHostState
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
                     InfoScreen(
-                        metAlertsViewModel = metalertsViewModel,
                         locationForecastViewModel = locationForecastViewModel,
-                        oceanForecastViewModel = oceanforecastViewModel,
-                        sunriseViewModel = sunriseViewModel,
                         mainViewModel = mainViewModel,
                         infoScreenViewModel = infoScreenViewModel,
                         userLocationViewModel = userLocationViewModel,
@@ -277,6 +295,19 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                         mapboxViewModel = mapboxViewModel
 
+                    )
+                }
+                composable(route = "selectboat") {
+                    SelectBoatScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController
+                    )
+                }
+                composable(route = "selectweather") {
+                    SelectWeatherScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        mainViewModel = mainViewModel,
                     )
                 }
             }

@@ -1,14 +1,20 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,12 +36,28 @@ fun SelectUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
                 title = { Text(text = "Velg profil") }
             )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = {
+                    navController.navigate("createuser")
+                }
+            ) {
+
+
+                Text(text = "Lag profil")
+                Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Create profile",
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(32.dp)
+                )
+            }
+
         }
     ) { paddingValue ->
         Box(
@@ -54,13 +76,9 @@ fun SelectUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         UserCard(user = it, profileViewModel = profileViewModel)
                     }
                 }
-                Button(
-                    onClick = {
-                        navController.navigate("createuser")
-                    }
-                ) {
-                    Text(text = "Lag profil")
-                }
+
+
+
             }
         }
     }

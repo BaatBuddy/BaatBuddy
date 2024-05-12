@@ -2,21 +2,22 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -26,6 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -37,7 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
@@ -52,37 +54,32 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InfoScreen(
-    metAlertsViewModel: MetAlertsViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    oceanForecastViewModel: OceanForecastViewModel,
-    sunriseViewModel: SunriseViewModel,
     mainViewModel: MainViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
     profileViewModel: ProfileViewModel,
 ) {
 
-    val metalertsUIState by metAlertsViewModel.metalertsUIState.collectAsState()
-    val locationForecastUIState by locationForecastViewModel.locationForecastUiState.collectAsState()
-    val oceanForecastUIState by oceanForecastViewModel.oceanForecastUIState.collectAsState()
-    val sunriseUIState by sunriseViewModel.sunriseUIState.collectAsState()
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
+    val profileUIState by profileViewModel.profileUIState.collectAsState()
+
+    if (profileUIState.updateWeather) {
+        locationForecastViewModel.updateScore()
+        profileViewModel.stopUpdateWeather()
+    }
 
     mainViewModel.selectScreen(1)
 
     Scaffold(
-        modifier = Modifier
-            .padding(8.dp),
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Været")
+                    Text(text = "Været", fontWeight = FontWeight.Bold)
                 }
             )
         }
-            ,
-        contentColor = MaterialTheme.colorScheme.background
     ) { contentPadding ->
         Box(
             modifier = Modifier
@@ -94,28 +91,47 @@ fun InfoScreen(
                 TabRow(
                     selectedTabIndex = infoScreenUIState.selectedTab,
                     modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    val modifier = Modifier
-                        .height(40.dp)
-
-                    Tab(
-                        selected = infoScreenUIState.selectedTab == 0,
-                        onClick = {
-                            infoScreenViewModel.selectTab(0)
-                        },
-                        modifier = modifier,
-                    ) {
-                        Text(text = "For din posisjon")
+                        .fillMaxWidth(),
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            Modifier.tabIndicatorOffset(tabPositions[infoScreenUIState.selectedTab])
+                        )
                     }
-                    Tab(
-                        selected = infoScreenUIState.selectedTab == 1,
-                        onClick = {
-                            infoScreenViewModel.selectTab(1)
-                        },
-                        modifier = modifier,
-                    ) {
-                        Text(text = "For din rute")
+                ) {
+                    val tabTitles = listOf("For din posisjon", "For din rute")
+
+                    tabTitles.forEachIndexed { index, title ->
+                        val selected = infoScreenUIState.selectedTab == index
+                        val textColor = if (selected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+
+                        Tab(
+                            selected = selected,
+                            onClick = {
+                                infoScreenViewModel.selectTab(index)
+                            },
+                            modifier = Modifier
+                                .height(40.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .background(
+                                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                        ) {
+                            Text(
+                                text = title,
+                                color = textColor,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
                     }
                 }
 
@@ -126,7 +142,42 @@ fun InfoScreen(
                     )
                 } else {
                     if (routeScreenUIState.pickedRouteMap == null) {
-                        Text(text = "Må velge en rute")
+
+
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = "Empty Map Icon",
+                                modifier = Modifier.size(120.dp),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Text(
+                                text = "Ingen rute valgt",
+                                style = MaterialTheme.typography.headlineSmall,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "Du må velge en rute for å kunne se værvarselet for din rute. \n Bruk funksjonen på hjemskjermen for å velge en rute.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            )
+                        }
+
+
                     } else {
                         RouteWeatherInfo(
                             routeMap = routeScreenUIState.pickedRouteMap!!,
@@ -146,6 +197,7 @@ fun LocationCard(
     selectedDay: DayForecast?,
     changeDay: () -> Unit
 ) {
+    val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier
@@ -172,9 +224,12 @@ fun LocationCard(
                 modifier = Modifier
                     .fillMaxSize(0.15f)
             )
+
             Text(
-                text = String.format("%.1f", dayForecast.dayScore?.score),
-                color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+                //text = String.format("%.1f", dayForecast.dayScore?.score),
+                text = emojiString,
+                fontSize = 30.sp
+
             )
 
 //            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)
@@ -194,27 +249,46 @@ fun LocationCard(
 fun LocationTable(dayForecast: DayForecast) {
     Column(
         modifier = Modifier
-            .padding(8.dp)
+            .fillMaxWidth()
+            .padding(16.dp)
     ) {
-        Row {
-            Text(
-                text = dayForecast.day,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W400,
-                modifier = Modifier.padding(bottom = 10.dp)
-            )
-        }
+        Text(
+            text = dayForecast.day,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Tid")
-            Text(text = "Temperatur")
-            Text(text = "Nedbør")
-            Text(text = "Vind(kast)")
+            Text(
+                text = "Tid",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "Temperatur",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "Nedbør",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "Vind(kast)",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
         }
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             items(dayForecast.weatherData) { tld ->
                 val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
                     pair.first == tld
@@ -244,31 +318,37 @@ fun LocationTable(dayForecast: DayForecast) {
                 }
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = time
+                        text = time,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-
-                    Row {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         WeatherIcon(
                             symbolCode = tld.symbolCode,
                             modifier = Modifier.size(32.dp)
                         )
                         Text(
-                            text = tld.airTemperature.toString() + "°",
-                            modifier = Modifier.padding(start = 8.dp)
+                            text = "${tld.airTemperature}°",
+                            modifier = Modifier.padding(start = 8.dp),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-
                     Text(
-                        text = tld.precipitationAmount.toString()
+                        text = tld.precipitationAmount.toString(),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Text(
+                        text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
 
-                    Text(
-                        text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}"
-                    )
                 }
             }
         }
@@ -292,6 +372,8 @@ fun WeatherIcon(symbolCode: String, modifier: Modifier) {
     )
 }
 
+
+/*
 @Composable
 fun NotificationCard( // må etterhvert hente inn posisjon
     awarenessSeriousness: String,
@@ -387,5 +469,7 @@ fun NotificationCard( // må etterhvert hente inn posisjon
         )
     }
 }
+
+ */
 
 

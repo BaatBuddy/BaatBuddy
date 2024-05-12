@@ -69,9 +69,9 @@ class AnnotationRepository(
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(points)
-            .withLineColor("#219EBC")
+            .withLineColor("#FFFFFF")
             .withLineWidth(4.0)
-            .withLineBorderColor("#023047")
+            .withLineBorderColor("#006973")
             .withLineBorderWidth(1.0)
 
         return polylineAnnotationManager.create(polylineAnnotationOptions)

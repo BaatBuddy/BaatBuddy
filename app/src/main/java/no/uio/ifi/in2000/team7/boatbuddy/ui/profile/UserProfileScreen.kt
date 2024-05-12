@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,20 +37,17 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
                 title = { Text(text = "Profil") },
                 actions = {
                     IconButton(
+
                         onClick = {
                             // TODO prevent this if the user is currently tracking a route
                             profileViewModel.unselectUser()
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Close,
+                            imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
                             contentDescription = "",
                         )
                     }
@@ -75,7 +72,10 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                 .padding(paddingValue)
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     text = "Valgt profil",
@@ -97,6 +97,7 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                     BoatCards(
                         boatProfile = it,
                         profileViewModel = profileViewModel,
+                        navController = navController,
                     )
                 }
                 Text(
@@ -104,7 +105,13 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                     fontSize = 32.sp,
                     fontWeight = FontWeight.W900
                 )
-                
+                profileUIState.selectedUser?.let {
+                    WeatherPreferencesCard(
+                        weatherPreferences = it.preferences,
+                        navController = navController,
+                    )
+                }
+
             }
         }
     }

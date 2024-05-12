@@ -1,10 +1,11 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import kotlin.math.PI
@@ -74,7 +75,7 @@ object WeatherScore {
     ): Double {
 
         var sumScore = 0.0 // compensation for weather at night
-        var factors = 4
+        var factors = 3
 
         sumScore += calculateSpeed(timeWeatherData.windSpeed, weatherPreferences.windSpeed)
         sumScore += calculateTemp(timeWeatherData.airTemperature, weatherPreferences.airTemperature)
@@ -84,6 +85,7 @@ object WeatherScore {
         )
         if (timeWeatherData.waveHeight != null) {
             sumScore += calculateWaves(timeWeatherData.waveHeight, 0.5)
+            factors += 1
         }
 
 
@@ -105,7 +107,7 @@ object WeatherScore {
         return ((sumScore / (factors + listOf(
             timeWeatherData.precipitationAmount,
             timeWeatherData.fogAreaFraction
-        ).count { it != 0.0 } * 2)) + 20).coerceIn(
+        ).count { it != 0.0 } * 2)) + 10).coerceIn(
             0.0,
             100.0
         ) // takes down the score if they are not equal to 0.0 which is ideal
@@ -126,7 +128,7 @@ object WeatherScore {
     }
 
     // calculates the amount of points based on the length in km
-    suspend fun calculatePath(
+    suspend fun calculateScorePath(
         pathWeatherData: List<PathWeatherData>,
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
@@ -136,6 +138,21 @@ object WeatherScore {
                 score = calculateDate(
                     timeWeatherData = it.timeWeatherData,
                     weatherPreferences = weatherPreferences
+                )
+            )
+        }
+    }
+
+    suspend fun calculateScoreWeekDay(
+        weekForecast: WeekForecast,
+        weatherPreferences: WeatherPreferences
+    ): List<DateScore> {
+        return weekForecast.days.map { entry ->
+            DateScore(
+                date = entry.key,
+                score = calculateDate(
+                    timeWeatherData = entry.value.weatherData,
+                    weatherPreferences = weatherPreferences,
                 )
             )
         }
@@ -181,7 +198,7 @@ object WeatherScore {
     }
 
     // converts distance between two geopoints to km (gpt / website)
-     fun distanceBetweenPoints(first: Point, second: Point): Double {
+    fun distanceBetweenPoints(first: Point, second: Point): Double {
         val R = 6371.0 // Radius of the Earth in kilometers
 
         val lat1Rad = Math.toRadians(first.latitude())

@@ -2,13 +2,15 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
 import android.util.Log
 import com.mapbox.geojson.Point
+import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculatePath
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScorePath
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScoreWeekDay
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.selectPointsFromPath
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.PathWeatherData
+import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import java.math.RoundingMode
@@ -16,11 +18,14 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import javax.inject.Inject
 
 
-class WeatherCalculatorRepository {
-    private val oceanForecastRepository = OceanForecastRepository()
-    private val locationForecastRepository = LocationForecastRepository()
+class WeatherCalculatorRepository @Inject constructor(
+    private val oceanForecastRepository: OceanForecastRepository,
+    private val locationForecastRepository: LocationForecastRepository,
+    private val userDao: UserProfileDao,
+) {
     // val sunriseRepository = SunriseRepository()
 
 
@@ -125,27 +130,24 @@ class WeatherCalculatorRepository {
     suspend fun getWeekdayForecastData(
         points: List<Point>
     ): WeekForecast {
-        val weekWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
+        val pathWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
 
         // TODO get weather preferences from database
-        val dateScores = calculatePath(
-            pathWeatherData = weekWeatherData, weatherPreferences = WeatherPreferences(
-                windSpeed = 0.0,
-                airTemperature = 0.0,
-                cloudAreaFraction = 0.0,
+        val weatherPreferences = userDao.getSelectedUser()?.preferences
+
+        val dateScores = calculateScorePath(
+            pathWeatherData = pathWeatherData,
+            weatherPreferences = weatherPreferences ?: WeatherPreferences(
+                windSpeed = 4.0,
+                airTemperature = 20.0,
+                cloudAreaFraction = 20.0,
                 waterTemperature = null,
                 relativeHumidity = null,
-            )
+            ) // use default values if no user selected
         )
 
-        // List<PathWeatherData>
-        // PathWeatherData
-        //    val date: String,
-        //    // val sunsetAtLastPoint: String?,
-        //    val timeWeatherData: List<TimeWeatherData>,
-
         return WeekForecast(
-            days = weekWeatherData.mapNotNull {
+            days = pathWeatherData.mapNotNull {
                 if (it.timeWeatherData.any { tld ->
                         tld.time.substring(
                             11,
@@ -153,7 +155,7 @@ class WeatherCalculatorRepository {
                         ) == "12" || tld.time.substring(
                             0,
                             10
-                        ) == weekWeatherData.minOf { pw ->
+                        ) == pathWeatherData.minOf { pw ->
                             pw.timeWeatherData.minOf { twd -> twd.time.substring(0, 10) }
                         }
                     }) {
@@ -175,6 +177,31 @@ class WeatherCalculatorRepository {
                 }
             }.toMap()
 
+        )
+    }
+
+    suspend fun updateWeekForecastScore(weekForecast: WeekForecast): WeekForecast {
+        val weatherPreferences = userDao.getSelectedUser()?.preferences
+
+        val dateScores = calculateScoreWeekDay(
+            weekForecast = weekForecast,
+            weatherPreferences = weatherPreferences ?: WeatherPreferences(
+                windSpeed = 4.0,
+                airTemperature = 20.0,
+                cloudAreaFraction = 20.0,
+                waterTemperature = null,
+                relativeHumidity = null,
+            ) // use default values if no user selected
+        )
+
+        return weekForecast.copy(
+            days = weekForecast.days.map { entry ->
+                entry.key to entry.value.copy(
+                    dayScore = dateScores.firstOrNull { dateScore ->
+                        dateScore.date == entry.key
+                    }
+                )
+            }.toMap()
         )
     }
 

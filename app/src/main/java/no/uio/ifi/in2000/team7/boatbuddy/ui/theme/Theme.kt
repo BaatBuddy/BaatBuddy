@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 
-
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
@@ -102,10 +101,7 @@ fun BoatbuddyTheme(
     content: @Composable () -> Unit
 ) {
 
-    val colors = when {
-        darkTheme -> darkScheme
-        else -> lightScheme
-    }
+    val colors = lightScheme
 
 
     val view = LocalView.current

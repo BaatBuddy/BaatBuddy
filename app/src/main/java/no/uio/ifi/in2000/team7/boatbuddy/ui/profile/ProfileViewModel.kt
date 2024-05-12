@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
@@ -13,6 +14,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import javax.inject.Inject
 
@@ -25,6 +27,10 @@ data class ProfileUIState(
 
     val boats: List<BoatProfile> = emptyList(),
     val selectedBoat: BoatProfile? = null,
+    val isSelectingBoat: Boolean = false,
+
+    val selectedWeather: WeatherPreferences? = null,
+    val updateWeather: Boolean = false,
 )
 
 data class CreateUserUIState(
@@ -103,6 +109,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.selectBoat(boatname = boatname, username = username)
             getAllBoatsUsername()
+            updateSelectedUser()
         }
     }
 
@@ -134,10 +141,10 @@ class ProfileViewModel @Inject constructor(
                 safetyDepth = safetyDepth,
                 safetyHeight = safetyHeight
             )
-            updateSelectedUser()
         }
     }
 
+    // use this one to update boats only too
     fun updateSelectedUser() {
         viewModelScope.launch(Dispatchers.IO) {
             val user = profileRepository.getSelectedUser()
@@ -146,7 +153,8 @@ class ProfileViewModel @Inject constructor(
                     it.copy(
                         selectedUser = user,
                         username = user.username,
-                        name = user.name
+                        name = user.name,
+                        selectedWeather = user.preferences
                     )
                 }
                 updateSelectedBoat()
@@ -162,7 +170,8 @@ class ProfileViewModel @Inject constructor(
                         it.username
                     )
                 }
-
+            Log.i("ASDASD", _profileUIState.value.selectedUser.toString())
+            Log.i("ASDASD", boat.toString())
             _profileUIState.update {
                 it.copy(
                     selectedBoat = boat
@@ -243,6 +252,7 @@ class ProfileViewModel @Inject constructor(
                 safetyHeight = safetyHeight
 
             )
+            getAllBoatsUsername()
         }
     }
 
@@ -403,4 +413,64 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun startSelectingBoats() {
+        viewModelScope.launch {
+            _profileUIState.update {
+                it.copy(
+                    isSelectingBoat = true
+                )
+            }
+        }
+    }
+
+    fun stopSelectingBoats() {
+        viewModelScope.launch {
+            _profileUIState.update {
+                it.copy(
+                    isSelectingBoat = false
+                )
+            }
+        }
+    }
+
+    fun updateWeatherPreference(weatherPreferences: WeatherPreferences) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _profileUIState.update {
+                it.copy(
+                    selectedWeather = weatherPreferences
+                )
+            }
+        }
+    }
+
+    fun replaceWeatherPreference(weatherPreferences: WeatherPreferences) {
+        viewModelScope.launch(Dispatchers.IO) {
+            profileRepository.replaceWeatherPreference(weatherPreferences = weatherPreferences)
+            updateSelectedUser()
+            startUpdateWeather()
+        }
+    }
+
+    fun startUpdateWeather() {
+        viewModelScope.launch {
+            _profileUIState.update {
+                it.copy(
+                    updateWeather = true
+                )
+            }
+        }
+    }
+
+    fun stopUpdateWeather() {
+        viewModelScope.launch {
+            _profileUIState.update {
+                it.copy(
+                    updateWeather = false
+                )
+            }
+        }
+    }
+
+
 }

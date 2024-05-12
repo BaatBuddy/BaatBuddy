@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
@@ -239,7 +238,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun showNoUserDialog(){
+    fun showNoUserDialog() {
         viewModelScope.launch(Dispatchers.IO) {
             _mainScreenUIState.update {
                 it.copy(
@@ -249,7 +248,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun hideNoUserDialog(){
+    fun hideNoUserDialog() {
         viewModelScope.launch(Dispatchers.IO) {
             _mainScreenUIState.update {
                 it.copy(

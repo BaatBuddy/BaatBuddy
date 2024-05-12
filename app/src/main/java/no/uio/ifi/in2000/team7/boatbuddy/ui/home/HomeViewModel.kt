@@ -13,6 +13,7 @@ import javax.inject.Inject
 data class HomeScreenUIState(
     val showBottomSheet: Boolean = false,
     val showBottomSheetInitialized: Boolean = false,
+    val showInfoPopup: Boolean = false,
 )
 
 
@@ -46,12 +47,22 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun resetBottomSheet() {
         viewModelScope.launch {
             _homeScreenUIState.update {
                 it.copy(
                     showBottomSheetInitialized = false
+                )
+            }
+        }
+    }
+
+    fun updateShowInfoPopup(state: Boolean) {
+        viewModelScope.launch {
+            _homeScreenUIState.update {
+                it.copy(
+                    showInfoPopup = state
                 )
             }
         }
