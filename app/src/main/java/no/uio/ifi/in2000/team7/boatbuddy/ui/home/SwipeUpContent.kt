@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -20,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,7 +66,7 @@ fun SwipeUpContent(
             .padding(4.dp)
     ) {
         Text(
-            text = "Din reise",
+            text = "Været for din reise \uD83D\uDE0D",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -95,17 +99,36 @@ fun SwipeUpContent(
                     .padding(8.dp)
             )
             // save route
-            Button(onClick = {
-                if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null && mapboxUIState.routeData is APIStatus.Success) {
-                    profileViewModel.updateCurrentRoute(mapboxUIState.generatedRoute?.route?.route)
-                    navController.navigate("saveroute")
-                    mainViewModel.hideBottomBar()
-                } else {
-                    Log.d("SwipeUpContent", "Ingen bruker lagret")
-                    mainViewModel.showNoUserDialog()
-                }
-            }) {
-                Text(text = "Lagre rute")
+            Button(
+                onClick = {
+                    if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null && mapboxUIState.routeData is APIStatus.Success) {
+                        profileViewModel.updateCurrentRoute(mapboxUIState.generatedRoute?.route?.route)
+                        navController.navigate("saveroute")
+                        mainViewModel.hideBottomBar()
+                    } else {
+                        Log.d("SwipeUpContent", "Ingen bruker lagret")
+                        mainViewModel.showNoUserDialog()
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = Color.White
+                ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 4.dp,
+                    pressedElevation = 8.dp
+                )
+            ) {
+                Text(
+                    text = "Lagre rute",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
 
