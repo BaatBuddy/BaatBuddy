@@ -27,3 +27,6 @@ Her kommer hvordan appen kan kjøres
 ## Biblioteker
 
 Her kommer info om biblioteker
+
+
+[Wiki]: https://github.uio.no/IN2000-V24/team-7/wiki
