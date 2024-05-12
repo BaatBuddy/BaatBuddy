@@ -108,12 +108,8 @@ fun HomeScreen(
                         homeViewModel.updateShowInfoPopup(true)
                     },
                     shape = CircleShape,
-                    containerColor =
-                    if (mapboxUIState.alertVisible) MaterialTheme.colorScheme.secondaryContainer
-                    else MaterialTheme.colorScheme.primaryContainer,
-                    contentColor =
-                    if (mapboxUIState.alertVisible) MaterialTheme.colorScheme.secondary
-                    else MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary
 
                 ) {
                     Icon(
