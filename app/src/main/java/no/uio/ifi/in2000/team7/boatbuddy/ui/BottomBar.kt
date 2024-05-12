@@ -90,6 +90,7 @@ fun BottomBar(
                         )
                     }
                 },
+                label = {Text(text = item.label)}
             )
 
         }
