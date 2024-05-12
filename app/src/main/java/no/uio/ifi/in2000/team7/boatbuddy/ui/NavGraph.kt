@@ -87,8 +87,8 @@ fun NavGraph(
     mapboxViewModel.initialize(
         context = context,
         cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(10.20449, 59.74389))
-            .zoom(10.0)
+            .center(Point.fromLngLat(9.0, 61.5))
+            .zoom(4.0)
             .bearing(0.0)
             .pitch(0.0)
             .build()
@@ -175,7 +175,6 @@ fun NavGraph(
         }
 
     if (mainScreenUIState.showLocationDialog) {
-        Log.i("ASDASD", "ASDASDASDASD")
         LocationDialog(
             launchRequest = {
                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -235,7 +234,6 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
-                        snackbarHostState = snackbarHostState
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
