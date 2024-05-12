@@ -197,6 +197,7 @@ fun LocationCard(
     selectedDay: DayForecast?,
     changeDay: () -> Unit
 ) {
+    val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier
@@ -223,9 +224,12 @@ fun LocationCard(
                 modifier = Modifier
                     .fillMaxSize(0.15f)
             )
+
             Text(
-                text = String.format("%.1f", dayForecast.dayScore?.score),
-                color = WeatherScore.getColor(dayForecast.dayScore?.score!!)
+                //text = String.format("%.1f", dayForecast.dayScore?.score),
+                text = emojiString,
+                fontSize = 30.sp
+
             )
 
 //            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)

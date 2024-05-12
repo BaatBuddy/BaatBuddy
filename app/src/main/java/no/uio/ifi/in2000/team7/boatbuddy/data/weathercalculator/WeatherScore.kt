@@ -107,7 +107,7 @@ object WeatherScore {
         return ((sumScore / (factors + listOf(
             timeWeatherData.precipitationAmount,
             timeWeatherData.fogAreaFraction
-        ).count { it != 0.0 } * 2)) + 20).coerceIn(
+        ).count { it != 0.0 } * 2)) + 10).coerceIn(
             0.0,
             100.0
         ) // takes down the score if they are not equal to 0.0 which is ideal
