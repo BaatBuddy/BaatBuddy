@@ -194,8 +194,9 @@ fun InfoScreen(
 fun LocationCard(
     dayForecast: DayForecast,
     selectedDay: DayForecast?,
-    changeDay: () -> Unit
-) {
+    changeDay: () -> Unit,
+
+    ) {
     val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     Card(
