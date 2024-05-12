@@ -18,7 +18,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -52,9 +51,6 @@ fun SwipeUpContent(
     mainViewModel: MainViewModel,
     mapboxViewModel: MapboxViewModel,
     navController: NavController,
-    infoScreenViewModel: InfoScreenViewModel,
-    homeViewModel: HomeViewModel,
-    locationForecastViewModel: LocationForecastViewModel,
     metalertsViewModel: MetAlertsViewModel,
 ) {
 
@@ -137,11 +133,12 @@ fun SwipeUpContent(
         }
 
         if (weekdayForecastRoute != null) {
-            Row (modifier = Modifier.horizontalScroll(rememberScrollState())){
-                weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score}.take(4).forEach {
-                        LocationCard(dayForecast = it, selectedDay = it ) {
+            Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score }.take(4)
+                    .forEach {
+                        LocationCard(dayForecast = it, selectedDay = it) {
                         }
-                }
+                    }
             }
 
 

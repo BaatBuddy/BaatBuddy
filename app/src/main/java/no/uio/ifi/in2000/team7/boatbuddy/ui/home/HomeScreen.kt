@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -55,7 +53,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
@@ -71,7 +68,6 @@ fun HomeScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
     profileViewModel: ProfileViewModel,
-    infoScreenViewModel: InfoScreenViewModel,
 ) {
 
     // fetches all alerts (no arguments)
@@ -303,9 +299,6 @@ fun HomeScreen(
                         mainViewModel = mainViewModel,
                         mapboxViewModel = mapboxViewModel,
                         navController = navController,
-                        infoScreenViewModel = infoScreenViewModel,
-                        homeViewModel = homeViewModel,
-                        locationForecastViewModel = locationForecastViewModel,
                         metalertsViewModel = metalertsViewModel,
 
                         )

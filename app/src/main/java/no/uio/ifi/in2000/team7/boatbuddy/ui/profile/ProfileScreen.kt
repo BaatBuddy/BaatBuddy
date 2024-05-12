@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -31,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
@@ -228,28 +226,6 @@ fun WeatherPreferencesCard(
                 Text(text = "Relativ fuktighet:")
                 Text(text = weatherPreferences.relativeHumidity.toString() + "%")
             }
-        }
-    }
-}
-
-@Composable
-fun SelectedUserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
-    // Name
-    // Username
-    // Routes
-    // Boats
-
-
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(8.dp)
-        ) {
-            Text(text = "Navn")
         }
     }
 }
