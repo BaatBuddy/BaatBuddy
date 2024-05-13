@@ -34,7 +34,7 @@ fun BottomBar(
             Screen.InfoScreen,
             Screen.TrackingScreen,
             Screen.RouteScreen,
-            Screen.SettingsScreen
+            Screen.ProfileScreen
             // add more screen if needed
         ).forEachIndexed { index, item ->
             NavigationBarItem(
@@ -90,7 +90,7 @@ fun BottomBar(
                         )
                     }
                 },
-                label = {Text(text = item.label)}
+                label = { Text(text = item.label) }
             )
 
         }
