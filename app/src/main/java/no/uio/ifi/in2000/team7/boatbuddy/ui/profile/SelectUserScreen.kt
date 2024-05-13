@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -47,7 +48,7 @@ fun SelectUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
 
                 Text(text = "Lag profil")
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    imageVector = Icons.Filled.Add,
                     contentDescription = "Create profile",
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
