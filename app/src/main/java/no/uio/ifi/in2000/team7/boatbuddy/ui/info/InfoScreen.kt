@@ -39,9 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
@@ -55,6 +57,8 @@ fun InfoScreen(
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
     profileViewModel: ProfileViewModel,
+    mapboxViewModel: MapboxViewModel,
+    navController: NavController,
 ) {
 
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
@@ -173,7 +177,11 @@ fun InfoScreen(
                     } else {
                         RouteWeatherInfo(
                             routeMap = routeScreenUIState.pickedRouteMap!!,
-                            locationForecastViewModel = locationForecastViewModel
+                            locationForecastViewModel = locationForecastViewModel,
+                            profileViewModel = profileViewModel,
+                            mapboxViewModel = mapboxViewModel,
+                            navController = navController,
+                            mainViewModel = mainViewModel
                         )
                     }
                 }
@@ -204,7 +212,7 @@ fun WeatherCard(
             else MaterialTheme.colorScheme.surfaceContainerLowest
         ),
         border = if (selectedDay == dayForecast) BorderStroke(
-            3.dp,
+            2.dp,
             MaterialTheme.colorScheme.onPrimaryContainer
         ) else null
     ) {
@@ -230,23 +238,12 @@ fun WeatherCard(
             )
 
             Text(
-                //text = String.format("%.1f", dayForecast.dayScore?.score),
                 text = emojiString,
                 fontSize = 30.sp
 
             )
-
-//            val symbolCode = translateSymbolCode(timeLocationData.symbol_code)
-//            if (showMore) {
-//                Text(text = symbolCode)
-//
-//                Text(text = "vindhastighet: ${timeLocationData.wind_speed}(${timeLocationData.wind_speed_of_gust})")
-//                Text(text = "tåke: ${timeLocationData.fog_area_fraction}")
-//            }
         }
-
     }
-
 }
 
 

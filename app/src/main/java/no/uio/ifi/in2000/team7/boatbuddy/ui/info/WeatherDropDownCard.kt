@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,7 +37,7 @@ fun WeatherDropDownCard(
     var isDroppedDown by remember { mutableStateOf(false) }
     var rotation by remember { mutableFloatStateOf(0f) }
 
-    ElevatedCard(
+    Card(
         modifier = Modifier
             .padding(16.dp)
             .clickable {
@@ -45,9 +46,13 @@ fun WeatherDropDownCard(
                 else 0f
             }
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer)
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
 
-    ) {
+        ) {
         Column(
             modifier = Modifier
                 .padding(8.dp)

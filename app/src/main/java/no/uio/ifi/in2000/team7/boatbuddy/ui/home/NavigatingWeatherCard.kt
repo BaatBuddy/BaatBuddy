@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -58,18 +59,26 @@ fun NavigatingWeatherCard(
             }
         },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
+            defaultElevation = 4.dp
         ),
         // TODO fix colors
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary)
+        colors = CardDefaults.elevatedCardColors(MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(4.dp)
         ) {
-            Text(text = dayForecast.day)
-            Text(text = "${timeLocationData.airTemperature}℃")
+            Text(
+                text = dayForecast.day,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "${timeLocationData.airTemperature}℃",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
             WeatherIcon(
                 symbolCode = timeLocationData.symbolCode,
                 modifier = Modifier

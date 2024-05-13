@@ -18,7 +18,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 
 @Composable
-fun OceanRow(twd: TimeWeatherData, dayForecast: DayForecast, isShort: Boolean) {
+fun OceanRow(twd: TimeWeatherData, dayForecast: DayForecast) {
     val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
         pair.first == twd
     }?.second

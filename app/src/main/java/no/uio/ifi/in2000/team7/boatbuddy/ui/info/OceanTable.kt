@@ -50,7 +50,7 @@ fun OceanTable(dayForecast: DayForecast, isShort: Boolean) {
             modifier = Modifier.fillMaxWidth()
         ) {
             dayForecast.weatherData.forEach { twd ->
-                OceanRow(twd, dayForecast, isShort)
+                OceanRow(twd, dayForecast)
             }
         }
     }
