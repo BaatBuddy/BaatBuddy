@@ -6,15 +6,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -191,7 +188,7 @@ fun InfoScreen(
 
 
 @Composable
-fun LocationCard(
+fun WeatherCard(
     dayForecast: DayForecast,
     selectedDay: DayForecast?,
     changeDay: () -> Unit,
@@ -201,7 +198,7 @@ fun LocationCard(
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier
-            .padding(4.dp),
+            .padding(8.dp),
         onClick = changeDay,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 3.dp
@@ -217,12 +214,12 @@ fun LocationCard(
             modifier = Modifier
                 .padding(4.dp)
         ) {
-            Text(text = dayForecast.day)
+            Text(text = dayForecast.day, fontWeight = FontWeight.Bold)
             Text(text = "${timeLocationData.airTemperature}℃")
             WeatherIcon(
                 symbolCode = timeLocationData.symbolCode,
                 modifier = Modifier
-                    .fillMaxSize(0.15f)
+                    .size(100.dp)
             )
 
             Text(
@@ -245,116 +242,6 @@ fun LocationCard(
 
 }
 
-@Composable
-fun LocationTable(dayForecast: DayForecast) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = dayForecast.day,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Tid",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Text(
-                text = "Temperatur",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Text(
-                text = "Nedbør",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Text(
-                text = "Vind(kast)",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(dayForecast.weatherData) { tld ->
-                val nextItem = dayForecast.weatherData.zipWithNext().firstOrNull { pair ->
-                    pair.first == tld
-                }?.second
-                var time = tld.time.substring(11, 13)
-
-                time = if (nextItem != null) {
-                    val nextItemTime = nextItem.time.substring(11, 13)
-                    when {
-                        (time == "00" && nextItemTime != "01") -> "00 - 06"
-                        (time == "06" && nextItemTime != "07") -> "06 - 12"
-                        (time == "12" && nextItemTime != "13") -> "12 - 18"
-                        else -> time
-                    }
-                } else {
-                    if (time != "23") {
-                        when (time) {
-                            "00" -> "00 - 06"
-                            "06" -> "06 - 12"
-                            "12" -> "12 - 18"
-                            "18" -> "18 - 00"
-                            else -> "18 - 00"
-                        }
-                    } else {
-                        time
-                    }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = time,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        WeatherIcon(
-                            symbolCode = tld.symbolCode,
-                            modifier = Modifier.size(32.dp)
-                        )
-                        Text(
-                            text = "${tld.airTemperature}°",
-                            modifier = Modifier.padding(start = 8.dp),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                    Text(
-                        text = tld.precipitationAmount.toString(),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Text(
-                        text = "${tld.windSpeed}${if (tld.windSpeedOfGust != 0.0) "(${tld.windSpeedOfGust})" else ""}",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun WeatherIcon(symbolCode: String, modifier: Modifier) {
@@ -368,7 +255,6 @@ fun WeatherIcon(symbolCode: String, modifier: Modifier) {
         contentDescription = null,
         tint = Color.Unspecified,
         modifier = modifier
-
     )
 }
 

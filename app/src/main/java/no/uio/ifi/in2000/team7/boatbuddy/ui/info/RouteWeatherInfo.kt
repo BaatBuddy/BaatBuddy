@@ -3,11 +3,14 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -39,7 +42,7 @@ fun RouteWeatherInfo(
 
     Column(
         modifier = Modifier
-//            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState())
     ) {
         AsyncImage(
             model = routeMap.mapURL,
@@ -69,7 +72,7 @@ fun RouteWeatherInfo(
                         it.toList().sortedBy { pair ->
                             pair.second.date
                         }.forEach { tld ->
-                            LocationCard(
+                            WeatherCard(
                                 dayForecast = tld.second,
                                 selectedDay = locationForecastUIState.selectedDayRoute,
                                 changeDay = { locationForecastViewModel.updateSelectedDayRoute(tld.second) },
@@ -78,12 +81,18 @@ fun RouteWeatherInfo(
                         }
                     }
                 }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
-                ) {
-                    locationForecastUIState.selectedDayRoute?.let { LocationTable(dayForecast = it) }
+                locationForecastUIState.selectedDayRoute?.let {
+                    WeatherDropDownCard(
+                        dayForecast = it,
+                        isWeather = true
+                    )
+                }
+
+                locationForecastUIState.selectedDayRoute?.let {
+                    WeatherDropDownCard(
+                        dayForecast = it,
+                        isWeather = false
+                    )
                 }
             }
 
