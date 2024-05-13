@@ -76,7 +76,7 @@ fun NoUserDialog(
             ) {
 
                     Text(
-                        text = "Lag bruker",
+                        text = "Lag profil",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
