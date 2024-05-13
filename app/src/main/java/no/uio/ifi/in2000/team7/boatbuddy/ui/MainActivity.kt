@@ -19,6 +19,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.OnBoardingViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme
 
@@ -35,6 +36,7 @@ class MainActivity : ComponentActivity() {
     private val userLocationViewModel: UserLocationViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private val infoScreenViewModel: InfoScreenViewModel by viewModels()
+    private val onBoardingViewModel: OnBoardingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
                     homeViewModel = homeViewModel,
                     infoScreenViewModel = infoScreenViewModel,
                     userLocationViewModel = userLocationViewModel,
+                    onBoardingViewModel = onBoardingViewModel,
                 )
 
             }

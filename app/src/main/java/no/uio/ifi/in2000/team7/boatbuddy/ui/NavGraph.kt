@@ -42,6 +42,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.OnBoarding
+import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.OnBoardingViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
@@ -66,6 +68,7 @@ fun NavGraph(
     homeViewModel: HomeViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
+    onBoardingViewModel: OnBoardingViewModel,
 ) {
 
     val context = LocalContext.current
@@ -131,7 +134,7 @@ fun NavGraph(
     }
 
 
-    // Show the dialog if required
+    // Show the Notification dialog if required
     if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
             .areNotificationsEnabled()
     ) {
@@ -167,6 +170,7 @@ fun NavGraph(
             }
         }
 
+    // Shows a dialog for location permissions
     if (mainScreenUIState.showLocationDialog) {
         LocationDialog(
             launchRequest = {
@@ -176,6 +180,7 @@ fun NavGraph(
         )
     }
 
+    // Shows if user has no selected profile
     if (mainScreenUIState.showNoUserDialog) {
         NoUserDialog(
             onDismissRequest = {
@@ -328,7 +333,13 @@ fun NavGraph(
                 )
             }
         }
+    }
 
+    if (mainScreenUIState.showOnBoarding) {
+        OnBoarding(
+            onBoardingViewModel = onBoardingViewModel,
+            mainViewModel = mainViewModel,
+        )
     }
 }
 

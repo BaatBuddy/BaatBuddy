@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
@@ -34,7 +33,9 @@ data class MainScreenUIState(
 
     val showLocationDialog: Boolean = false,
     val showNotificationDialog: Boolean = false,
-    val showNoUserDialog: Boolean = false
+    val showNoUserDialog: Boolean = false,
+
+    val showOnBoarding: Boolean = false,
 )
 
 @HiltViewModel
@@ -64,8 +65,8 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             val isFirstStart = preferences.getBoolean("firstStart", true)
+            updateShowOnBoarding(true)
             if (isFirstStart) {
-                showLocationAndNotificationDialog()
                 with(preferences.edit()) {
                     putBoolean("firstStart", false)
                     apply()
@@ -109,9 +110,6 @@ class MainViewModel @Inject constructor(
                     isTrackingUser = isTracking
                 )
             }
-            /*if (isTracking && hasLocationPermission(mapboxRepository.context)) {
-                mapboxRepository.startFollowUserOnMap()
-            }*/
         }
     }
 
@@ -166,9 +164,6 @@ class MainViewModel @Inject constructor(
             }
             mapboxRepository.startFollowUserOnMap()
             profileRepository.startTrackingUser()
-            val thread = Thread {
-
-            }
         }
     }
 
@@ -223,12 +218,10 @@ class MainViewModel @Inject constructor(
                     showLocationDialog = false
                 )
             }
-            Log.i("ASDASD", "IKKE UIHEI")
         }
     }
 
     fun showLocationDialog() {
-        Log.i("ASDASD", "HDBFHEWBGUWEB")
         viewModelScope.launch(Dispatchers.IO) {
             _mainScreenUIState.update {
                 it.copy(
@@ -285,6 +278,16 @@ class MainViewModel @Inject constructor(
             showNotificationDialog()
             delay(1500)
             showLocationDialog()
+        }
+    }
+
+    fun updateShowOnBoarding(state: Boolean) {
+        viewModelScope.launch {
+            _mainScreenUIState.update {
+                it.copy(
+                    showOnBoarding = state
+                )
+            }
         }
     }
 }
