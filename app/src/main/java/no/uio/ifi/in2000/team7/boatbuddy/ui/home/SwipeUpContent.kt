@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -29,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.SaveUserButton
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
@@ -110,31 +107,18 @@ fun SwipeUpContent(
                     .padding(vertical = 8.dp)
             )
 
-            Button(
-                onClick = {
-                    if (profileUIState.selectedUser != null && profileUIState.selectedBoat != null && mapboxUIState.routeData is APIStatus.Success) {
-                        profileViewModel.updateCurrentRoute(mapboxUIState.generatedRoute?.route?.route)
-                        navController.navigate("saveroute")
-                        mainViewModel.hideBottomBar()
-                    } else {
-                        Log.d("SwipeUpContent", "Ingen bruker lagret")
-                        mainViewModel.showNoUserDialog()
-                    }
-                },
+            SaveUserButton(
+                mainViewModel = mainViewModel,
+                navController = navController,
                 modifier = Modifier
-                    .padding(16.dp),
-                shape = RoundedCornerShape(8.dp),
+                    .padding(8.dp),
+                profileViewModel = profileViewModel,
+                mapboxViewModel = mapboxViewModel,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary
-                ),
-            ) {
-                Text(
-                    text = "Lagre rute!",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
                 )
-            }
+            )
         }
 
         if (weekdayForecastRoute != null) {

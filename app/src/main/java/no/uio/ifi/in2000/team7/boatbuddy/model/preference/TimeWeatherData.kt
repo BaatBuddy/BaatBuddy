@@ -6,6 +6,7 @@ data class TimeWeatherData(
     val time: String,
     val waveHeight: Double?,
     val waterTemperature: Double?,
+    val waterDirection: Double?,
     val windSpeed: Double,
     val windSpeedOfGust: Double,
     val airTemperature: Double,

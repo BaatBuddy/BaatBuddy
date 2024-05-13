@@ -58,6 +58,7 @@ class WeatherCalculatorRepository @Inject constructor(
                         time = ld.time,
                         waveHeight = od.sea_surface_wave_height,
                         waterTemperature = od.sea_water_temperature,
+                        waterDirection = od.sea_water_to_direction,
                         windSpeed = ld.wind_speed,
                         windSpeedOfGust = ld.wind_speed_of_gust,
                         airTemperature = ld.air_temperature,
@@ -74,6 +75,7 @@ class WeatherCalculatorRepository @Inject constructor(
                         time = ld.time,
                         waveHeight = null,
                         waterTemperature = null,
+                        waterDirection = null,
                         windSpeed = ld.wind_speed,
                         windSpeedOfGust = ld.wind_speed_of_gust,
                         airTemperature = ld.air_temperature,
@@ -104,6 +106,10 @@ class WeatherCalculatorRepository @Inject constructor(
                         ) else null,
                         waterTemperature = if (twd.all { it.waterTemperature != null }) getAvg(
                             twd.sumOf { it.waterTemperature!! },
+                            twd.size
+                        ) else null,
+                        waterDirection = if (twd.all { it.waterDirection != null }) getAvg(
+                            twd.sumOf { it.waterDirection!! },
                             twd.size
                         ) else null,
                         windSpeed = getAvg(twd.sumOf { it.windSpeed }, twd.size),

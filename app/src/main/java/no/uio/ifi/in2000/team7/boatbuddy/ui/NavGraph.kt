@@ -183,8 +183,16 @@ fun NavGraph(
             },
             onConfirmation = {
                 mainViewModel.selectScreen(4)
-                navController.navigate(Screen.ProfileScreen.route)
 
+                navController.navigate(Screen.ProfileScreen.route) {
+
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+
+                    launchSingleTop = true
+                    restoreState = true
+                }
                 mainViewModel.hideNoUserDialog()
 
             },
@@ -237,6 +245,8 @@ fun NavGraph(
                         infoScreenViewModel = infoScreenViewModel,
                         userLocationViewModel = userLocationViewModel,
                         profileViewModel = profileViewModel,
+                        mapboxViewModel = mapboxViewModel,
+                        navController = navController,
                     )
                 }
                 composable(route = Screen.ProfileScreen.route) {
