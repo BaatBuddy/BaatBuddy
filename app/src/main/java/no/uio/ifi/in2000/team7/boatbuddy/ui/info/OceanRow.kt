@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,7 +15,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.TimeLocationData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 
 @Composable
@@ -36,7 +33,7 @@ fun OceanRow(twd: TimeWeatherData, dayForecast: DayForecast, isShort: Boolean) {
             else -> time
         }
     } else {
-        if (time != "23" && !isShort) {
+        if (time != "23") {
             when (time) {
                 "00" -> "00 - 06"
                 "06" -> "06 - 12"

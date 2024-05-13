@@ -3,8 +3,8 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,13 +31,13 @@ fun NavigatingWeatherCard(
     infoScreenViewModel: InfoScreenViewModel,
     homeViewModel: HomeViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
     val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
-    Card(
+    ElevatedCard(
         modifier = Modifier
             .padding(4.dp),
         onClick = {

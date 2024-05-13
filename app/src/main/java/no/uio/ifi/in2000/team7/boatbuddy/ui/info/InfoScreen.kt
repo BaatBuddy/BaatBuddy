@@ -1,8 +1,10 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,8 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -88,11 +88,7 @@ fun InfoScreen(
                     selectedTabIndex = infoScreenUIState.selectedTab,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            Modifier.tabIndicatorOffset(tabPositions[infoScreenUIState.selectedTab])
-                        )
-                    }
+                    indicator = {}
                 ) {
                     val tabTitles = listOf("For din posisjon", "For din rute")
 
@@ -198,24 +194,35 @@ fun WeatherCard(
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier
-            .padding(8.dp),
-        onClick = changeDay,
+            .padding(16.dp)
+            .clickable { run(changeDay) },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp
+            defaultElevation = 4.dp
         ),
-        colors = CardDefaults.cardColors(
-            if (selectedDay == dayForecast) Color(0xFFCCCCCC) else Color(
-                0xFFE1E2EC
-            )
-        )
+        colors = CardDefaults.elevatedCardColors(
+            if (selectedDay == dayForecast) MaterialTheme.colorScheme.surfaceContainer
+            else MaterialTheme.colorScheme.surfaceContainerLowest
+        ),
+        border = if (selectedDay == dayForecast) BorderStroke(
+            3.dp,
+            MaterialTheme.colorScheme.onPrimaryContainer
+        ) else null
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(4.dp)
         ) {
-            Text(text = dayForecast.day, fontWeight = FontWeight.Bold)
-            Text(text = "${timeLocationData.airTemperature}℃")
+            Text(
+                text = dayForecast.day,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "${timeLocationData.airTemperature}℃",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
             WeatherIcon(
                 symbolCode = timeLocationData.symbolCode,
                 modifier = Modifier
