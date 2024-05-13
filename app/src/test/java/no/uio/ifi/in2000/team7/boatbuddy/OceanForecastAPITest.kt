@@ -1,10 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import junit.framework.TestCase
-import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
 import org.junit.Assert.assertNull
 import org.junit.Test
 

@@ -2,10 +2,9 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
 import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
+import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import kotlin.math.PI

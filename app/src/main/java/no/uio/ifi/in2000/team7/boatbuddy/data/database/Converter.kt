@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
-import java.util.prefs.Preferences
 
 class Converter {
     private val gson = Gson()

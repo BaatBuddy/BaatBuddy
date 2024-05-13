@@ -2,21 +2,21 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -25,22 +25,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
-import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationCard
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.WeatherIcon
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @SuppressLint("UnrememberedMutableState")
@@ -52,51 +46,68 @@ fun SwipeUpContent(
     mapboxViewModel: MapboxViewModel,
     navController: NavController,
     metalertsViewModel: MetAlertsViewModel,
+    infoScreenViewModel: InfoScreenViewModel,
+    homeViewModel: HomeViewModel,
+    locationForecastViewModel: LocationForecastViewModel,
 ) {
 
     val profileUIState by profileViewModel.profileUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val metalertsUIState by metalertsViewModel.metalertsUIState.collectAsState()
 
-
+    // TODO fix row with vertical divider, looks too goofy
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
+            .padding(8.dp)
     ) {
         Text(
             text = "De 4 beste dagene for din reise",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(4.dp)
         )
         HorizontalDivider(
             thickness = 2.dp,
             modifier = Modifier
-                .padding(8.dp)
+                .padding(vertical = 8.dp)
         )
+
         // weather alerts
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(32.dp)
+                .height(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             //alerts
-            metalertsUIState.alerts.forEach {
-                AlertIcon(
-                    event = it.event,
-                    riskMatrixColor = it.riskMatrixColor,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .padding(end = 8.dp)
-                )
+            Row(
+                modifier = Modifier
+                    .weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                metalertsUIState.alerts.forEach { featureData ->
+                    IconButton(
+                        onClick = {
+                            homeViewModel.updateShowWeatherAlertInfoCard(featureData)
+                        },
+                        modifier = Modifier
+                            .height(IntrinsicSize.Max),
+                    ) {
+                        AlertIcon(
+                            event = featureData.event,
+                            riskMatrixColor = featureData.riskMatrixColor,
+                            modifier = Modifier
+                                .height(IntrinsicSize.Max)
+                        )
+                    }
+                }
             }
             VerticalDivider(
                 thickness = 2.dp,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(vertical = 8.dp)
             )
 
             Button(
@@ -111,33 +122,37 @@ fun SwipeUpContent(
                     }
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 8.dp
-                )
             ) {
                 Text(
                     text = "Lagre rute!",
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    color = Color.White
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
 
         if (weekdayForecastRoute != null) {
-            Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+            ) {
                 weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score }.take(4)
-                    .forEach {
-                        LocationCard(dayForecast = it, selectedDay = it) {
-                        }
+                    .forEach { dayForecast ->
+                        NavigatingWeatherCard(
+                            dayForecast = dayForecast,
+                            profileViewModel = profileViewModel,
+                            mapboxViewModel = mapboxViewModel,
+                            infoScreenViewModel = infoScreenViewModel,
+                            homeViewModel = homeViewModel,
+                            locationForecastViewModel = locationForecastViewModel,
+                            navController = navController
+                        )
                     }
             }
 
@@ -145,16 +160,20 @@ fun SwipeUpContent(
         } else {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                    .fillMaxWidth()
+                    .height(100.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primaryContainer
+                )
             }
         }
     }
 }
 
-
+/*
 @Composable
 fun DayWeatherTable(
     weekForecast: WeekForecast,
@@ -256,15 +275,6 @@ fun DayWeatherRow(
 
     }
 }
-
-
-
-
-
-
-
-
-
-
+*/
 
 

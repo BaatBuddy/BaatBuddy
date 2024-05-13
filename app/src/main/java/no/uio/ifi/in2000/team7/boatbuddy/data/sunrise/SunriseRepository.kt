@@ -2,10 +2,8 @@ package no.uio.ifi.in2000.team7.boatbuddy.data.sunrise
 
 import android.util.Log
 import com.mapbox.geojson.Point
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache.sunsetToday
 import no.uio.ifi.in2000.team7.boatbuddy.model.sunrise.SunriseData
-import java.util.Date
 
 interface SunriseRepo {
     suspend fun getSunriseData(lat: String, lon: String, date: String): SunriseData?

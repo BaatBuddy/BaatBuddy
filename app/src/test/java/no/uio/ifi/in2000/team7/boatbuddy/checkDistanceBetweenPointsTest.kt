@@ -2,15 +2,8 @@ package no.uio.ifi.in2000.team7.boatbuddy
 
 import com.mapbox.geojson.Point
 import junit.framework.TestCase.assertEquals
-import org.junit.Test
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.cos
-import kotlin.math.sqrt
-import kotlin.math.atan2
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.distanceBetweenPoints
-
-
+import org.junit.Test
 
 
 class checkDistanceBetweenPointsTest {

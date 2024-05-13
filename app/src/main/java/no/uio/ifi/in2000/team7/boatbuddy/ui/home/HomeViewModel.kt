@@ -8,18 +8,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 import javax.inject.Inject
 
 data class HomeScreenUIState(
     val showBottomSheet: Boolean = false,
     val showBottomSheetInitialized: Boolean = false,
-    val showInfoPopup: Boolean = false,
+    val showExplanationCard: Boolean = false,
+    val showWeatherAlertInfoCard: FeatureData? = null,
 )
 
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    application: Application
+    application: Application,
 ) : AndroidViewModel(application) {
 
     private val _homeScreenUIState: MutableStateFlow<HomeScreenUIState> =
@@ -58,11 +60,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateShowInfoPopup(state: Boolean) {
+    fun updateShowExplanationCard(state: Boolean) {
         viewModelScope.launch {
             _homeScreenUIState.update {
                 it.copy(
-                    showInfoPopup = state
+                    showExplanationCard = state
+                )
+            }
+        }
+    }
+
+    fun updateShowWeatherAlertInfoCard(featureData: FeatureData?) {
+        viewModelScope.launch {
+            _homeScreenUIState.update {
+                it.copy(
+                    showWeatherAlertInfoCard = featureData
                 )
             }
         }

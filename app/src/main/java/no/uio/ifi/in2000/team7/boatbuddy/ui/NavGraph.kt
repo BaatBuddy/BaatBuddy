@@ -182,7 +182,8 @@ fun NavGraph(
                 mainViewModel.hideNoUserDialog()
             },
             onConfirmation = {
-                navController.navigate("profileScreen")
+                mainViewModel.selectScreen(4)
+                navController.navigate(Screen.ProfileScreen.route)
 
                 mainViewModel.hideNoUserDialog()
 
@@ -238,7 +239,7 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                     )
                 }
-                composable(route = Screen.SettingsScreen.route) {
+                composable(route = Screen.ProfileScreen.route) {
                     ProfileScreen(
                         profileViewModel = profileViewModel,
                         navController = navController,
