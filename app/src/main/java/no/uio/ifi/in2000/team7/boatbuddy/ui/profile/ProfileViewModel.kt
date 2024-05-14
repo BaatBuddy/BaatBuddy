@@ -472,5 +472,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun deleteSelectedRoute() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _routeScreenUIState.value.selectedRouteMap?.let { routeRepository.deleteRoute(it) }
+        }
+    }
+
 
 }
