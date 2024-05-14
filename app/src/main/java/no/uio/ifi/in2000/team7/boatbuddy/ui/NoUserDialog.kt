@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,10 +38,11 @@ fun NoUserDialog(
             Icon(
                 imageVector = icon,
                 contentDescription = "Dialog Icon",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                tint = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier
                     .size(60.dp)
-                    .padding(bottom = 5.dp)
+                    .padding(bottom = 5.dp),
+
             )
         },
 
@@ -66,6 +68,7 @@ fun NoUserDialog(
             }
 
         },
+
         confirmButton = {
             Button(
                 onClick = onConfirmation,
@@ -83,6 +86,7 @@ fun NoUserDialog(
 
             }
         },
+
         dismissButton = {
             Button(
                 onClick = onDismissRequest,

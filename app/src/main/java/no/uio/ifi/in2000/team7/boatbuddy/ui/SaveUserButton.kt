@@ -45,7 +45,7 @@ fun SaveUserButton(
         colors = colors,
     ) {
         Text(
-            text = "Lagre rute!",
+            text = "Lagre rute",
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
         )

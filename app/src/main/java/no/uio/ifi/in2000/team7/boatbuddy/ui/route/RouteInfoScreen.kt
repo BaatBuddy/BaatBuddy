@@ -106,7 +106,7 @@ fun RouteInfoScreen(
                     )
                     AsyncImage(
                         model = routeUIState.selectedRouteMap!!.mapURL,
-                        contentScale = ContentScale.Crop, //added
+                        contentScale = ContentScale.FillWidth,
                         contentDescription = "Map with path",
                         modifier = Modifier
                             .fillMaxWidth()
