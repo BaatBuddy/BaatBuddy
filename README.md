@@ -22,7 +22,14 @@ Her kommer info om hvor dokumetasjonen ligger (?)
 
 ## Hvordan kjøre appen
 
-Her kommer hvordan appen kan kjøres
+1. Åpne terminalen på din pc/mac.
+2. Naviger til det området du vil laste ned prosjektet. 
+3. Kopier URL-en til prosjektet, dette gjør du ved å trykke på "code" knappen på siden til prosjektet(https://github.uio.no/IN2000-V24/team-7) og trykke så på kopier knappen. 
+4. Skriv inn git clone etterfulgt av det du kopierte, det skal se slik ut: git clone https://github.uio.no/IN2000-V24/team-7.git
+5. Trykk enter og vent til nedlastningen er fullført
+6. Åpne Android Studio og trykk på "open"
+7. Finn frem til der du lagra prosjektet og trykk på "open"
+8. Trykk på "run" knappen for å kjøre appen
 
 ## Biblioteker
 
