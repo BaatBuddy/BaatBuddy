@@ -3,24 +3,19 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -34,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,9 +46,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen.HomeScreen.route
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SaveRouteScreen(
@@ -113,7 +107,12 @@ fun SaveRouteScreen(
             OutlinedTextField(
                 value = routeScreenUIState.routeName,
                 onValueChange = { profileViewModel.updateRouteName(it) },
-                label = { Text(text = "Navn på turen", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                label = {
+                    Text(
+                        text = "Navn på turen",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -122,7 +121,12 @@ fun SaveRouteScreen(
             OutlinedTextField(
                 value = routeScreenUIState.routeDescription,
                 onValueChange = { profileViewModel.updateRouteDescription(it) },
-                label = { Text(text = "Beskrivelse av turen", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                label = {
+                    Text(
+                        text = "Beskrivelse av turen",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 

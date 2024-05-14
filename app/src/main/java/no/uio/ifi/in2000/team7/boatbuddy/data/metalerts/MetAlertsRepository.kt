@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 
-import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.PolygonPosition
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
@@ -13,7 +12,7 @@ interface MetAlertsRepo {
 }
 
 class MetAlertsRepository(
-    private val dataSource: MetAlertsDataSource = MetAlertsDataSource()
+    private val dataSource: MetAlertsDataSource = MetAlertsDataSource(),
 ) : MetAlertsRepo {
 
     // every alerts
@@ -40,7 +39,7 @@ class MetAlertsRepository(
                 )
             }?.let { it2 -> fds.addAll(it2) }
         }
-        return fds.toList()
+        return fds.toList().distinctBy { it.event }
     }
 
     suspend fun updateAlertData() {

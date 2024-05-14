@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
-import android.util.Log
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -8,7 +7,6 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun LocationDialog(launchRequest: () -> Unit, onDismiss: () -> Unit) {
-    Log.i("ASDASD", "IUUGUWEBGUIBW")
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = "Del din lokasjon") },

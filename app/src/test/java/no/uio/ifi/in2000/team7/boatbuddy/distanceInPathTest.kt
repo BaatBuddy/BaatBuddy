@@ -1,9 +1,9 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.distanceInPath
-import org.junit.Test
 import com.mapbox.geojson.Point
 import junit.framework.TestCase.assertEquals
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.distanceInPath
+import org.junit.Test
 
 class distanceInPathTest {
 

@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy
 
-import com.mapbox.geojson.Point
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import org.junit.Test
 

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
@@ -44,8 +42,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.OceanForecastViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.info.SunriseViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
@@ -59,7 +55,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -67,9 +62,7 @@ fun NavGraph(
     locationForecastViewModel: LocationForecastViewModel,
     mapboxViewModel: MapboxViewModel,
     metalertsViewModel: MetAlertsViewModel,
-    oceanforecastViewModel: OceanForecastViewModel,
     profileViewModel: ProfileViewModel,
-    sunriseViewModel: SunriseViewModel,
     homeViewModel: HomeViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
@@ -189,8 +182,17 @@ fun NavGraph(
                 mainViewModel.hideNoUserDialog()
             },
             onConfirmation = {
-                navController.navigate("profileScreen")
+                mainViewModel.selectScreen(4)
 
+                navController.navigate(Screen.ProfileScreen.route) {
+
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+
+                    launchSingleTop = true
+                    restoreState = true
+                }
                 mainViewModel.hideNoUserDialog()
 
             },
@@ -243,9 +245,11 @@ fun NavGraph(
                         infoScreenViewModel = infoScreenViewModel,
                         userLocationViewModel = userLocationViewModel,
                         profileViewModel = profileViewModel,
+                        mapboxViewModel = mapboxViewModel,
+                        navController = navController,
                     )
                 }
-                composable(route = Screen.SettingsScreen.route) {
+                composable(route = Screen.ProfileScreen.route) {
                     ProfileScreen(
                         profileViewModel = profileViewModel,
                         navController = navController,

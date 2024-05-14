@@ -194,6 +194,7 @@ class MapboxViewModel @Inject constructor(
     }
 
     fun generateRoute() {
+        emptyGeneratedRoute()
         updateRoute()
         viewModelScope.launch {
             // init Loading
@@ -255,6 +256,16 @@ class MapboxViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    fun emptyGeneratedRoute() {
+        viewModelScope.launch {
+            _mapboxUIState.update {
+                it.copy(
+                    generatedRoute = null
+                )
             }
         }
     }

@@ -18,7 +18,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,9 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,19 +37,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.style.TextAlign
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +60,6 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
     var (text, setText) = remember {
         mutableStateOf("Close keyboard on done ime action")
     }
-
 
 
     val invalidMap = remember {
@@ -143,7 +136,12 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Navn", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                    label = {
+                        Text(
+                            text = "Navn",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
                     isError = invalidMap["name"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -169,7 +167,12 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Brukernavn",color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                    label = {
+                        Text(
+                            text = "Brukernavn",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
                     isError = invalidMap["username"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -206,7 +209,12 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     //colors = TextFieldDefaults.colors(MaterialTheme.colorScheme.onPrimaryContainer),
 
                     maxLines = 1,
-                    label = { Text(text = "Båt navn", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                    label = {
+                        Text(
+                            text = "Båt navn",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
                     isError = invalidMap["boatname"] ?: false,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -214,7 +222,8 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             createUserUIState,
                             invalidMap,
                             profileViewModel,
-                            navController )
+                            navController
+                        )
                         keyboardController?.hide()
                     }),
                     modifier = Modifier
@@ -317,9 +326,17 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Båt hastighet i knop", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                    label = {
+                        Text(
+                            text = "Båt hastighet i knop",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
                     isError = invalidMap["boatSpeed"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Number
+                    ),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -343,9 +360,17 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }
                     },
                     maxLines = 1,
-                    label = { Text(text = "Sikkerhets høyde på båten", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                    label = {
+                        Text(
+                            text = "Sikkerhets høyde på båten",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
                     isError = invalidMap["safetyHeight"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Number
+                    ),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
@@ -370,9 +395,17 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
 
                     },
                     maxLines = 1,
-                    label = { Text(text = "Sikkerhets dybde på båten", color = MaterialTheme.colorScheme.onPrimaryContainer) },
+                    label = {
+                        Text(
+                            text = "Sikkerhets dybde på båten",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
                     isError = invalidMap["safetyDepth"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Number
+                    ),
                     keyboardActions = KeyboardActions(onDone = {
                         checkInputsUserProfile(
                             createUserUIState,
