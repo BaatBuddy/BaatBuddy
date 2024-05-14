@@ -256,7 +256,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                                 painter = painterResource(id = R.drawable.boat_svgrepo_com),
                                 contentDescription = "",
                                 modifier = Modifier
-                                    .size(32.dp)
+                                    .size(48.dp)
                             )
 
                         }
@@ -279,7 +279,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
+                                painter = painterResource(id = R.drawable.boatmedium_svgrepo_com),
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(48.dp)
@@ -305,10 +305,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                             verticalArrangement = Arrangement.Center
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
+                                painter = painterResource(id = R.drawable.boatbig_svgrepo_com),
                                 contentDescription = "",
                                 modifier = Modifier
-                                    .size(64.dp)
+                                    .size(48.dp)
                             )
 
                         }

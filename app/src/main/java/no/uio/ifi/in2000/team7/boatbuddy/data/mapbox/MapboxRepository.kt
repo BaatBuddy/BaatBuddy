@@ -128,7 +128,7 @@ class MapboxRepository(
                 puckBearingEnabled = true
                 enabled = true
                 locationPuck = LocationPuck2D(
-                    bearingImage = ImageHolder.from(R.drawable.map_2d_pucker_boat),
+                    bearingImage = ImageHolder.from(R.drawable.map_2d_pucker_target),
                     shadowImage = ImageHolder.from(R.drawable.map_2d_pucker_shadow),
                     scaleExpression = Expression.interpolate {
                         linear()
