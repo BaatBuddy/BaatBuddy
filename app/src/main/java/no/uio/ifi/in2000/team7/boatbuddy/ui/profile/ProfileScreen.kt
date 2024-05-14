@@ -155,7 +155,7 @@ fun UserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
             .clickable {
                 profileViewModel.selectUser(user.username)
             },
-        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(
