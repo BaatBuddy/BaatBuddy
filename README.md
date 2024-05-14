@@ -1,13 +1,4 @@
-<h1> team-7 </h1>
-
-Oppgavebeskrivelse:
-■ Beskriver hvor dokumentasjonen ligger og hvordan man kjører
-appen. Denne burde også inneholde informasjon om biblioteker
-som er brukt.
-
-***
-
-Noe form for introduksjon...
+<h1> Team-7 - Boatbuddy </h1>
 
 ***
 
@@ -15,6 +6,7 @@ Noe form for introduksjon...
 * [Hvordan kjøre appen](#hvordan-kjøre-appen)
 * [Biblioteker](#biblioteker)
 
+***
 
 ## Dokumentasjon
 
@@ -22,9 +14,9 @@ Her kommer info om hvor dokumetasjonen ligger (?)
 
 ## Hvordan kjøre appen
 
-1. Åpne terminalen på din pc/mac.
-2. Naviger til det området du vil laste ned prosjektet. 
-3. Kopier URL-en til prosjektet, dette gjør du ved å trykke på "code" knappen på siden til prosjektet(https://github.uio.no/IN2000-V24/team-7) og trykke så på kopier knappen. 
+1. Åpne terminalen på din pc/mac
+2. Naviger til det området du vil laste ned prosjektet
+3. Kopier URL-en til prosjektet, dette gjør du ved å trykke på "code" knappen på siden til prosjektet(https://github.uio.no/IN2000-V24/team-7) og trykke så på kopier knappen
 4. Skriv inn git clone etterfulgt av det du kopierte, det skal se slik ut: git clone https://github.uio.no/IN2000-V24/team-7.git
 5. Trykk enter og vent til nedlastningen er fullført
 6. Åpne Android Studio og trykk på "open"
@@ -44,6 +36,6 @@ Worker: Hva slags bibilotek er dette?
 MapBox: 
 MapBox-biblioteket er et bibliotek som tilbyr kart. Det er ett av verdens ledene selskaper innen kartteknologi. Derfor er det et svært godt bibliotek som tilbyr kart og stedtjenester. Kartdataen de baserer seg på kommer fra OpenStreetMap-data (OSM), dette oppdateres kontinuerlig noe som fører til at kartdataen er veldig presis og pålitelig. En av det mest populere funksjonene som kan anvendes er såkalt "ruting". Ruting er noe som kan brukes for å planlegge en rute mellom to eller flere punkter. Noe som vi bruker som en av våres viktige funksjoner. 
 
-Marius skriver litt om dette biblioteket:
+Marius skriver litt om disse bibliotekene:
 - Dagger Hilt
 - Room Database: 
