@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -18,9 +21,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -88,7 +95,34 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     }
                 }
             )
+
         }
+        , floatingActionButton = { ExtendedFloatingActionButton(
+            onClick = {
+
+                checkInputsUserProfile(
+                    createUserUIState,
+                    invalidMap,
+                    profileViewModel,
+                    navController
+                )
+                keyboardController?.hide()
+
+            }
+        ) {
+
+
+            Text(text = "Lag profil")
+            Spacer(modifier = Modifier.width(6.dp))
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Create profile",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(32.dp)
+            )
+        }}
     ) { paddingValue ->
         Box(
             modifier = Modifier
@@ -96,333 +130,348 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 .padding(paddingValue)
         ) {
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge inn minst en båt for å lage en rute.",
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.W400,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    lineHeight = 24.sp,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(16.dp)
-                )
-                Text(
-                    text = "Bruker profil",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W300,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-                HorizontalDivider()
+            Column {
 
-                // name
-                OutlinedTextField(
-                    value = createUserUIState.name,
-                    onValueChange = {
-                        if (it.length <= 20) {
-                            profileViewModel.updateCreateName(it)
-                        }
-                    },
-                    maxLines = 1,
-                    label = {
-                        Text(
-                            text = "Navn",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    },
-                    isError = invalidMap["name"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        checkInputsUserProfile(
-                            createUserUIState,
-                            invalidMap,
-                            profileViewModel,
-                            navController
-                        )
-                        keyboardController?.hide()
-                    }),
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .focusRequester(focusRequester)
-
-                )
-
-                // username
-                OutlinedTextField(
-                    value = createUserUIState.username,
-                    onValueChange = {
-                        if (it.length <= 20) {
-                            profileViewModel.updateCreateUsername(it)
-                        }
-                    },
-                    maxLines = 1,
-                    label = {
-                        Text(
-                            text = "Brukernavn",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    },
-                    isError = invalidMap["username"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        checkInputsUserProfile(
-                            createUserUIState,
-                            invalidMap,
-                            profileViewModel,
-                            navController
-                        )
-                        keyboardController?.hide()
-                    }),
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                )
-
-                Text(
-                    text = "Båt profil",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.W300,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-                HorizontalDivider()
-
-                // boat
-                // name
-                OutlinedTextField(
-                    value = createUserUIState.boatname,
-                    onValueChange = {
-                        if (it.length <= 20) {
-                            profileViewModel.updateBoatName(it)
-                        }
-                    },
-                    //colors = TextFieldDefaults.colors(MaterialTheme.colorScheme.onPrimaryContainer),
-
-                    maxLines = 1,
-                    label = {
-                        Text(
-                            text = "Båt navn",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    },
-                    isError = invalidMap["boatname"] ?: false,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        checkInputsUserProfile(
-                            createUserUIState,
-                            invalidMap,
-                            profileViewModel,
-                            navController
-                        )
-                        keyboardController?.hide()
-                    }),
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                )
-
-                //size
-                Text(text = "Trykk på et av ikonene for å få standard verdier")
-                Row(
-                    modifier = Modifier
-                        .padding(4.dp)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    ElevatedCard(
+                    Text(
+                        text = "Du må skrive inn et navn og et unikt brukernavn. I tillegg må du legge inn minst en båt for å lage en rute.",
+                        textAlign = TextAlign.Center,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.W400,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        lineHeight = 24.sp,
                         modifier = Modifier
-                            .size(72.dp)
-                            .padding(4.dp)
-                            .clickable {
-                                profileViewModel.updateBoatSpeed("21")
-                                profileViewModel.updateBoatHeight("2")
-                                profileViewModel.updateBoatDepth("1")
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(32.dp)
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(8.dp)
                             )
+                            .padding(16.dp)
+                    )
+                    Text(
+                        text = "Bruker profil",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W300,
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                    HorizontalDivider()
+
+                    // name
+                    OutlinedTextField(
+                        value = createUserUIState.name,
+                        onValueChange = {
+                            if (it.length <= 20) {
+                                profileViewModel.updateCreateName(it)
+                            }
+                        },
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Navn",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        },
+                        isError = invalidMap["name"] ?: false,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            checkInputsUserProfile(
+                                createUserUIState,
+                                invalidMap,
+                                profileViewModel,
+                                navController
+                            )
+                            keyboardController?.hide()
+                        }),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+
+                    )
+
+                    // username
+                    OutlinedTextField(
+                        value = createUserUIState.username,
+                        onValueChange = {
+                            if (it.length <= 20) {
+                                profileViewModel.updateCreateUsername(it)
+                            }
+                        },
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Brukernavn",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        },
+                        isError = invalidMap["username"] ?: false,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            checkInputsUserProfile(
+                                createUserUIState,
+                                invalidMap,
+                                profileViewModel,
+                                navController
+                            )
+                            keyboardController?.hide()
+                        }),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                    )
+
+                    Text(
+                        text = "Båt profil",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.W300,
+                        modifier = Modifier
+                            .padding(4.dp)
+                    )
+                    HorizontalDivider()
+
+                    // boat
+                    // name
+                    OutlinedTextField(
+                        value = createUserUIState.boatname,
+                        onValueChange = {
+                            if (it.length <= 20) {
+                                profileViewModel.updateBoatName(it)
+                            }
+                        },
+                        //colors = TextFieldDefaults.colors(MaterialTheme.colorScheme.onPrimaryContainer),
+
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Båt navn",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        },
+                        isError = invalidMap["boatname"] ?: false,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            checkInputsUserProfile(
+                                createUserUIState,
+                                invalidMap,
+                                profileViewModel,
+                                navController
+                            )
+                            keyboardController?.hide()
+                        }),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                    )
+
+                    //size
+                    Text(text = "Trykk på et av ikonene for å få standard verdier")
+                    Row(
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
+                        ElevatedCard(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    profileViewModel.updateBoatSpeed("21")
+                                    profileViewModel.updateBoatHeight("2")
+                                    profileViewModel.updateBoatDepth("1")
+                                }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.boat_svgrepo_com),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                )
+
+                            }
+
+                        }
+                        ElevatedCard(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    profileViewModel.updateBoatSpeed("14")
+                                    profileViewModel.updateBoatHeight("4")
+                                    profileViewModel.updateBoatDepth("2")
+                                }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.boatmedium_svgrepo_com),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                )
+
+                            }
+
+                        }
+                        ElevatedCard(
+                            modifier = Modifier
+                                .size(72.dp)
+                                .padding(4.dp)
+                                .clickable {
+                                    profileViewModel.updateBoatSpeed("7")
+                                    profileViewModel.updateBoatDepth("3")
+                                    profileViewModel.updateBoatHeight("6")
+                                }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.boatbig_svgrepo_com),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                )
+
+                            }
 
                         }
 
                     }
-                    ElevatedCard(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .padding(4.dp)
-                            .clickable {
-                                profileViewModel.updateBoatSpeed("14")
-                                profileViewModel.updateBoatHeight("4")
-                                profileViewModel.updateBoatDepth("2")
+
+                    OutlinedTextField(
+                        value = createUserUIState.boatSpeed,
+                        onValueChange = {
+                            if (it.length <= 20 && it.isDigitsOnly()) {
+                                profileViewModel.updateBoatSpeed(it)
+                                text = it
                             }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(48.dp)
+                        },
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Båt hastighet i knop",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
-
-                        }
-
-                    }
-                    ElevatedCard(
+                        },
+                        isError = invalidMap["boatSpeed"] ?: false,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Number
+                        ),
+                        keyboardActions = KeyboardActions(onDone = {
+                            checkInputsUserProfile(
+                                createUserUIState,
+                                invalidMap,
+                                profileViewModel,
+                                navController
+                            )
+                            keyboardController?.hide()
+                        }),
                         modifier = Modifier
-                            .size(72.dp)
-                            .padding(4.dp)
-                            .clickable {
-                                profileViewModel.updateBoatSpeed("7")
-                                profileViewModel.updateBoatDepth("3")
-                                profileViewModel.updateBoatHeight("6")
+                            .focusRequester(focusRequester)
+                    )
+
+
+                    OutlinedTextField(
+                        value = createUserUIState.safetyHeight,
+                        onValueChange = {
+                            if (it.length <= 20 && it.isDigitsOnly()) {
+                                profileViewModel.updateBoatSpeed(it)
+                                text = it
                             }
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.boat_svgrepo_com),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .size(64.dp)
+                        },
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Sikkerhets høyde på båten",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
+                        },
+                        isError = invalidMap["safetyHeight"] ?: false,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Number
+                        ),
+                        keyboardActions = KeyboardActions(onDone = {
+                            checkInputsUserProfile(
+                                createUserUIState,
+                                invalidMap,
+                                profileViewModel,
+                                navController
+                            )
+                            keyboardController?.hide()
+                        }),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                    )
 
-                        }
 
-                    }
+                    OutlinedTextField(
+                        value = createUserUIState.safetyDepth,
+                        onValueChange = {
+                            if (it.length <= 20 && it.isDigitsOnly()) {
+                                profileViewModel.updateBoatSpeed(it)
+                                text = it
+                            }
+
+                        },
+                        maxLines = 1,
+                        label = {
+                            Text(
+                                text = "Sikkerhets dybde på båten",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        },
+                        isError = invalidMap["safetyDepth"] ?: false,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                            keyboardType = KeyboardType.Number
+                        ),
+                        keyboardActions = KeyboardActions(onDone = {
+                            checkInputsUserProfile(
+                                createUserUIState,
+                                invalidMap,
+                                profileViewModel,
+                                navController
+                            )
+                            keyboardController?.hide()
+                        }),
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                        //  To
+                    )
+
+                    Spacer(modifier = Modifier.height(60.dp))
+
 
                 }
 
-                OutlinedTextField(
-                    value = createUserUIState.boatSpeed,
-                    onValueChange = {
-                        if (it.length <= 20 && it.isDigitsOnly()) {
-                            profileViewModel.updateBoatSpeed(it)
-                            text = it
-                        }
-                    },
-                    maxLines = 1,
-                    label = {
-                        Text(
-                            text = "Båt hastighet i knop",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    },
-                    isError = invalidMap["boatSpeed"] ?: false,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Number
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        checkInputsUserProfile(
-                            createUserUIState,
-                            invalidMap,
-                            profileViewModel,
-                            navController
-                        )
-                        keyboardController?.hide()
-                    }),
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                )
-
-
-                OutlinedTextField(
-                    value = createUserUIState.safetyHeight,
-                    onValueChange = {
-                        if (it.length <= 20 && it.isDigitsOnly()) {
-                            profileViewModel.updateBoatSpeed(it)
-                            text = it
-                        }
-                    },
-                    maxLines = 1,
-                    label = {
-                        Text(
-                            text = "Sikkerhets høyde på båten",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    },
-                    isError = invalidMap["safetyHeight"] ?: false,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Number
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        checkInputsUserProfile(
-                            createUserUIState,
-                            invalidMap,
-                            profileViewModel,
-                            navController
-                        )
-                        keyboardController?.hide()
-                    }),
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                )
-
-
-                OutlinedTextField(
-                    value = createUserUIState.safetyDepth,
-                    onValueChange = {
-                        if (it.length <= 20 && it.isDigitsOnly()) {
-                            profileViewModel.updateBoatSpeed(it)
-                            text = it
-                        }
-
-                    },
-                    maxLines = 1,
-                    label = {
-                        Text(
-                            text = "Sikkerhets dybde på båten",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    },
-                    isError = invalidMap["safetyDepth"] ?: false,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                        keyboardType = KeyboardType.Number
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        checkInputsUserProfile(
-                            createUserUIState,
-                            invalidMap,
-                            profileViewModel,
-                            navController
-                        )
-                        keyboardController?.hide()
-                    }),
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                )
-
 
             }
+
+
         }
+
+
     }
+
 }
 
 fun checkInputsUserProfile(
@@ -455,6 +504,7 @@ fun checkInputsUserProfile(
             safetyDepth = safetyDepth,
             safetyHeight = safetyHeight
         )
+
         profileViewModel.clearCreateProfile()
         navController.popBackStack()
     }

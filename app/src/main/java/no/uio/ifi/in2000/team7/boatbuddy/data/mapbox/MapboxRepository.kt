@@ -53,7 +53,7 @@ class MapboxRepository(
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         mapView.mapboxMap.setCamera(
             CameraOptions.Builder()
-                // .zoom(14.0)
+                .zoom(10.0)
                 .center(it)
                 .build()
         )
@@ -128,18 +128,18 @@ class MapboxRepository(
                 puckBearingEnabled = true
                 enabled = true
                 locationPuck = LocationPuck2D(
-                    bearingImage = ImageHolder.from(R.drawable.map_2d_pucker_boat),
+                    bearingImage = ImageHolder.from(R.drawable.map_2d_pucker),
                     shadowImage = ImageHolder.from(R.drawable.map_2d_pucker_shadow),
                     scaleExpression = Expression.interpolate {
                         linear()
                         zoom()
                         stop {
                             literal(0.0)
-                            literal(0.6)
+                            literal(0.45)
                         }
                         stop {
-                            literal(20.0)
-                            literal(1.0)
+                            literal(15.0)
+                            literal(0.75)
                         }
                     }.toJson()
                 )

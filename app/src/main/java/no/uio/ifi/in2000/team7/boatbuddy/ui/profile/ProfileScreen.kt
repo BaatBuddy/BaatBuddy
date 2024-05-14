@@ -109,11 +109,7 @@ fun BoatCards(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Navn",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.W900,
-                )
+
                 Text(
                     text = boatProfile.boatname,
                     fontSize = 20.sp,
@@ -151,6 +147,7 @@ fun BoatCards(
 
 @Composable
 fun UserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
+    val profileUiState by profileViewModel.profileUIState.collectAsState()
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -158,7 +155,7 @@ fun UserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
             .clickable {
                 profileViewModel.selectUser(user.username)
             },
-        elevation = CardDefaults.cardElevation(defaultElevation = 20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(
@@ -183,14 +180,20 @@ fun UserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                contentDescription = "View Profile",
-                tint = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(32.dp)
-            )
+
+            if(profileUiState.selectedUser == null){
+                Icon(
+
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "View Profile",
+                    tint = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .size(32.dp)
+                )
+            }
+
+
         }
     }
 }

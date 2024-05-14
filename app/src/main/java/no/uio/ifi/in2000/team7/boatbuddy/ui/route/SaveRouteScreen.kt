@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
@@ -27,8 +28,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -76,7 +81,7 @@ fun SaveRouteScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Lagre generert rute",
+                        text = "Lagre rute",
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -93,6 +98,18 @@ fun SaveRouteScreen(
                         )
                     }
                 },
+                actions = {
+                    Button(
+                        onClick = {
+                            mainViewModel.showBottomBar()
+                            mainViewModel.stopFollowUserOnMap()
+                            mainViewModel.stopTrackingUser()
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Text(text = "FORKAST")
+                    }
+                }
             )
         }
     ) { paddingValues ->
@@ -106,14 +123,20 @@ fun SaveRouteScreen(
         ) {
             OutlinedTextField(
                 value = routeScreenUIState.routeName,
-                onValueChange = { profileViewModel.updateRouteName(it) },
+                onValueChange = { if (it.length <= 20) profileViewModel.updateRouteName(it) },
+                maxLines = 1,
                 label = {
                     Text(
-                        text = "Navn på turen",
+                        text = "Tittel på turen",
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -127,7 +150,13 @@ fun SaveRouteScreen(
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                maxLines = 5,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                )
             )
 
             Spacer(modifier = Modifier.height(24.dp))

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,13 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.SaveUserButton
+import no.uio.ifi.in2000.team7.boatbuddy.ui.SaveRouteButton
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
@@ -54,14 +56,19 @@ fun RouteWeatherInfo(
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .fillMaxWidth()
-    ) {
-        Box {
+            .fillMaxWidth(),
+
+        ) {
+        Box(
+            modifier = Modifier.padding(16.dp)
+        ) {
             AsyncImage(
                 model = routeMap.mapURL,
+
                 contentDescription = "Map with path",
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp)),
                 onError = {
                     loading = false
                 },
@@ -69,13 +76,18 @@ fun RouteWeatherInfo(
                     loading = false
                 },
                 contentScale = ContentScale.FillWidth
+
             )
-            SaveUserButton(
+
+
+
+
+            SaveRouteButton(
                 mainViewModel = mainViewModel,
                 navController = navController,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(8.dp),
+                    .padding(2.dp),
                 profileViewModel = profileViewModel,
                 mapboxViewModel = mapboxViewModel,
                 ButtonDefaults.buttonColors(

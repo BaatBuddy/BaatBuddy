@@ -37,12 +37,14 @@ class RouteRepository @Inject constructor(
         routeDescription: String,
         route: List<Point>? = null,
     ) {
+        val routeID = getLastIDUsername(username = username, boatname = boatname)?.plus(1) ?: 0
+
         routeDao.insertRoute(
             Route(
                 username = username,
                 boatname = boatname,
-                routeID = getLastIDUsername(username = username, boatname = boatname)?.plus(1) ?: 0,
-                routename = routename,
+                routeID = routeID,
+                routename = routename.ifBlank { "Rute $routeID" },
                 routeDescription = routeDescription,
                 route = route ?: points,
                 start = startTime,
@@ -80,5 +82,9 @@ class RouteRepository @Inject constructor(
 
     suspend fun getTemporaryRouteView(points: List<Point>?): String {
         return mapRepo.generateMapURI(points = points ?: AlertNotificationCache.points)
+    }
+
+    suspend fun deleteRoute(routeMap: RouteMap) {
+        routeDao.deleteRoute(routeMap.route)
     }
 }

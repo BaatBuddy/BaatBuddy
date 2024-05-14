@@ -66,7 +66,7 @@ class MapboxViewModel @Inject constructor(
         if (initialized) return
         initialized = true
         createMap(context = context, cameraOptions = cameraOptions)
-
+        panToUser()
     }
 
 

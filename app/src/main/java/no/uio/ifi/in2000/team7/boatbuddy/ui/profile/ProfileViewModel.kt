@@ -141,6 +141,7 @@ class ProfileViewModel @Inject constructor(
                 safetyDepth = safetyDepth,
                 safetyHeight = safetyHeight
             )
+            selectUser(username)
         }
     }
 
@@ -469,6 +470,12 @@ class ProfileViewModel @Inject constructor(
                     updateWeather = false
                 )
             }
+        }
+    }
+
+    fun deleteSelectedRoute() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _routeScreenUIState.value.selectedRouteMap?.let { routeRepository.deleteRoute(it) }
         }
     }
 

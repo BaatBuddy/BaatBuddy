@@ -106,7 +106,7 @@ fun RouteInfoScreen(
                     )
                     AsyncImage(
                         model = routeUIState.selectedRouteMap!!.mapURL,
-                        contentScale = ContentScale.Crop, //added
+                        contentScale = ContentScale.FillWidth,
                         contentDescription = "Map with path",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -133,6 +133,7 @@ fun RouteInfoScreen(
                         Button(
                             onClick = {
                                 // TODO: Add delete route functionality
+                                mainViewModel.updateShowDeleteRouteDialog(true)
                             },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),

@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -34,6 +35,12 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.DeleteRouteDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.LocationDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NoUserDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NotificationDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StopTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
@@ -50,11 +57,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
 
 @Composable
@@ -84,7 +88,7 @@ fun NavGraph(
         context = context,
         cameraOptions = CameraOptions.Builder()
             .center(Point.fromLngLat(9.0, 61.5))
-            .zoom(4.0)
+            .zoom(5.0)
             .bearing(0.0)
             .pitch(0.0)
             .build()
@@ -92,6 +96,7 @@ fun NavGraph(
 
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -203,9 +208,27 @@ fun NavGraph(
             },
             dialogTitle = "Ingen bruker valgt",
             dialogText = "Du må lage eller velge en bruker",
-            icon = Icons.Default.Info
-        )
+            icon = Icons.Default.Info,
 
+
+            )
+
+    }
+
+    if (mainScreenUIState.showDeleteRouteDialog) {
+        DeleteRouteDialog(
+            onDismissRequest = {
+                mainViewModel.updateShowDeleteRouteDialog(false)
+            },
+            onConfirmation = {
+                profileViewModel.deleteSelectedRoute()
+                mainViewModel.updateShowDeleteRouteDialog(false)
+                navController.popBackStack()
+            },
+            dialogTitle = "Har du lyst til å slette ${routeUIState.selectedRouteMap?.route?.routename}?",
+            dialogText = "Ruten vil bli slettet for alltid!",
+            icon = Icons.Default.Delete
+        )
     }
 
     Scaffold(
@@ -278,14 +301,6 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
-                    )
-                }
-                composable(route = "addroute") {
-                    AddRouteScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                        mapboxViewModel = mapboxViewModel,
                     )
                 }
                 composable(route = "routeinfo") {

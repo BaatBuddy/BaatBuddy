@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
@@ -90,7 +91,9 @@ fun HomeScreen(
                     onDismissRequest = {
                         homeViewModel.hideBottomSheet()
                     },
-                    sheetState = sheetState
+                    sheetState = sheetState,
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = Color.White
                 ) {
                     if (mapboxUIState.routePoints.isNotEmpty()) {
                         locationForecastViewModel.loadWeekdayForecastRoute(

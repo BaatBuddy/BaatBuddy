@@ -18,7 +18,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
-fun SaveUserButton(
+fun SaveRouteButton(
     mainViewModel: MainViewModel,
     navController: NavController,
     modifier: Modifier,
@@ -45,7 +45,7 @@ fun SaveUserButton(
         colors = colors,
     ) {
         Text(
-            text = "Lagre rute!",
+            text = "Lagre rute",
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
         )
