@@ -39,6 +39,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.DeleteRouteDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.LocationDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NoUserDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NotificationDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StopTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
@@ -53,11 +55,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StopTrackingDialog
 
 
 @Composable
