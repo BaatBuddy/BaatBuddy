@@ -167,9 +167,6 @@ class MainViewModel @Inject constructor(
             }
             mapboxRepository.startFollowUserOnMap()
             profileRepository.startTrackingUser()
-            val thread = Thread {
-
-            }
         }
     }
 
