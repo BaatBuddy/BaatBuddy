@@ -95,7 +95,34 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     }
                 }
             )
+
         }
+        , floatingActionButton = { ExtendedFloatingActionButton(
+            onClick = {
+
+                checkInputsUserProfile(
+                    createUserUIState,
+                    invalidMap,
+                    profileViewModel,
+                    navController
+                )
+                keyboardController?.hide()
+
+            }
+        ) {
+
+
+            Text(text = "Lag profil")
+            Spacer(modifier = Modifier.width(6.dp))
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Create profile",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(32.dp)
+            )
+        }}
     ) { paddingValue ->
         Box(
             modifier = Modifier
@@ -429,9 +456,10 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         }),
                         modifier = Modifier
                             .focusRequester(focusRequester)
+                        //  To
                     )
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(60.dp))
 
 
 
@@ -445,32 +473,6 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
 
             }
 
-            ExtendedFloatingActionButton(
-                onClick = {
-
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
-                    keyboardController?.hide()
-
-                }
-            ) {
-
-
-                Text(text = "Lag profil")
-                Spacer(modifier = Modifier.width(6.dp))
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = "Create profile",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(32.dp)
-                )
-            }
 
         }
 
