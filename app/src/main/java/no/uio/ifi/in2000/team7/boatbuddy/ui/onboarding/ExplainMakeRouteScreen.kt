@@ -9,14 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ExplainThisScreen() {
+fun ExplainMakeRouteScreen() {
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .padding(paddingValue)
         ) {
             Column {
-                Text(text = "THISSCREEN")
+                // picture with explaination
+                // TODO image
+
+                // more explanation?
             }
         }
     }

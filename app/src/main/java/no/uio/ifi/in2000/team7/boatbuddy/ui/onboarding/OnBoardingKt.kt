@@ -49,7 +49,7 @@ fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainView
                     ) {
                         Text(text = "Forrige")
                     }
-                    if (onBoardingUIState.index == 2) {
+                    if (onBoardingUIState.index == 6) {
                         Button(
                             onClick = {
                                 mainViewModel.updateShowOnBoarding(false)
@@ -87,9 +87,13 @@ fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainView
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (onBoardingUIState.index) {
-                    0 -> ExplainHomeScreen()
-                    1 -> ExplainWeatherScreen()
-                    2 -> ExplainThisScreen()
+                    0 -> WelcomeScreen()
+                    1 -> MakeUserScreen()
+                    2 -> ExplainMakeRouteScreen()
+                    3 -> ExplainGenerateRouteScreen()
+                    4 -> ExplainWeatherScreen()
+                    5 -> ExplainTrackingScreen()
+                    6 -> FinishOnBoardingScreen()
                 }
             }
 

@@ -9,17 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ExplainWeatherScreen() {
+fun FinishOnBoardingScreen() {
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .padding(paddingValue)
         ) {
             Column {
-                // image of weather screen with explanations
-                // TODO image
-
-                // more explanations?
+                // Try to make your first route!
+                Text(text = "Prøv å lag din først rute!")
             }
         }
     }

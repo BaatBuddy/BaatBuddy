@@ -9,17 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ExplainWeatherScreen() {
+fun ExplainGenerateRouteScreen() {
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .padding(paddingValue)
         ) {
             Column {
-                // image of weather screen with explanations
+                // picture of bottomsheet
                 // TODO image
 
-                // more explanations?
+                // more explanation??
             }
         }
     }

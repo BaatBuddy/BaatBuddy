@@ -9,17 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ExplainWeatherScreen() {
+fun WelcomeScreen() {
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .padding(paddingValue)
         ) {
             Column {
-                // image of weather screen with explanations
-                // TODO image
+                // welcome text
+                Text(text = "Velkommen")
 
-                // more explanations?
+                // this is boat buddy text
+                Text(text = "Båtbuddy er en app som forenkler båtplanleggingen for båtførere i norge")
+                
+
             }
         }
     }

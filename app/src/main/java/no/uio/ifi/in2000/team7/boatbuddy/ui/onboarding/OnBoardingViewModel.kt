@@ -42,11 +42,11 @@ class OnBoardingViewModel : ViewModel() {
         }
     }
 
-    fun updateProgressValue() {
-        viewModelScope.launch(Dispatchers.IO) {
+    private fun updateProgressValue() {
+        viewModelScope.launch {
             _onBoardingUIState.update {
                 it.copy(
-                    progressValue = _onBoardingUIState.value.index.toFloat() / 2
+                    progressValue = _onBoardingUIState.value.index.toFloat() / 6
                 )
             }
 

@@ -9,14 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ExplainHomeScreen() {
+fun ExplainTrackingScreen() {
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .padding(paddingValue)
         ) {
             Column {
-                Text(text = "HOMESCREEN")
+                // short explanation on how the track user button works
+                // TODO image of track user
+
+                // explanation
             }
         }
     }
