@@ -28,8 +28,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
@@ -73,19 +71,24 @@ fun NavGraph(
     // Internet connectivity
     val connectivityObserver = NetworkConnectivityObserver(context)
     val status by connectivityObserver.observe().collectAsState(
-        initial = NetworkConnectivityObserver.Status.Available
+        initial = NetworkConnectivityObserver.Status.NoStatus
     )
-    //Log.d("InternetStatus", "$status")
 
-    mapboxViewModel.initialize(
-        context = context,
-        cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(9.0, 61.5))
-            .zoom(4.0)
-            .bearing(0.0)
-            .pitch(0.0)
-            .build()
-    )
+    /*LaunchedEffect(status) {
+        Log.d("InternetStatus", "$status")
+    }
+
+    if (status == NetworkConnectivityObserver.Status.Available) {
+        mapboxViewModel.initialize(
+            context = context,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(4.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+    }*/
 
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
@@ -93,7 +96,7 @@ fun NavGraph(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // If user does not have internet access, show snackbar
+    /*// If user does not have internet access, show snackbar
     LaunchedEffect(status) {
         if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
             scope.launch {
@@ -103,7 +106,7 @@ fun NavGraph(
                 )
             }
         }
-    }
+    }*/
 
     // if route is either too long or points is not close enough to the water
     LaunchedEffect(mapboxUIState.lastRouteData) {
@@ -112,11 +115,12 @@ fun NavGraph(
         ) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = if (status == NetworkConnectivityObserver.Status.Available) {
+                    /*message = if (status == NetworkConnectivityObserver.Status.Available) {
                         "Ruten er for lang eller inneholder punkter på land"
                     } else {
                         "Kan ikke generere rute uten tilgang til Internett"
-                    },
+                    },*/
+                    message = "Ruten er for lang eller inneholder punkter på land",
                     duration = SnackbarDuration.Short
                 )
             }
@@ -236,6 +240,7 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
+                        status = status
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -247,6 +252,7 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         mapboxViewModel = mapboxViewModel,
                         navController = navController,
+                        status = status
                     )
                 }
                 composable(route = Screen.ProfileScreen.route) {
@@ -259,13 +265,13 @@ fun NavGraph(
                 composable(route = "createuser") {
                     CreateUserScreen(
                         profileViewModel = profileViewModel,
-                        navController = navController
+                        navController = navController,
                     )
                 }
                 composable(route = "createboat") {
                     CreateBoatScreen(
                         profileViewModel = profileViewModel,
-                        navController = navController
+                        navController = navController,
                     )
                 }
                 composable(route = Screen.RouteScreen.route) {
@@ -273,6 +279,7 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
+                        status = status
                     )
                 }
                 composable(route = "addroute") {
@@ -281,6 +288,7 @@ fun NavGraph(
                         navController = navController,
                         mainViewModel = mainViewModel,
                         mapboxViewModel = mapboxViewModel,
+                        status = status
                     )
                 }
                 composable(route = "routeinfo") {
@@ -289,22 +297,22 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                         profileViewModel = profileViewModel,
                         locationForecastViewModel = locationForecastViewModel,
-
-                        )
+                        status = status
+                    )
                 }
                 composable(route = "saveroute") {
                     SaveRouteScreen(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
-                        mapboxViewModel = mapboxViewModel
-
+                        mapboxViewModel = mapboxViewModel,
+                        status = status
                     )
                 }
                 composable(route = "selectboat") {
                     SelectBoatScreen(
                         profileViewModel = profileViewModel,
-                        navController = navController
+                        navController = navController,
                     )
                 }
                 composable(route = "selectweather") {

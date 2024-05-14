@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
@@ -59,6 +60,7 @@ fun InfoScreen(
     profileViewModel: ProfileViewModel,
     mapboxViewModel: MapboxViewModel,
     navController: NavController,
+    status: NetworkConnectivityObserver.Status
 ) {
 
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()

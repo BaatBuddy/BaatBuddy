@@ -25,8 +25,9 @@ import javax.inject.Inject
 
 
 data class MapboxUIState(
-    val mapView: MapView,
-    val cameraOptions: CameraOptions,
+
+    val mapView: MapView? = null,
+    val cameraOptions: CameraOptions? = null,
 
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
     val alertVisible: Boolean = false,
@@ -49,30 +50,24 @@ class MapboxViewModel @Inject constructor(
     private val weatherCalculatorRepository: WeatherCalculatorRepository
 ) : ViewModel() {
 
+    //private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
+    //lateinit var mapboxUIState: StateFlow<MapboxUIState>
 
-    private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
-    lateinit var mapboxUIState: StateFlow<MapboxUIState>
+    private var _mapboxUIState: MutableStateFlow<MapboxUIState> = MutableStateFlow(MapboxUIState())
+    var mapboxUIState: StateFlow<MapboxUIState> = _mapboxUIState
 
     private var initialized = false
-
-    /*private val _undoClick = MutableLiveData(false)
-    val undoClick: LiveData<Boolean> = _undoClick
-
-    private val _redoClick = MutableLiveData(false)
-    val redoClick: LiveData<Boolean> = _redoClick*/
 
     @MainThread
     fun initialize(context: Context, cameraOptions: CameraOptions) {
         if (initialized) return
         initialized = true
         createMap(context = context, cameraOptions = cameraOptions)
-
+        //Log.d("InitializeCall", "initialize map")
     }
-
 
     private fun createMap(context: Context, cameraOptions: CameraOptions) {
 
-        // mapview setup
         val mapView =
             mapboxRepository.createMap(
                 context = context,

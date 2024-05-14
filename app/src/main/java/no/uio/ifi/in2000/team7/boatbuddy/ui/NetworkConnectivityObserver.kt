@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class NetworkConnectivityObserver(val context: Context) {
     enum class Status {
-        Available, Unavailable, Losing, Lost
+        NoStatus, Available, Unavailable, Losing, Lost
     }
 
     private val connectivityManager =
@@ -48,5 +48,5 @@ class NetworkConnectivityObserver(val context: Context) {
             }
         }.distinctUntilChanged()
     }
-    
+
 }

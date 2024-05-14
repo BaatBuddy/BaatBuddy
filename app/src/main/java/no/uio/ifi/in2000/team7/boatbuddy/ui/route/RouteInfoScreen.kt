@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
@@ -44,7 +45,8 @@ fun RouteInfoScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
-    locationForecastViewModel: LocationForecastViewModel
+    locationForecastViewModel: LocationForecastViewModel,
+    status: NetworkConnectivityObserver.Status
 ) {
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
 

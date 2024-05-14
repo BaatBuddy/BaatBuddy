@@ -17,12 +17,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
@@ -40,6 +44,7 @@ fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
     infoScreenViewModel: InfoScreenViewModel,
+    status: NetworkConnectivityObserver.Status
 ) {
 
     // fetches all alerts (no arguments)
@@ -51,6 +56,25 @@ fun HomeScreen(
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
+
+    val context = LocalContext.current
+
+    /*LaunchedEffect(status) {
+        Log.d("InternetStatus", "$status")
+    }*/
+
+    // Initialize map
+    if (status == NetworkConnectivityObserver.Status.Available) {
+        mapboxViewModel.initialize(
+            context = context,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(4.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+    }
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
@@ -78,11 +102,14 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValue)
         ) {
-            AndroidView(
-                factory = { _ ->
-                    mapboxUIState.mapView // Her lages kartet
-                }
-            )
+
+            if (mapboxUIState.mapView != null) { // mapboxUIState.mapView can only be null if we didn't have internet access upon opening the app
+                AndroidView(
+                    factory = { _ ->
+                        mapboxUIState.mapView!! // Her lages kartet
+                    }
+                )
+            }
 
             if (homeScreenUIState.showBottomSheet) {
 
