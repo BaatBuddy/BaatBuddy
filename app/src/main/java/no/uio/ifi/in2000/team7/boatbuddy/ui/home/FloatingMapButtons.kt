@@ -54,7 +54,7 @@ fun FloatingMapButtons(
 
         ) {
             Icon(
-                imageVector = Icons.Filled.Info,
+                painter = painterResource(id = R.drawable.instruction_icon),
                 contentDescription = "info"
             )
         }
@@ -72,7 +72,7 @@ fun FloatingMapButtons(
             if (mapboxUIState.alertVisible) MaterialTheme.colorScheme.secondary
             else MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .padding(top = 8.dp)
+                .padding(top = 16.dp)
 
         ) {
             Icon(
@@ -89,7 +89,7 @@ fun FloatingMapButtons(
             contentColor = MaterialTheme.colorScheme.primary,
             shape = CircleShape,
             modifier = Modifier
-                .padding(vertical = 8.dp)
+                .padding(vertical = 16.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.center_user_icon),
