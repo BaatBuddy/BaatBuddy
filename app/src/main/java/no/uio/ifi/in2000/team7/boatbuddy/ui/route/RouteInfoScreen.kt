@@ -133,6 +133,7 @@ fun RouteInfoScreen(
                         Button(
                             onClick = {
                                 // TODO: Add delete route functionality
+                                mainViewModel.updateShowDeleteRouteDialog(true)
                             },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),

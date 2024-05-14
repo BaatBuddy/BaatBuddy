@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -90,6 +91,7 @@ fun NavGraph(
 
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -202,9 +204,24 @@ fun NavGraph(
             icon = Icons.Default.Info,
 
 
+            )
 
+    }
+
+    if (mainScreenUIState.showDeleteRouteDialog) {
+        DeleteRouteDialog(
+            onDismissRequest = {
+                mainViewModel.updateShowDeleteRouteDialog(false)
+            },
+            onConfirmation = {
+                profileViewModel.deleteSelectedRoute()
+                mainViewModel.updateShowDeleteRouteDialog(false)
+                navController.popBackStack()
+            },
+            dialogTitle = "Har du lyst til å slette ${routeUIState.selectedRouteMap?.route?.routename}?",
+            dialogText = "Ruten vil bli slettet for alltid!",
+            icon = Icons.Default.Delete
         )
-
     }
 
     Scaffold(
