@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
@@ -7,6 +8,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.DateScore
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
+import java.math.RoundingMode
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -116,14 +118,82 @@ object WeatherScore {
         timeWeatherData: List<TimeWeatherData>,
         weatherPreferences: WeatherPreferences
     ): Double {
-        return timeWeatherData.sumOf {
+        val formattedTWD = selectWeatherDataFromDay(timeWeatherData)
+        Log.i("ASDASD", formattedTWD.toString())
+        return formattedTWD.sumOf {
             calculateHour(
                 it,
                 weatherPreferences,
                 // it == timeWeatherData.last()
             )
-        } / timeWeatherData.size
+        } / formattedTWD.size
 
+    }
+
+    fun selectWeatherDataFromDay(twd: List<TimeWeatherData>): List<TimeWeatherData> {
+        if (twd.size > 4) {
+            return twd.map {
+                it.copy(
+                    time = when (it.time.substring(11, 13).toInt()) {
+                        in 0..5 -> "0-5"
+                        in 6..11 -> "6-11"
+                        in 12..17 -> "12-17"
+                        in 18..23 -> "18-23"
+                        else -> "outside"
+                    }
+                )
+            }.groupBy { it.time }.map { entry ->
+                // could be in a function
+                TimeWeatherData(
+                    lat = entry.value.first().lat,
+                    lon = entry.value.first().lon,
+                    time = entry.value.first().time,
+                    waveHeight = if (entry.value.all { it.waveHeight != null }) getAvg(
+                        entry.value.sumOf { it.waveHeight!! },
+                        entry.value.size
+                    ) else null,
+                    waterTemperature = if (entry.value.all { it.waterTemperature != null }) getAvg(
+                        entry.value.sumOf { it.waterTemperature!! },
+                        entry.value.size
+                    ) else null,
+                    waterDirection = if (entry.value.all { it.waterDirection != null }) getAvg(
+                        entry.value.sumOf { it.waterDirection!! },
+                        entry.value.size
+                    ) else null,
+                    windSpeed = getAvg(entry.value.sumOf { it.windSpeed }, entry.value.size),
+                    windSpeedOfGust = getAvg(
+                        entry.value.sumOf { it.windSpeedOfGust },
+                        entry.value.size
+                    ),
+                    airTemperature = getAvg(
+                        entry.value.sumOf { it.airTemperature },
+                        entry.value.size
+                    ),
+                    cloudAreaFraction = getAvg(
+                        entry.value.sumOf { it.cloudAreaFraction },
+                        entry.value.size
+                    ),
+                    fogAreaFraction = getAvg(
+                        entry.value.sumOf { it.fogAreaFraction },
+                        entry.value.size
+                    ),
+                    relativeHumidity = getAvg(
+                        entry.value.sumOf { it.relativeHumidity },
+                        entry.value.size
+                    ),
+                    precipitationAmount = getAvg(
+                        entry.value.sumOf { it.precipitationAmount },
+                        entry.value.size
+                    ),
+                    symbolCode = entry.value[entry.value.size.floorDiv(2)].symbolCode
+                )
+            }
+        }
+        return twd
+    }
+
+    fun getAvg(sum: Double, size: Int): Double {
+        return (sum / size).toBigDecimal().setScale(1, RoundingMode.DOWN).toDouble()
     }
 
     // calculates the amount of points based on the length in km
@@ -158,41 +228,32 @@ object WeatherScore {
     }
 
     // pick out points based on the length of the path and distance between each point (40km default)
-    fun selectPointsFromPath(points: List<Point>, distanceBetweenPoint: Double): List<Point> {
+    fun selectPointsFromPath(points: List<Point>): List<Point> {
         if (points.size in 1..2) return points
         val distance = distanceInPath(points)
-        val nBetweenPoints =
-            max(
-                distance.div(distanceBetweenPoint).toInt(),
-                2
-            ) // at least 1 point between start and end
-        val distanceBetweenPoints = distance / nBetweenPoints
+
         val outPoints = mutableListOf(points.first())
 
         var pointer = points.first()
         points.fold(0.0) { total, point ->
             val distanceFromLast = distanceBetweenPoints(pointer, point)
             val addedDistance = total + distanceFromLast
-            if (addedDistance == distanceBetweenPoints) {
-                outPoints.add(point)
-                pointer = point
-                0.0
-            } else if (addedDistance > distanceBetweenPoints) {
+            if (addedDistance > distance / 2) {
                 val intermediatePoint = intermediatePoint(
                     first = pointer,
                     second = point,
-                    nKmFromFirst = distanceFromLast - (addedDistance - distanceBetweenPoints)
+                    nKmFromFirst = addedDistance - total
                 )
                 outPoints.add(intermediatePoint)
-                pointer = point
-                addedDistance - distanceBetweenPoints
+                outPoints.add(points.last())
+                return outPoints
             } else {
                 pointer = point
                 addedDistance
             }
         }
         outPoints.add(points.last())
-        return listOf(outPoints.first())
+        return outPoints
 
     }
 
