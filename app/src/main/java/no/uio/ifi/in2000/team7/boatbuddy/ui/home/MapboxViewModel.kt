@@ -49,10 +49,7 @@ class MapboxViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
     private val weatherCalculatorRepository: WeatherCalculatorRepository
 ) : ViewModel() {
-
-    //private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
-    //lateinit var mapboxUIState: StateFlow<MapboxUIState>
-
+    
     private var _mapboxUIState: MutableStateFlow<MapboxUIState> = MutableStateFlow(MapboxUIState())
     var mapboxUIState: StateFlow<MapboxUIState> = _mapboxUIState
 

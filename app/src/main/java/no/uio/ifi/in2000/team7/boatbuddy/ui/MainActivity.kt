@@ -7,6 +7,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -49,6 +52,12 @@ class MainActivity : ComponentActivity() {
 
             BoatbuddyTheme {
                 navController = rememberNavController()
+                val context = LocalContext.current
+                // Internet connectivity
+                val connectivityObserver = NetworkConnectivityObserver(context)
+                val status by connectivityObserver.observe().collectAsState(
+                    initial = NetworkConnectivityObserver.Status.NoStatus
+                )
                 NavGraph(
                     navController = navController,
                     mainViewModel = mainViewModel,
@@ -59,10 +68,9 @@ class MainActivity : ComponentActivity() {
                     homeViewModel = homeViewModel,
                     infoScreenViewModel = infoScreenViewModel,
                     userLocationViewModel = userLocationViewModel,
+                    status = status
                 )
-
             }
-
         }
 
         when {

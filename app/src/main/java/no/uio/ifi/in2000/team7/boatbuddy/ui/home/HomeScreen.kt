@@ -1,6 +1,8 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -56,25 +59,9 @@ fun HomeScreen(
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
-
     val context = LocalContext.current
 
-    /*LaunchedEffect(status) {
-        Log.d("InternetStatus", "$status")
-    }*/
-
-    // Initialize map
-    if (status == NetworkConnectivityObserver.Status.Available) {
-        mapboxViewModel.initialize(
-            context = context,
-            cameraOptions = CameraOptions.Builder()
-                .center(Point.fromLngLat(9.0, 61.5))
-                .zoom(4.0)
-                .bearing(0.0)
-                .pitch(0.0)
-                .build()
-        )
-    }
+    initializeMap(mapboxViewModel, status, context)
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
@@ -175,5 +162,31 @@ fun HomeScreen(
             featureData = homeScreenUIState.showWeatherAlertInfoCard!!
         )
     }
+}
+
+@Composable
+fun initializeMap(
+    mapboxViewModel: MapboxViewModel,
+    status: NetworkConnectivityObserver.Status,
+    context: Context
+) {
+
+    LaunchedEffect(status) {
+        Log.d("InternetStatus", "$status")
+    }
+
+    // Initialize map
+    if (status == NetworkConnectivityObserver.Status.Available) {
+        mapboxViewModel.initialize(
+            context = context,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(4.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+    }
+
 }
 

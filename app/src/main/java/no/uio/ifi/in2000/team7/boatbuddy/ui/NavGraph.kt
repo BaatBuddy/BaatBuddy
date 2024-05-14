@@ -64,32 +64,10 @@ fun NavGraph(
     homeViewModel: HomeViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
+    status: NetworkConnectivityObserver.Status
 ) {
 
     val context = LocalContext.current
-
-    // Internet connectivity
-    val connectivityObserver = NetworkConnectivityObserver(context)
-    val status by connectivityObserver.observe().collectAsState(
-        initial = NetworkConnectivityObserver.Status.NoStatus
-    )
-
-    /*LaunchedEffect(status) {
-        Log.d("InternetStatus", "$status")
-    }
-
-    if (status == NetworkConnectivityObserver.Status.Available) {
-        mapboxViewModel.initialize(
-            context = context,
-            cameraOptions = CameraOptions.Builder()
-                .center(Point.fromLngLat(9.0, 61.5))
-                .zoom(4.0)
-                .bearing(0.0)
-                .pitch(0.0)
-                .build()
-        )
-    }*/
-
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
