@@ -7,6 +7,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecast
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScorePath
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.calculateScoreWeekDay
+import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.getAvg
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.selectPointsFromPath
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
@@ -30,10 +31,8 @@ class WeatherCalculatorRepository @Inject constructor(
 
 
     suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
-        Log.i("ASDASD", "FETCH PATH WEATHER")
-        Log.i("ASDASD", points.toString())
 
-        return selectPointsFromPath(points, 40.0).mapNotNull { point ->
+        return selectPointsFromPath(points).mapNotNull { point ->
             val lat = point.latitude().toString()
             val lon = point.longitude().toString()
 
@@ -129,16 +128,11 @@ class WeatherCalculatorRepository @Inject constructor(
         }
     }
 
-    private fun getAvg(sum: Double, size: Int): Double {
-        return (sum / size).toBigDecimal().setScale(1, RoundingMode.DOWN).toDouble()
-    }
-
     suspend fun getWeekdayForecastData(
         points: List<Point>
     ): WeekForecast {
         val pathWeatherData = fetchPathWeatherData(points = points).take(7) // take out 7 days
 
-        // TODO get weather preferences from database
         val weatherPreferences = userDao.getSelectedUser()?.preferences
 
         val dateScores = calculateScorePath(
@@ -204,6 +198,7 @@ class WeatherCalculatorRepository @Inject constructor(
             days = weekForecast.days.map { entry ->
                 entry.key to entry.value.copy(
                     dayScore = dateScores.firstOrNull { dateScore ->
+
                         dateScore.date == entry.key
                     }
                 )
