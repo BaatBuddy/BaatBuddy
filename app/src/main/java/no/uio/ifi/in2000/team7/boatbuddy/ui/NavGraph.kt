@@ -56,8 +56,8 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StopTrackingDialog
 
 
 @Composable
@@ -297,14 +297,6 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
-                    )
-                }
-                composable(route = "addroute") {
-                    AddRouteScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                        mapboxViewModel = mapboxViewModel,
                     )
                 }
                 composable(route = "routeinfo") {

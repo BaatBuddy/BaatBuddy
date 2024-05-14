@@ -81,7 +81,7 @@ fun SaveRouteScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Lagre generert rute",
+                        text = "Lagre rute",
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -98,6 +98,18 @@ fun SaveRouteScreen(
                         )
                     }
                 },
+                actions = {
+                    Button(
+                        onClick = {
+                            mainViewModel.showBottomBar()
+                            mainViewModel.stopFollowUserOnMap()
+                            mainViewModel.stopTrackingUser()
+                            navController.popBackStack()
+                        }
+                    ) {
+                        Text(text = "FORKAST")
+                    }
+                }
             )
         }
     ) { paddingValues ->

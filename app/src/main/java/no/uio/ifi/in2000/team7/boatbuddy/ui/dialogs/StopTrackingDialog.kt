@@ -1,19 +1,26 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui.route
+package no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,23 +35,18 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.AlertNotificationCache
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.UpdateDataWorker
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
-import java.util.concurrent.TimeUnit
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
-fun StartTrackingDialog(
+fun StopTrackingDialog(
     navController: NavController,
     mainViewModel: MainViewModel,
+    profileViewModel: ProfileViewModel,
 ) {
+    val context = LocalContext.current
+
     Dialog(
         onDismissRequest = {
             mainViewModel.hideDialog()
@@ -54,7 +56,6 @@ fun StartTrackingDialog(
             dismissOnClickOutside = true
         )
     ) {
-        val context = LocalContext.current
 
         Card(
             modifier = Modifier
@@ -74,7 +75,7 @@ fun StartTrackingDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Vil du starte sporing av turen din?",
+                    text = "Vil du avslutte sporing av turen din?",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -84,8 +85,10 @@ fun StartTrackingDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Button(
@@ -95,6 +98,7 @@ fun StartTrackingDialog(
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp),
+
                         shape = RoundedCornerShape(24.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
@@ -111,46 +115,16 @@ fun StartTrackingDialog(
                             fontWeight = FontWeight.Bold
                         )
                     }
-
                     Button(
                         onClick = {
-                            if (navController.currentDestination?.route != Screen.HomeScreen.route) {
-                                navController.navigate(Screen.HomeScreen.route)
-                                mainViewModel.selectScreen(0)
-                            }
+                            mainViewModel.hideBottomBar()
+                            navController.navigate("saveroute")
 
                             mainViewModel.hideDialog()
-                            mainViewModel.startFollowUserOnMap()
 
-                            AlertNotificationCache.points = mutableListOf()
+                            profileViewModel.updateCurrentRouteTime()
 
-                            Intent(context, LocationService::class.java).apply {
-                                action = LocationService.ACTION_START
-                                context.startService(this)
-                            }
-
-                            val constraints = Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .build()
-
-
-                            val uploadWorkRequest: PeriodicWorkRequest =
-                                PeriodicWorkRequest.Builder(
-                                    UpdateDataWorker::class.java,
-                                    15,
-                                    TimeUnit.MINUTES
-                                )
-                                    .setConstraints(constraints)
-                                    .build()
-
-                            val workManager = WorkManager.getInstance(context)
-                            workManager
-                                .enqueueUniquePeriodicWork(
-                                    "test",
-                                    ExistingPeriodicWorkPolicy.KEEP,
-                                    uploadWorkRequest,
-                                )
-
+                            WorkManager.getInstance(context).cancelAllWork()
                         },
                         modifier = Modifier
                             .weight(1f)
@@ -166,14 +140,16 @@ fun StartTrackingDialog(
                         )
                     ) {
                         Text(
-                            text = "Start",
+                            text = "Ferdig",
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                            ,color = Color.White
+                            fontWeight = FontWeight.Bold, color = Color.White
                         )
                     }
+
                 }
             }
         }
+
+
     }
 }
