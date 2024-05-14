@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs
 
 
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 
-
 @Composable
 fun NoUserDialog(
     onDismissRequest: () -> Unit,
@@ -32,7 +31,8 @@ fun NoUserDialog(
     dialogText: String,
     icon: ImageVector,
 ) {
-    AlertDialog(onDismissRequest = onDismissRequest,
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
 
         icon = {
             Icon(
@@ -43,7 +43,7 @@ fun NoUserDialog(
                     .size(60.dp)
                     .padding(bottom = 5.dp),
 
-            )
+                )
         },
 
         title = {
@@ -57,7 +57,8 @@ fun NoUserDialog(
 
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = dialogText,
@@ -74,15 +75,20 @@ fun NoUserDialog(
                 onClick = onConfirmation,
                 modifier = Modifier,
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.onSurfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant, disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant, disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant) ,
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
                 //modifier = Modifier.weight(1f)
             ) {
 
-                    Text(
-                        text = "Lag profil",
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                Text(
+                    text = "Lag profil",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
 
             }
         },
@@ -90,16 +96,23 @@ fun NoUserDialog(
         dismissButton = {
             Button(
                 onClick = onDismissRequest,
-                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.secondaryContainer, disabledContentColor = MaterialTheme.colorScheme.secondaryContainer, disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer) ,
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.secondaryContainer,
+                    disabledContentColor = MaterialTheme.colorScheme.secondaryContainer,
+                    disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
                 //modifier = Modifier.weight(1f)
                 shape = RoundedCornerShape(8.dp),
             ) {
 
-                Text(text = "Avbryt",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(
+                    text = "Avbryt",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             }
         },
         containerColor = MaterialTheme.colorScheme.surface,
 
-    )
+        )
 }

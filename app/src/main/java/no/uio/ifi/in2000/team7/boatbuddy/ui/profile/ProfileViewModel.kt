@@ -141,6 +141,7 @@ class ProfileViewModel @Inject constructor(
                 safetyDepth = safetyDepth,
                 safetyHeight = safetyHeight
             )
+            selectUser(username)
         }
     }
 

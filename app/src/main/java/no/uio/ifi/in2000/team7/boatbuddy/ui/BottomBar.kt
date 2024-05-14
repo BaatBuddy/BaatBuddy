@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -62,7 +63,6 @@ fun BottomBar(
                                 mainViewModel.showFinishDialog()
                             }
                         } else {
-                            // TODO snackbar: "need to select a profile"
                             mainViewModel.showNoUserDialog()
                         }
                     }
@@ -90,7 +90,13 @@ fun BottomBar(
                         )
                     }
                 },
-                label = { Text(text = item.label) }
+                label = {
+                    Text(
+                        text = item.label,
+                        color = if (mainScreenUIState.selectedScreen == index && item != Screen.TrackingScreen) MaterialTheme.colorScheme.secondaryContainer
+                        else MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             )
 
         }

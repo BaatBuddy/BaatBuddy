@@ -133,7 +133,6 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
             Column {
 
 
-
                 Spacer(modifier = Modifier.height(10.dp))
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -462,13 +461,7 @@ fun CreateUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                     Spacer(modifier = Modifier.height(60.dp))
 
 
-
-
-            }
-
-
-
-
+                }
 
 
             }
@@ -511,6 +504,7 @@ fun checkInputsUserProfile(
             safetyDepth = safetyDepth,
             safetyHeight = safetyHeight
         )
+
         profileViewModel.clearCreateProfile()
         navController.popBackStack()
     }
