@@ -9,6 +9,7 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -198,7 +199,10 @@ fun NavGraph(
             },
             dialogTitle = "Ingen bruker valgt",
             dialogText = "Du må lage eller velge en bruker",
-            icon = Icons.Default.Info
+            icon = Icons.Default.Info,
+
+
+
         )
 
     }

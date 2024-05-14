@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -60,7 +61,7 @@ fun SwipeUpContent(
             .padding(8.dp)
     ) {
         Text(
-            text = "De 4 beste dagene for din reise",
+            text = "De beste dagene for din reise",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -126,7 +127,7 @@ fun SwipeUpContent(
                 modifier = Modifier
                     .horizontalScroll(rememberScrollState())
             ) {
-                weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score }.take(4)
+                weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score }
                     .forEach { dayForecast ->
                         NavigatingWeatherCard(
                             dayForecast = dayForecast,
@@ -154,6 +155,7 @@ fun SwipeUpContent(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(25.dp))
     }
 }
 

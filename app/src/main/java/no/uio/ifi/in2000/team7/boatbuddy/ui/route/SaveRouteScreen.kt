@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -107,13 +109,15 @@ fun SaveRouteScreen(
             OutlinedTextField(
                 value = routeScreenUIState.routeName,
                 onValueChange = { profileViewModel.updateRouteName(it) },
+                maxLines = 1,
                 label = {
                     Text(
                         text = "Navn på turen",
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -127,7 +131,10 @@ fun SaveRouteScreen(
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                maxLines = 5,
+
             )
 
             Spacer(modifier = Modifier.height(24.dp))

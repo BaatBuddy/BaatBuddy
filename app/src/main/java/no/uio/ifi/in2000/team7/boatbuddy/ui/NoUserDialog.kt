@@ -2,11 +2,14 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,10 +38,11 @@ fun NoUserDialog(
             Icon(
                 imageVector = icon,
                 contentDescription = "Dialog Icon",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                tint = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier
                     .size(60.dp)
-                    .padding(bottom = 5.dp)
+                    .padding(bottom = 5.dp),
+
             )
         },
 
@@ -64,37 +68,38 @@ fun NoUserDialog(
             }
 
         },
+
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = onConfirmation,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
+                modifier = Modifier,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.onSurfaceVariant, contentColor = MaterialTheme.colorScheme.onSurfaceVariant, disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant, disabledContainerColor = MaterialTheme.colorScheme.onSurfaceVariant) ,
                 //modifier = Modifier.weight(1f)
             ) {
 
-
-
                     Text(
-                        text = "Lag bruker",
-                        fontWeight = FontWeight.Bold
+                        text = "Lag profil",
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
 
             }
         },
+
         dismissButton = {
-            TextButton(
+            Button(
                 onClick = onDismissRequest,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                ),
+                colors = ButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.secondaryContainer, disabledContentColor = MaterialTheme.colorScheme.secondaryContainer, disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer) ,
                 //modifier = Modifier.weight(1f)
+                shape = RoundedCornerShape(8.dp),
             ) {
-                Text("Avbryt")
+
+                Text(text = "Avbryt",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         },
-        shape = RoundedCornerShape(16.dp),
         containerColor = MaterialTheme.colorScheme.surface,
-        tonalElevation = 6.dp
+
     )
 }

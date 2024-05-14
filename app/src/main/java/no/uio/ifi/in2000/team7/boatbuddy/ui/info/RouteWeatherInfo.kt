@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -55,13 +58,19 @@ fun RouteWeatherInfo(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
             .fillMaxWidth()
+            ,
+
     ) {
-        Box {
+        Box (modifier = Modifier.padding(16.dp)
+        ){
             AsyncImage(
                 model = routeMap.mapURL,
+
                 contentDescription = "Map with path",
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                ,
                 onError = {
                     loading = false
                 },
@@ -69,13 +78,18 @@ fun RouteWeatherInfo(
                     loading = false
                 },
                 contentScale = ContentScale.FillWidth
+
             )
+
+
+
+
             SaveUserButton(
                 mainViewModel = mainViewModel,
                 navController = navController,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(8.dp),
+                    .padding(2.dp),
                 profileViewModel = profileViewModel,
                 mapboxViewModel = mapboxViewModel,
                 ButtonDefaults.buttonColors(
