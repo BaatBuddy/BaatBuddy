@@ -354,6 +354,8 @@ fun NavGraph(
         OnBoarding(
             onBoardingViewModel = onBoardingViewModel,
             mainViewModel = mainViewModel,
+            profileViewModel = profileViewModel,
+            navController = navController,
         )
     }
 }

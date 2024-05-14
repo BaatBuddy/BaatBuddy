@@ -17,10 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
-fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainViewModel) {
+fun OnBoarding(
+    onBoardingViewModel: OnBoardingViewModel,
+    mainViewModel: MainViewModel,
+    profileViewModel: ProfileViewModel,
+    navController: NavController,
+) {
 
     val onBoardingUIState by onBoardingViewModel.onBoardingUIState.collectAsState()
 
@@ -39,15 +46,16 @@ fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainView
                     modifier = Modifier
                         .padding(8.dp)
                 ) {
-                    Button(
-                        onClick = {
-                            onBoardingViewModel.goToLastScreen()
-                        },
-                        modifier = Modifier
-                            .weight(1f),
-                        enabled = onBoardingUIState.index != 0
-                    ) {
-                        Text(text = "Forrige")
+                    if (onBoardingUIState.index != 0) {
+                        Button(
+                            onClick = {
+                                onBoardingViewModel.goToLastScreen()
+                            },
+                            modifier = Modifier
+                                .weight(1f),
+                        ) {
+                            Text(text = "Forrige")
+                        }
                     }
                     if (onBoardingUIState.index == 6) {
                         Button(
@@ -60,6 +68,17 @@ fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainView
                             Text(text = "Ferdig")
                         }
 
+                    } else if (onBoardingUIState.index == 1) {
+                        Button(
+                            onClick = {
+                                onBoardingViewModel.goToNextScreen()
+                            },
+                            modifier = Modifier
+                                .weight(1f),
+                            enabled = onBoardingUIState.isDoneCreatingUser
+                        ) {
+                            Text(text = "Neste")
+                        }
                     } else {
                         Button(
                             onClick = {
@@ -68,7 +87,7 @@ fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainView
                             modifier = Modifier
                                 .weight(1f),
                         ) {
-                            Text(text = "Neste")
+                            Text(text = if (onBoardingUIState.index == 0) "Kom i gang!" else "Neste")
                         }
                     }
                 }
@@ -88,7 +107,12 @@ fun OnBoarding(onBoardingViewModel: OnBoardingViewModel, mainViewModel: MainView
             ) {
                 when (onBoardingUIState.index) {
                     0 -> WelcomeScreen()
-                    1 -> MakeUserScreen()
+                    1 -> MakeUserScreen(
+                        profileViewModel = profileViewModel,
+                        navController = navController,
+                        onBoardingViewModel = onBoardingViewModel
+                    )
+
                     2 -> ExplainMakeRouteScreen()
                     3 -> ExplainGenerateRouteScreen()
                     4 -> ExplainWeatherScreen()

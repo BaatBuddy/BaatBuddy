@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,6 +11,7 @@ import kotlinx.coroutines.launch
 data class OnBoardingUIState(
     val index: Int = 0,
     val progressValue: Float = 0f,
+    val isDoneCreatingUser: Boolean = false,
 )
 
 class OnBoardingViewModel : ViewModel() {
@@ -50,6 +50,16 @@ class OnBoardingViewModel : ViewModel() {
                 )
             }
 
+        }
+    }
+
+    fun updateIsDoneCreatingUser(state: Boolean) {
+        viewModelScope.launch {
+            _onBoardingUIState.update {
+                it.copy(
+                    isDoneCreatingUser = state
+                )
+            }
         }
     }
 }

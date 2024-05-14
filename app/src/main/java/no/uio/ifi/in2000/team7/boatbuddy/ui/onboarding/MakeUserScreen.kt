@@ -4,13 +4,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
+import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatSegment
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserSegment
+import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
-fun MakeUserScreen() {
+fun MakeUserScreen(
+    profileViewModel: ProfileViewModel,
+    navController: NavController,
+    onBoardingViewModel: OnBoardingViewModel,
+) {
+    val profileUIState by profileViewModel.profileUIState.collectAsState()
+
+    if (profileUIState.selectedUser != null) {
+        onBoardingViewModel.updateIsDoneCreatingUser(true)
+    } else {
+        onBoardingViewModel.updateIsDoneCreatingUser(false)
+    }
+
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
@@ -18,6 +34,14 @@ fun MakeUserScreen() {
         ) {
             Column {
                 // TODO seperate create user screen from top bar and make it scrollable
+                CreateUserSegment(
+                    profileViewModel = profileViewModel,
+                    navController = navController
+                )
+                CreateBoatSegment(
+                    profileViewModel = profileViewModel,
+                    navController = navController
+                )
             }
         }
     }
