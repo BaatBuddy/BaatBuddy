@@ -47,9 +47,6 @@ fun SelectUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                 }
             ) {
 
-
-                Text(text = "Lag profil")
-                Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Create profile",
@@ -58,6 +55,10 @@ fun SelectUserScreen(profileViewModel: ProfileViewModel, navController: NavContr
                         .align(Alignment.CenterVertically)
                         .size(32.dp)
                 )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = "Lag profil")
+
+
             }
 
         }
