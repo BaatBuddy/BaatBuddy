@@ -21,6 +21,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -103,6 +104,11 @@ fun CreateUserSegment(
 
             // name
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
+
                 value = createUserUIState.name,
                 onValueChange = {
                     if (it.length <= 20) {
@@ -134,6 +140,10 @@ fun CreateUserSegment(
 
             // username
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.username,
                 onValueChange = {
                     if (it.length <= 20) {
@@ -144,7 +154,7 @@ fun CreateUserSegment(
                 label = {
                     Text(
                         text = "Brukernavn",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
                 isError = invalidMap["username"] ?: false,
@@ -160,6 +170,7 @@ fun CreateUserSegment(
                 }),
                 modifier = Modifier
                     .focusRequester(focusRequester)
+
             )
 
             Text(
@@ -174,6 +185,10 @@ fun CreateUserSegment(
             // boat
             // name
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.boatname,
                 onValueChange = {
                     if (it.length <= 20) {
@@ -292,6 +307,10 @@ fun CreateUserSegment(
             }
 
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.boatSpeed,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
@@ -326,6 +345,10 @@ fun CreateUserSegment(
 
 
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.safetyHeight,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
@@ -360,6 +383,10 @@ fun CreateUserSegment(
 
 
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.safetyDepth,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
