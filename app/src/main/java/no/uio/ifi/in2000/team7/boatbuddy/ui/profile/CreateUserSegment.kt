@@ -125,12 +125,6 @@ fun CreateUserSegment(
                 isError = invalidMap["name"] ?: false,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -160,12 +154,6 @@ fun CreateUserSegment(
                 isError = invalidMap["username"] ?: false,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -207,12 +195,7 @@ fun CreateUserSegment(
                 isError = invalidMap["boatname"] ?: false,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
+
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -331,12 +314,7 @@ fun CreateUserSegment(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
+
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -352,7 +330,7 @@ fun CreateUserSegment(
                 value = createUserUIState.safetyHeight,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
-                        profileViewModel.updateBoatSpeed(it)
+                        profileViewModel.updateBoatHeight(it)
                         text = it
                     }
                 },
@@ -369,12 +347,6 @@ fun CreateUserSegment(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -390,7 +362,7 @@ fun CreateUserSegment(
                 value = createUserUIState.safetyDepth,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
-                        profileViewModel.updateBoatSpeed(it)
+                        profileViewModel.updateBoatDepth(it)
                         text = it
                     }
 
@@ -408,12 +380,6 @@ fun CreateUserSegment(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
