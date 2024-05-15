@@ -62,28 +62,8 @@ class MainActivity : ComponentActivity() {
                     infoScreenViewModel = infoScreenViewModel,
                     userLocationViewModel = userLocationViewModel,
                     onBoardingViewModel = onBoardingViewModel,
+                    activity = this,
                 )
-
-            }
-
-        }
-
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                mapboxViewModel.panToUser()
-            }
-
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) -> {
-                mainViewModel.showLocationDialog()
-            }
-
-            else -> {
-                mainViewModel.showLocationDialog()
             }
         }
     }

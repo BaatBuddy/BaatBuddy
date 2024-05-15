@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -73,6 +74,7 @@ fun NavGraph(
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
     onBoardingViewModel: OnBoardingViewModel,
+    activity: ComponentActivity,
 ) {
 
     val context = LocalContext.current
@@ -356,6 +358,8 @@ fun NavGraph(
             mainViewModel = mainViewModel,
             profileViewModel = profileViewModel,
             navController = navController,
+            mapboxViewModel = mapboxViewModel,
+            activity = activity,
         )
     }
 }

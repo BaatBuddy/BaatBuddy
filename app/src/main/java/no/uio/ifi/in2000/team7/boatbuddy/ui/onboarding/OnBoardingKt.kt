@@ -1,5 +1,10 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,9 +21,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
@@ -27,6 +36,8 @@ fun OnBoarding(
     mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
     navController: NavController,
+    mapboxViewModel: MapboxViewModel,
+    activity: ComponentActivity
 ) {
 
     val onBoardingUIState by onBoardingViewModel.onBoardingUIState.collectAsState()
@@ -61,6 +72,25 @@ fun OnBoarding(
                         Button(
                             onClick = {
                                 mainViewModel.updateShowOnBoarding(false)
+                                when {
+                                    ContextCompat.checkSelfPermission(
+                                        activity as Context,
+                                        Manifest.permission.ACCESS_FINE_LOCATION
+                                    ) == PackageManager.PERMISSION_GRANTED -> {
+                                        mapboxViewModel.panToUser()
+                                    }
+
+                                    ActivityCompat.shouldShowRequestPermissionRationale(
+                                        activity as Activity,
+                                        Manifest.permission.ACCESS_FINE_LOCATION
+                                    ) -> {
+                                        mainViewModel.showLocationDialog()
+                                    }
+
+                                    else -> {
+                                        mainViewModel.showLocationDialog()
+                                    }
+                                }
                             },
                             modifier = Modifier
                                 .weight(1f),

@@ -67,8 +67,8 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             val isFirstStart = preferences.getBoolean("firstStart", true)
-            updateShowOnBoarding(true)
             if (isFirstStart) {
+                updateShowOnBoarding(true)
                 with(preferences.edit()) {
                     putBoolean("firstStart", false)
                     apply()
@@ -280,14 +280,6 @@ class MainViewModel @Inject constructor(
                     showNotificationDialog = true
                 )
             }
-        }
-    }
-
-    fun showLocationAndNotificationDialog() {
-        viewModelScope.launch(Dispatchers.IO) {
-            showNotificationDialog()
-            delay(1500)
-            showLocationDialog()
         }
     }
 
