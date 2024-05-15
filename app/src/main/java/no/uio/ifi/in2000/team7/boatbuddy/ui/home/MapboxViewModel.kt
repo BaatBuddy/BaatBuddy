@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -24,8 +25,9 @@ import javax.inject.Inject
 
 
 data class MapboxUIState(
-    val mapView: MapView,
-    val cameraOptions: CameraOptions,
+
+    val mapView: MapView? = null,
+    val cameraOptions: CameraOptions? = null,
 
     val polygonAlerts: MutableList<AlertPolygon> = mutableListOf(),
     val alertVisible: Boolean = false,
@@ -48,9 +50,8 @@ class MapboxViewModel @Inject constructor(
     private val weatherCalculatorRepository: WeatherCalculatorRepository,
 ) : ViewModel() {
 
-
-    private lateinit var _mapboxUIState: MutableStateFlow<MapboxUIState>
-    lateinit var mapboxUIState: StateFlow<MapboxUIState>
+    private var _mapboxUIState: MutableStateFlow<MapboxUIState> = MutableStateFlow(MapboxUIState())
+    var mapboxUIState: StateFlow<MapboxUIState> = _mapboxUIState
 
     private var initialized = false
 
@@ -65,13 +66,23 @@ class MapboxViewModel @Inject constructor(
         if (initialized) return
         initialized = true
         createMap(context = context, cameraOptions = cameraOptions)
+        observeMapInitialization()
+        Log.d("InitializeCall", "initialize map")
         panToUser()
     }
 
+    private fun observeMapInitialization() {
+        viewModelScope.launch {
+            mapboxRepository.isMapInitialized.collect { isInitialized ->
+                Log.d("LoadMap", "Map initialized: $isInitialized")
+            }
+        }
+    }
 
     private fun createMap(context: Context, cameraOptions: CameraOptions) {
+        //delay(5000L) // Lose internet access here
 
-        // mapview setup
+
         val mapView =
             mapboxRepository.createMap(
                 context = context,

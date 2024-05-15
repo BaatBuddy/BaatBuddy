@@ -13,6 +13,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
     private val userLocationViewModel: UserLocationViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private val infoScreenViewModel: InfoScreenViewModel by viewModels()
+    private val networkConnectivityViewModel: NetworkConnectivityViewModel by viewModels()
     private val onBoardingViewModel: OnBoardingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +53,7 @@ class MainActivity : ComponentActivity() {
 
             BoatbuddyTheme {
                 navController = rememberNavController()
+                networkConnectivityViewModel.initialize()
                 NavGraph(
                     navController = navController,
                     mainViewModel = mainViewModel,
@@ -61,11 +64,10 @@ class MainActivity : ComponentActivity() {
                     homeViewModel = homeViewModel,
                     infoScreenViewModel = infoScreenViewModel,
                     userLocationViewModel = userLocationViewModel,
+                    networkConnectivityViewModel = networkConnectivityViewModel,
                     onBoardingViewModel = onBoardingViewModel,
                 )
-
             }
-
         }
 
         when {
