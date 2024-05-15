@@ -36,6 +36,7 @@ data class MainScreenUIState(
     val showNoUserDialog: Boolean = false,
 
     val showDeleteRouteDialog: Boolean = false,
+    val launched: Boolean = false,
 )
 
 @HiltViewModel
@@ -75,6 +76,17 @@ class MainViewModel @Inject constructor(
 
         updateIsTracking()
 
+    }
+
+
+    fun updateLaunched(state: Boolean) {
+        viewModelScope.launch {
+            _mainScreenUIState.update {
+                it.copy(
+                    launched = state
+                )
+            }
+        }
     }
 
     // takes user to settings and depending on the API version which screen in the settings

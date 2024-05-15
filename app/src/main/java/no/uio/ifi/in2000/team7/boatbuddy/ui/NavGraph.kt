@@ -2,11 +2,14 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import SaveRouteScreen
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,7 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -101,11 +106,8 @@ fun NavGraph(
     if (onBoardingUIState.showOnBoarding) {
         OnBoarding(
             onBoardingViewModel = onBoardingViewModel,
-            mainViewModel = mainViewModel,
             profileViewModel = profileViewModel,
             navController = navController,
-            mapboxViewModel = mapboxViewModel,
-            activity = activity,
         )
     } else {
 
@@ -120,6 +122,35 @@ fun NavGraph(
         )
 
         val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
+        if (!mainScreenUIState.launched) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    activity as Context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    mapboxViewModel.panToUser()
+                    Log.i("ASDASD", "first")
+
+                }
+
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity as Activity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) -> {
+                    Log.i("ASDASD", "thing")
+                    mainViewModel.showLocationDialog()
+                }
+
+                else -> {
+                    Log.i("ASDASD", "Else")
+
+                    mainViewModel.showLocationDialog()
+                }
+            }
+
+            mainViewModel.updateLaunched(true)
+        }
 
         // If user does not have internet access, show snackbar
         LaunchedEffect(status) {
@@ -151,14 +182,14 @@ fun NavGraph(
             }
 
         }
-    // Observe Internet connection, initialize map, show snackbars
-    InitializeMap(status = status, mapboxViewModel = mapboxViewModel, context = context)
-    ShowSnackbars(
-        scope = scope,
-        snackbarHostState = snackbarHostState,
-        status = status,
-        mapboxUIState = mapboxUIState
-    )
+        // Observe Internet connection, initialize map, show snackbars
+        InitializeMap(status = status, mapboxViewModel = mapboxViewModel, context = context)
+        ShowSnackbars(
+            scope = scope,
+            snackbarHostState = snackbarHostState,
+            status = status,
+            mapboxUIState = mapboxUIState
+        )
 
         // notification setup
         val settingsActivityResultLauncher = rememberLauncherForActivityResult(
@@ -166,7 +197,7 @@ fun NavGraph(
         ) { _ ->
         }
 
-    // Show the dialog if required
+        // Show the dialog if required
 
         // Show the Notification dialog if required
         if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
@@ -388,7 +419,7 @@ fun NavGraph(
 fun InitializeMap(
     status: NetworkConnectivityObserver.Status,
     mapboxViewModel: MapboxViewModel,
-    context: Context
+    context: Context,
 ) {
 
     if (status == NetworkConnectivityObserver.Status.Available) {
@@ -410,7 +441,7 @@ fun ShowSnackbars(
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
     status: NetworkConnectivityObserver.Status,
-    mapboxUIState: MapboxUIState
+    mapboxUIState: MapboxUIState,
 ) {
 
     // If user does not have internet access, show snackbar
