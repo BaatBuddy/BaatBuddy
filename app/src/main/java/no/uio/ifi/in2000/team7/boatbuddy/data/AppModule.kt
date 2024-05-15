@@ -14,6 +14,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecast
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.onboarding.OnboardingRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
@@ -27,7 +28,7 @@ object AppModule {
     @Singleton
     @Provides
     fun fetchDatabase(
-        @ApplicationContext app: Context
+        @ApplicationContext app: Context,
     ) = Room.databaseBuilder(app, ProfileDatabase::class.java, "users")
         .fallbackToDestructiveMigration()
         .build()
@@ -44,7 +45,7 @@ object AppModule {
     @Provides
     fun fetchProfileRepository(
         db: ProfileDatabase,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): ProfileRepository =
         ProfileRepository(db.userDao(), db.boatDao(), context = context)
 
@@ -85,7 +86,7 @@ object AppModule {
     @Provides
     fun fetchRouteRepository(
         db: ProfileDatabase,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): RouteRepository = RouteRepository(
         context = context,
         routeDao = db.routeDao(),
@@ -95,7 +96,13 @@ object AppModule {
     @Singleton
     @Provides
     fun fetchUserLocationRepository(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): UserLocationRepository = UserLocationRepository(context = context)
+
+    @Singleton
+    @Provides
+    fun fetchOnboardingRepository(
+        @ApplicationContext context: Context,
+    ): OnboardingRepository = OnboardingRepository(context = context)
 
 }

@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
@@ -36,7 +35,6 @@ data class MainScreenUIState(
     val showNotificationDialog: Boolean = false,
     val showNoUserDialog: Boolean = false,
 
-    val showOnBoarding: Boolean = false,
     val showDeleteRouteDialog: Boolean = false,
 )
 
@@ -51,8 +49,6 @@ class MainViewModel @Inject constructor(
     private val _mainScreenUIState = MutableStateFlow(MainScreenUIState())
     val mainScreenUIState = _mainScreenUIState.asStateFlow()
 
-    private val preferences =
-        getApplication<Application>().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE)
 
     init {
 
@@ -66,14 +62,7 @@ class MainViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val isFirstStart = preferences.getBoolean("firstStart", true)
-            if (isFirstStart) {
-                updateShowOnBoarding(true)
-                with(preferences.edit()) {
-                    putBoolean("firstStart", false)
-                    apply()
-                }
-            }
+
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -288,16 +277,6 @@ class MainViewModel @Inject constructor(
             _mainScreenUIState.update {
                 it.copy(
                     showDeleteRouteDialog = state
-                )
-            }
-        }
-    }
-
-    fun updateShowOnBoarding(state: Boolean) {
-        viewModelScope.launch {
-            _mainScreenUIState.update {
-                it.copy(
-                    showOnBoarding = state
                 )
             }
         }

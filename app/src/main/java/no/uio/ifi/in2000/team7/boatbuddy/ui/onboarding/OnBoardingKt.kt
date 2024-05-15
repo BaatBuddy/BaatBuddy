@@ -21,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -37,7 +36,7 @@ fun OnBoarding(
     profileViewModel: ProfileViewModel,
     navController: NavController,
     mapboxViewModel: MapboxViewModel,
-    activity: ComponentActivity
+    activity: ComponentActivity,
 ) {
 
     val onBoardingUIState by onBoardingViewModel.onBoardingUIState.collectAsState()
@@ -71,7 +70,7 @@ fun OnBoarding(
                     if (onBoardingUIState.index == 6) {
                         Button(
                             onClick = {
-                                mainViewModel.updateShowOnBoarding(false)
+                                onBoardingViewModel.updateShowOnBoarding(false)
                                 when {
                                     ContextCompat.checkSelfPermission(
                                         activity as Context,

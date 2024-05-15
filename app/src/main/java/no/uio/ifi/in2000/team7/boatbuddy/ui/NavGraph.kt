@@ -76,8 +76,8 @@ fun NavGraph(
     onBoardingViewModel: OnBoardingViewModel,
     activity: ComponentActivity,
 ) {
-
     val context = LocalContext.current
+
 
     // Internet connectivity
     val connectivityObserver = NetworkConnectivityObserver(context)
@@ -86,273 +86,16 @@ fun NavGraph(
     )
     //Log.d("InternetStatus", "$status")
 
-    mapboxViewModel.initialize(
-        context = context,
-        cameraOptions = CameraOptions.Builder()
-            .center(Point.fromLngLat(9.0, 61.5))
-            .zoom(5.0)
-            .bearing(0.0)
-            .pitch(0.0)
-            .build()
-    )
 
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
-    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
+    val onBoardingUIState by onBoardingViewModel.onBoardingUIState.collectAsState()
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // If user does not have internet access, show snackbar
-    LaunchedEffect(status) {
-        if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
-            scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = "Du er ikke koblet til Internett",
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-    }
 
-    // if route is either too long or points is not close enough to the water
-    LaunchedEffect(mapboxUIState.lastRouteData) {
-        if (mapboxUIState.routeData is APIStatus.Failed
-            && mapboxUIState.lastRouteData is APIStatus.Loading
-        ) {
-            scope.launch {
-                snackbarHostState.showSnackbar(
-                    message = if (status == NetworkConnectivityObserver.Status.Available) {
-                        "Ruten er for lang eller inneholder punkter på land"
-                    } else {
-                        "Kan ikke generere rute uten tilgang til Internett"
-                    },
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-
-    }
-
-    // notification setup
-    val settingsActivityResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { _ ->
-    }
-
-
-    // Show the Notification dialog if required
-    if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
-            .areNotificationsEnabled()
-    ) {
-        NotificationDialog(
-            navigateToSettings = {
-                mainViewModel.navigateToNotificationSettings()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    settingsActivityResultLauncher.launch(
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                        }
-                    )
-                } else {
-                    settingsActivityResultLauncher.launch(
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                            data = Uri.fromParts("package", context.packageName, null)
-                        }
-                    )
-                }
-            },
-            onDismiss = {
-                mainViewModel.hideNotificationDialog()
-            }
-        )
-    }
-
-    val permissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                userLocationViewModel.requestLocationPermission()
-                userLocationViewModel.fetchUserLocation()
-                mapboxViewModel.panToUser()
-            }
-        }
-
-    // Shows a dialog for location permissions
-    if (mainScreenUIState.showLocationDialog) {
-        LocationDialog(
-            launchRequest = {
-                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            },
-            onDismiss = { mainViewModel.hideLocationDialog() }
-        )
-    }
-
-    // Shows if user has no selected profile
-    if (mainScreenUIState.showNoUserDialog) {
-        NoUserDialog(
-            onDismissRequest = {
-                mainViewModel.hideNoUserDialog()
-            },
-            onConfirmation = {
-                mainViewModel.selectScreen(4)
-
-                navController.navigate(Screen.ProfileScreen.route) {
-
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
-
-                    launchSingleTop = true
-                    restoreState = true
-                }
-                mainViewModel.hideNoUserDialog()
-
-            },
-            dialogTitle = "Ingen bruker valgt",
-            dialogText = "Du må lage eller velge en bruker",
-            icon = Icons.Default.Info,
-
-
-            )
-
-    }
-
-    if (mainScreenUIState.showDeleteRouteDialog) {
-        DeleteRouteDialog(
-            onDismissRequest = {
-                mainViewModel.updateShowDeleteRouteDialog(false)
-            },
-            onConfirmation = {
-                profileViewModel.deleteSelectedRoute()
-                mainViewModel.updateShowDeleteRouteDialog(false)
-                navController.popBackStack()
-            },
-            dialogTitle = "Har du lyst til å slette ${routeUIState.selectedRouteMap?.route?.routename}?",
-            dialogText = "Ruten vil bli slettet for alltid!",
-            icon = Icons.Default.Delete
-        )
-    }
-
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
-        bottomBar = {
-            if (mainScreenUIState.showBottomBar) {
-                BottomBar(
-                    navController = navController,
-                    mainViewModel = mainViewModel,
-                    profileViewModel = profileViewModel,
-                )
-            }
-        }
-    ) { innerPadding ->
-
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = Screen.HomeScreen.route
-            ) {
-                composable(route = Screen.HomeScreen.route) {
-                    HomeScreen(
-                        metalertsViewModel = metalertsViewModel,
-                        mapboxViewModel = mapboxViewModel,
-                        locationForecastViewModel = locationForecastViewModel,
-                        homeViewModel = homeViewModel,
-                        mainViewModel = mainViewModel,
-                        navController = navController,
-                        profileViewModel = profileViewModel,
-                        infoScreenViewModel = infoScreenViewModel,
-                    )
-                }
-                composable(route = Screen.InfoScreen.route) {
-                    InfoScreen(
-                        locationForecastViewModel = locationForecastViewModel,
-                        mainViewModel = mainViewModel,
-                        infoScreenViewModel = infoScreenViewModel,
-                        userLocationViewModel = userLocationViewModel,
-                        profileViewModel = profileViewModel,
-                        mapboxViewModel = mapboxViewModel,
-                        navController = navController,
-                    )
-                }
-                composable(route = Screen.ProfileScreen.route) {
-                    ProfileScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                    )
-                }
-                composable(route = "createuser") {
-                    CreateUserScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController
-                    )
-                }
-                composable(route = "createboat") {
-                    CreateBoatScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController
-                    )
-                }
-                composable(route = Screen.RouteScreen.route) {
-                    RouteScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                    )
-                }
-                composable(route = "routeinfo") {
-                    RouteInfoScreen(
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                        profileViewModel = profileViewModel,
-                        locationForecastViewModel = locationForecastViewModel,
-
-                        )
-                }
-                composable(route = "saveroute") {
-                    SaveRouteScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                        mapboxViewModel = mapboxViewModel
-
-                    )
-                }
-                composable(route = "selectboat") {
-                    SelectBoatScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController
-                    )
-                }
-                composable(route = "selectweather") {
-                    SelectWeatherScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                    )
-                }
-            }
-            if (mainScreenUIState.showDialog == ShowStartDialog) {
-                StartTrackingDialog(
-                    navController = navController,
-                    mainViewModel = mainViewModel
-                )
-            } else if (mainScreenUIState.showDialog == ShowFinishDialog) {
-                StopTrackingDialog(
-                    navController = navController,
-                    mainViewModel = mainViewModel,
-                    profileViewModel = profileViewModel,
-                )
-            }
-        }
-    }
-
-    if (mainScreenUIState.showOnBoarding) {
+    if (onBoardingUIState.showOnBoarding) {
         OnBoarding(
             onBoardingViewModel = onBoardingViewModel,
             mainViewModel = mainViewModel,
@@ -361,7 +104,271 @@ fun NavGraph(
             mapboxViewModel = mapboxViewModel,
             activity = activity,
         )
+    } else {
+
+        mapboxViewModel.initialize(
+            context = context,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(5.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+
+        val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+
+        // If user does not have internet access, show snackbar
+        LaunchedEffect(status) {
+            if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Du er ikke koblet til Internett",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        }
+
+        // if route is either too long or points is not close enough to the water
+        LaunchedEffect(mapboxUIState.lastRouteData) {
+            if (mapboxUIState.routeData is APIStatus.Failed
+                && mapboxUIState.lastRouteData is APIStatus.Loading
+            ) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = if (status == NetworkConnectivityObserver.Status.Available) {
+                            "Ruten er for lang eller inneholder punkter på land"
+                        } else {
+                            "Kan ikke generere rute uten tilgang til Internett"
+                        },
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+
+        }
+
+        // notification setup
+        val settingsActivityResultLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { _ ->
+        }
+
+
+        // Show the Notification dialog if required
+        if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
+                .areNotificationsEnabled()
+        ) {
+            NotificationDialog(
+                navigateToSettings = {
+                    mainViewModel.navigateToNotificationSettings()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        settingsActivityResultLauncher.launch(
+                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                        )
+                    } else {
+                        settingsActivityResultLauncher.launch(
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                        )
+                    }
+                },
+                onDismiss = {
+                    mainViewModel.hideNotificationDialog()
+                }
+            )
+        }
+
+        val permissionLauncher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+                if (it) {
+                    userLocationViewModel.requestLocationPermission()
+                    userLocationViewModel.fetchUserLocation()
+                    mapboxViewModel.panToUser()
+                }
+            }
+
+        // Shows a dialog for location permissions
+        if (mainScreenUIState.showLocationDialog) {
+            LocationDialog(
+                launchRequest = {
+                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                },
+                onDismiss = { mainViewModel.hideLocationDialog() }
+            )
+        }
+
+        // Shows if user has no selected profile
+        if (mainScreenUIState.showNoUserDialog) {
+            NoUserDialog(
+                onDismissRequest = {
+                    mainViewModel.hideNoUserDialog()
+                },
+                onConfirmation = {
+                    mainViewModel.selectScreen(4)
+
+                    navController.navigate(Screen.ProfileScreen.route) {
+
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                    mainViewModel.hideNoUserDialog()
+
+                },
+                dialogTitle = "Ingen bruker valgt",
+                dialogText = "Du må lage eller velge en bruker",
+                icon = Icons.Default.Info,
+
+
+                )
+
+        }
+
+        if (mainScreenUIState.showDeleteRouteDialog) {
+            DeleteRouteDialog(
+                onDismissRequest = {
+                    mainViewModel.updateShowDeleteRouteDialog(false)
+                },
+                onConfirmation = {
+                    profileViewModel.deleteSelectedRoute()
+                    mainViewModel.updateShowDeleteRouteDialog(false)
+                    navController.popBackStack()
+                },
+                dialogTitle = "Har du lyst til å slette ${routeUIState.selectedRouteMap?.route?.routename}?",
+                dialogText = "Ruten vil bli slettet for alltid!",
+                icon = Icons.Default.Delete
+            )
+        }
+
+        Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
+            bottomBar = {
+                if (mainScreenUIState.showBottomBar) {
+                    BottomBar(
+                        navController = navController,
+                        mainViewModel = mainViewModel,
+                        profileViewModel = profileViewModel,
+                    )
+                }
+            }
+        ) { innerPadding ->
+
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.HomeScreen.route
+                ) {
+                    composable(route = Screen.HomeScreen.route) {
+                        HomeScreen(
+                            metalertsViewModel = metalertsViewModel,
+                            mapboxViewModel = mapboxViewModel,
+                            locationForecastViewModel = locationForecastViewModel,
+                            homeViewModel = homeViewModel,
+                            mainViewModel = mainViewModel,
+                            navController = navController,
+                            profileViewModel = profileViewModel,
+                            infoScreenViewModel = infoScreenViewModel,
+                        )
+                    }
+                    composable(route = Screen.InfoScreen.route) {
+                        InfoScreen(
+                            locationForecastViewModel = locationForecastViewModel,
+                            mainViewModel = mainViewModel,
+                            infoScreenViewModel = infoScreenViewModel,
+                            userLocationViewModel = userLocationViewModel,
+                            profileViewModel = profileViewModel,
+                            mapboxViewModel = mapboxViewModel,
+                            navController = navController,
+                        )
+                    }
+                    composable(route = Screen.ProfileScreen.route) {
+                        ProfileScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController,
+                            mainViewModel = mainViewModel,
+                        )
+                    }
+                    composable(route = "createuser") {
+                        CreateUserScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController
+                        )
+                    }
+                    composable(route = "createboat") {
+                        CreateBoatScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController
+                        )
+                    }
+                    composable(route = Screen.RouteScreen.route) {
+                        RouteScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController,
+                            mainViewModel = mainViewModel,
+                        )
+                    }
+                    composable(route = "routeinfo") {
+                        RouteInfoScreen(
+                            navController = navController,
+                            mainViewModel = mainViewModel,
+                            profileViewModel = profileViewModel,
+                            locationForecastViewModel = locationForecastViewModel,
+
+                            )
+                    }
+                    composable(route = "saveroute") {
+                        SaveRouteScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController,
+                            mainViewModel = mainViewModel,
+                            mapboxViewModel = mapboxViewModel
+
+                        )
+                    }
+                    composable(route = "selectboat") {
+                        SelectBoatScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController
+                        )
+                    }
+                    composable(route = "selectweather") {
+                        SelectWeatherScreen(
+                            profileViewModel = profileViewModel,
+                            navController = navController,
+                            mainViewModel = mainViewModel,
+                        )
+                    }
+                }
+                if (mainScreenUIState.showDialog == ShowStartDialog) {
+                    StartTrackingDialog(
+                        navController = navController,
+                        mainViewModel = mainViewModel
+                    )
+                } else if (mainScreenUIState.showDialog == ShowFinishDialog) {
+                    StopTrackingDialog(
+                        navController = navController,
+                        mainViewModel = mainViewModel,
+                        profileViewModel = profileViewModel,
+                    )
+                }
+            }
+        }
+
     }
+
 }
 
 
