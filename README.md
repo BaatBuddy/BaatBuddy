@@ -50,4 +50,6 @@ Marius skriver litt om disse bibliotekene:
 - Room Database: 
 
 
-Worker: Hva slags bibilotek er dette?
+Worker: Er dette ett bibliotek?
+
+Er det flere biblioteker som må med?
