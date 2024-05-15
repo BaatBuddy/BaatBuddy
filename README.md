@@ -11,8 +11,6 @@ Dette prosjektet er laget av:
 - Shannen Leigh Finnøy (shannen@ifi.uio.no)
 - Magnus Grønmo (magngro@ifi.uio.no)
 
----
-
 ***
 
 * [Dokumentasjon](#dokumentasjon)
@@ -23,7 +21,7 @@ Dette prosjektet er laget av:
 
 ## Dokumentasjon
 
-Dokumentasjonen ligger her: 
+Dokumentasjonen ligger [HER](https://github.uio.no/IN2000-V24/team-7/blob/main/documentation.md)
 
 ## Hvordan kjøre appen
 
@@ -44,11 +42,12 @@ Ktor er et bibliotek som er svært nyttig når det kommer til å bygge serverkli
 Coroutine:
 Coroutine-bibliotek er et bibliotek som er nyttig for asynkron programmering. Coroutines fungerer slik at det er mulig å skrive kodebiter som ser synkrone ut men som utføres usynkront og dermed ikke blokkerer tråden og forsinker resten av koden. Dette gjør at appen kan kjøres mer effektivt og smidig. Spesielt nettverkskall, I/O opperasjoner og databasekall forenkles med bruk av coroutine-biblioteket.
 
-Worker: Hva slags bibilotek er dette?
-
 MapBox: 
 MapBox-biblioteket er et bibliotek som tilbyr kart. Det er ett av verdens ledene selskaper innen kartteknologi. Derfor er det et svært godt bibliotek som tilbyr kart og stedtjenester. Kartdataen de baserer seg på kommer fra OpenStreetMap-data (OSM), dette oppdateres kontinuerlig noe som fører til at kartdataen er veldig presis og pålitelig. En av det mest populere funksjonene som kan anvendes er såkalt "ruting". Ruting er noe som kan brukes for å planlegge en rute mellom to eller flere punkter. Noe som vi bruker som en av våres viktige funksjoner. 
 
 Marius skriver litt om disse bibliotekene:
 - Dagger Hilt
 - Room Database: 
+
+
+Worker: Hva slags bibilotek er dette?
