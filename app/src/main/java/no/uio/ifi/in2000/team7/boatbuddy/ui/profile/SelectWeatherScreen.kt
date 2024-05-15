@@ -76,7 +76,7 @@ fun SelectWeatherScreen(
                             navController.popBackStack()
                         }
                     ) {
-                        Text(text = "Lagre rute")
+                        Text(text = "Lagre preferanser")
                     }
                 }
             )

@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -37,6 +38,12 @@ import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.DeleteRouteDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.LocationDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NoUserDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NotificationDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StartTrackingDialog
+import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StopTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxUIState
@@ -46,17 +53,16 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.OnBoarding
+import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.OnBoardingViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.AddRouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StartTrackingDialog
-import no.uio.ifi.in2000.team7.boatbuddy.ui.route.StopTrackingDialog
 
 
 @Composable
@@ -70,18 +76,35 @@ fun NavGraph(
     homeViewModel: HomeViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
-    networkConnectivityViewModel: NetworkConnectivityViewModel
+    networkConnectivityViewModel: NetworkConnectivityViewModel,
+    onBoardingViewModel: OnBoardingViewModel,
 ) {
 
     val context = LocalContext.current
+
+    // Internet connectivity
+    val connectivityObserver = NetworkConnectivityObserver(context)
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
+    //Log.d("InternetStatus", "$status")
+
+    mapboxViewModel.initialize(
+        context = context,
+        cameraOptions = CameraOptions.Builder()
+            .center(Point.fromLngLat(9.0, 61.5))
+            .zoom(5.0)
+            .bearing(0.0)
+            .pitch(0.0)
+            .build()
+    )
+
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
+    val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Observe Internet connection, initialize map, show snackbars
-    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
     InitializeMap(status = status, mapboxViewModel = mapboxViewModel, context = context)
     ShowSnackbars(
         scope = scope,
@@ -97,6 +120,8 @@ fun NavGraph(
     }
 
     // Show the dialog if required
+
+    // Show the Notification dialog if required
     if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
             .areNotificationsEnabled()
     ) {
@@ -132,6 +157,7 @@ fun NavGraph(
             }
         }
 
+    // Shows a dialog for location permissions
     if (mainScreenUIState.showLocationDialog) {
         LocationDialog(
             launchRequest = {
@@ -141,6 +167,7 @@ fun NavGraph(
         )
     }
 
+    // Shows if user has no selected profile
     if (mainScreenUIState.showNoUserDialog) {
         NoUserDialog(
             onDismissRequest = {
@@ -163,9 +190,27 @@ fun NavGraph(
             },
             dialogTitle = "Ingen bruker valgt",
             dialogText = "Du må lage eller velge en bruker",
-            icon = Icons.Default.Info
-        )
+            icon = Icons.Default.Info,
 
+
+            )
+
+    }
+
+    if (mainScreenUIState.showDeleteRouteDialog) {
+        DeleteRouteDialog(
+            onDismissRequest = {
+                mainViewModel.updateShowDeleteRouteDialog(false)
+            },
+            onConfirmation = {
+                profileViewModel.deleteSelectedRoute()
+                mainViewModel.updateShowDeleteRouteDialog(false)
+                navController.popBackStack()
+            },
+            dialogTitle = "Har du lyst til å slette ${routeUIState.selectedRouteMap?.route?.routename}?",
+            dialogText = "Ruten vil bli slettet for alltid!",
+            icon = Icons.Default.Delete
+        )
     }
 
     Scaffold(
@@ -241,14 +286,6 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                     )
                 }
-                composable(route = "addroute") {
-                    AddRouteScreen(
-                        profileViewModel = profileViewModel,
-                        navController = navController,
-                        mainViewModel = mainViewModel,
-                        mapboxViewModel = mapboxViewModel,
-                    )
-                }
                 composable(route = "routeinfo") {
                     RouteInfoScreen(
                         navController = navController,
@@ -292,7 +329,15 @@ fun NavGraph(
                 )
             }
         }
+    }
 
+    if (mainScreenUIState.showOnBoarding) {
+        OnBoarding(
+            onBoardingViewModel = onBoardingViewModel,
+            mainViewModel = mainViewModel,
+            profileViewModel = profileViewModel,
+            navController = navController,
+        )
     }
 }
 

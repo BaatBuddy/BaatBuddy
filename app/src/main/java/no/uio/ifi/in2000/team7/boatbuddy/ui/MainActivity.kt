@@ -62,7 +62,8 @@ class MainActivity : ComponentActivity() {
                     homeViewModel = homeViewModel,
                     infoScreenViewModel = infoScreenViewModel,
                     userLocationViewModel = userLocationViewModel,
-                    networkConnectivityViewModel = networkConnectivityViewModel
+                    networkConnectivityViewModel = networkConnectivityViewModel,
+                    onBoardingViewModel = onBoardingViewModel,
                 )
             }
         }

@@ -1,8 +1,20 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +24,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,9 +57,30 @@ fun NavigatingWeatherCard(
     val timeLocationData = dayForecast.middayWeatherData
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
+    val infiniteTransition = rememberInfiniteTransition()
+    val rotationAnimation = infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f ,
+        animationSpec =  infiniteRepeatable(tween(1000, easing = LinearEasing)), label = ""
+    )
+    val borderColor by infiniteTransition.animateColor(
+        initialValue = MaterialTheme.colorScheme.onPrimaryContainer,
+        targetValue = MaterialTheme.colorScheme.secondaryContainer ,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
+    val shape = RoundedCornerShape(20.dp)
+
     ElevatedCard(
         modifier = Modifier
-            .padding(4.dp),
+            .padding(4.dp)
+            //.border(2.dp, borderColor)
+
+        
+        ,
         onClick = {
             // navigate to weather info screen with route selected
             profileViewModel.updatePickedRoute(mapboxUIState.generatedRoute)
@@ -64,6 +104,11 @@ fun NavigatingWeatherCard(
         // TODO fix colors
         colors = CardDefaults.elevatedCardColors(MaterialTheme.colorScheme.primaryContainer)
     ) {
+
+        Box(modifier = Modifier.width(IntrinsicSize.Max)){
+
+
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier

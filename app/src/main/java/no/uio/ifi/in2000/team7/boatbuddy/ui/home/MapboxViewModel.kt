@@ -20,7 +20,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculato
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
-import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
 import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
 import javax.inject.Inject
 
@@ -48,13 +47,19 @@ data class MapboxUIState(
 @HiltViewModel
 class MapboxViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
-    private val weatherCalculatorRepository: WeatherCalculatorRepository
+    private val weatherCalculatorRepository: WeatherCalculatorRepository,
 ) : ViewModel() {
 
     private var _mapboxUIState: MutableStateFlow<MapboxUIState> = MutableStateFlow(MapboxUIState())
     var mapboxUIState: StateFlow<MapboxUIState> = _mapboxUIState
 
     private var initialized = false
+
+    /*private val _undoClick = MutableLiveData(false)
+    val undoClick: LiveData<Boolean> = _undoClick
+
+    private val _redoClick = MutableLiveData(false)
+    val redoClick: LiveData<Boolean> = _redoClick*/
 
     @MainThread
     fun initialize(context: Context, cameraOptions: CameraOptions) {
@@ -63,6 +68,7 @@ class MapboxViewModel @Inject constructor(
         createMap(context = context, cameraOptions = cameraOptions)
         observeMapInitialization()
         Log.d("InitializeCall", "initialize map")
+        panToUser()
     }
 
     private fun observeMapInitialization() {
@@ -117,67 +123,6 @@ class MapboxViewModel @Inject constructor(
                     cameraOptions = cameraOptions
                 )
             }
-        }
-    }
-
-    fun resetRoutePath() {
-        viewModelScope.launch {
-            _mapboxUIState.update {
-                it.copy(
-                    routePath = null
-                )
-            }
-        }
-    }
-
-    fun panToPoint(
-        cameraOptions: CameraOptions
-    ) {
-        updateCameraOptions(cameraOptions = cameraOptions)
-        viewModelScope.launch {
-            mapboxRepository.panToPoint(cameraOptions = cameraOptions)
-        }
-    }
-
-    // TODO fix
-//    fun changeStyle(
-//        style: String
-//    ) {
-//        viewModelScope.launch {
-//            mapboxRepository.changeStyle(
-//                style = style
-//            )
-//            _mapboxUIState.update {
-//                it.copy(
-//                    style = style
-//                )
-//            }
-//        }
-//    }
-
-    fun createLinePath(
-        points: List<Point>
-    ) {
-        viewModelScope.launch {
-            mapboxRepository.createLinePath(points = points)
-        }
-    }
-
-    fun calculateWeather(points: List<Point>) {
-        viewModelScope.launch {
-            val weatherPreferences = WeatherPreferences(
-                waveHeight = 0.5,
-                windSpeed = 4.0,
-                airTemperature = 20.0,
-                cloudAreaFraction = 20.0,
-                waterTemperature = 20.0,
-                relativeHumidity = 30.0,
-                precipitationAmount = 0.0,
-                fogAreaFraction = 0.0
-            )
-
-            val pathWeatherData =
-                weatherCalculatorRepository.fetchPathWeatherData(points)
         }
     }
 
@@ -264,7 +209,7 @@ class MapboxViewModel @Inject constructor(
         }
     }
 
-    fun emptyGeneratedRoute() {
+    private fun emptyGeneratedRoute() {
         viewModelScope.launch {
             _mapboxUIState.update {
                 it.copy(

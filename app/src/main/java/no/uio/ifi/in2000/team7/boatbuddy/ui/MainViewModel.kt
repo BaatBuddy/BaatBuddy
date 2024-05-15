@@ -34,7 +34,10 @@ data class MainScreenUIState(
 
     val showLocationDialog: Boolean = false,
     val showNotificationDialog: Boolean = false,
-    val showNoUserDialog: Boolean = false
+    val showNoUserDialog: Boolean = false,
+
+    val showOnBoarding: Boolean = false,
+    val showDeleteRouteDialog: Boolean = false,
 )
 
 @HiltViewModel
@@ -64,8 +67,8 @@ class MainViewModel @Inject constructor(
 
         viewModelScope.launch {
             val isFirstStart = preferences.getBoolean("firstStart", true)
+            updateShowOnBoarding(true)
             if (isFirstStart) {
-                showLocationAndNotificationDialog()
                 with(preferences.edit()) {
                     putBoolean("firstStart", false)
                     apply()
@@ -285,6 +288,26 @@ class MainViewModel @Inject constructor(
             showNotificationDialog()
             delay(1500)
             showLocationDialog()
+        }
+    }
+
+    fun updateShowDeleteRouteDialog(state: Boolean) {
+        viewModelScope.launch {
+            _mainScreenUIState.update {
+                it.copy(
+                    showDeleteRouteDialog = state
+                )
+            }
+        }
+    }
+
+    fun updateShowOnBoarding(state: Boolean) {
+        viewModelScope.launch {
+            _mainScreenUIState.update {
+                it.copy(
+                    showOnBoarding = state
+                )
+            }
         }
     }
 }

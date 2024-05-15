@@ -82,7 +82,7 @@ fun RouteScreen(
                                 imageVector = Icons.Outlined.Info,
                                 contentDescription = "Empty Map Icon",
                                 modifier = Modifier.size(120.dp),
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
                             )
 
                             Spacer(modifier = Modifier.height(24.dp))

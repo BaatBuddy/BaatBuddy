@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
@@ -58,7 +57,7 @@ data class RouteScreenUIState(
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
-    private val routeRepository: RouteRepository
+    private val routeRepository: RouteRepository,
 ) : ViewModel() {
 
     private val _profileUIState = MutableStateFlow(ProfileUIState())
@@ -74,29 +73,6 @@ class ProfileViewModel @Inject constructor(
         updateSelectedUser()
         getAllUsers()
     }
-
-
-    fun updateUsername(username: String) {
-        viewModelScope.launch {
-            _profileUIState.update {
-                it.copy(
-                    username = username
-                )
-            }
-        }
-    }
-
-
-    fun updateName(name: String) {
-        viewModelScope.launch {
-            _profileUIState.update {
-                it.copy(
-                    name = name
-                )
-            }
-        }
-    }
-
 
     fun selectUser(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -130,7 +106,7 @@ class ProfileViewModel @Inject constructor(
         boatname: String,
         boatSpeed: String,
         safetyDepth: String,
-        safetyHeight: String
+        safetyHeight: String,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.addUser(
@@ -141,6 +117,7 @@ class ProfileViewModel @Inject constructor(
                 safetyDepth = safetyDepth,
                 safetyHeight = safetyHeight
             )
+            selectUser(username)
         }
     }
 
@@ -162,7 +139,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedBoat() {
+    private fun updateSelectedBoat() {
         viewModelScope.launch(Dispatchers.IO) {
             val boat =
                 _profileUIState.value.selectedUser?.let {
@@ -170,8 +147,7 @@ class ProfileViewModel @Inject constructor(
                         it.username
                     )
                 }
-            Log.i("ASDASD", _profileUIState.value.selectedUser.toString())
-            Log.i("ASDASD", boat.toString())
+
             _profileUIState.update {
                 it.copy(
                     selectedBoat = boat
@@ -241,7 +217,7 @@ class ProfileViewModel @Inject constructor(
         boatname: String,
         boatSpeed: String,
         safetyDepth: String,
-        safetyHeight: String
+        safetyHeight: String,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             profileRepository.addBoat(
@@ -332,7 +308,7 @@ class ProfileViewModel @Inject constructor(
         boatname: String,
         routename: String,
         routeDescription: String,
-        route: List<Point>?
+        route: List<Point>?,
     ) {
         viewModelScope.launch {
             routeRepository.addRouteUsername(
@@ -468,6 +444,14 @@ class ProfileViewModel @Inject constructor(
                 it.copy(
                     updateWeather = false
                 )
+            }
+        }
+    }
+
+    fun deleteSelectedRoute() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _routeScreenUIState.value.selectedRouteMap?.let {
+                routeRepository.deleteRoute(it)
             }
         }
     }
