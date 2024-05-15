@@ -46,7 +46,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
@@ -57,7 +56,6 @@ fun SaveRouteScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     mapboxViewModel: MapboxViewModel,
-    status: NetworkConnectivityObserver.Status
 ) {
     var loading by remember { mutableStateOf(true) }
     var failed by remember { mutableStateOf(true) }

@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 
@@ -37,7 +36,6 @@ fun RouteScreen(
     profileViewModel: ProfileViewModel,
     navController: NavController,
     mainViewModel: MainViewModel,
-    status: NetworkConnectivityObserver.Status
 ) {
     mainViewModel.selectScreen(3)
     profileViewModel.updateRoutes()

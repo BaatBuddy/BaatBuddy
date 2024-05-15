@@ -28,7 +28,10 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
@@ -64,7 +67,7 @@ fun NavGraph(
     homeViewModel: HomeViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
-    status: NetworkConnectivityObserver.Status
+    networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     val context = LocalContext.current
@@ -74,6 +77,24 @@ fun NavGraph(
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
+    /*LaunchedEffect(status) {
+        Log.d("InternetStatus", "$status")
+    }*/
+
+    // Initialize map
+    if (status == NetworkConnectivityObserver.Status.Available) {
+        mapboxViewModel.initialize(
+            context = LocalContext.current,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(4.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+    }
+    
     /*// If user does not have internet access, show snackbar
     LaunchedEffect(status) {
         if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
@@ -218,7 +239,7 @@ fun NavGraph(
                         navController = navController,
                         profileViewModel = profileViewModel,
                         infoScreenViewModel = infoScreenViewModel,
-                        status = status
+                        networkConnectivityViewModel = networkConnectivityViewModel
                     )
                 }
                 composable(route = Screen.InfoScreen.route) {
@@ -230,7 +251,6 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         mapboxViewModel = mapboxViewModel,
                         navController = navController,
-                        status = status
                     )
                 }
                 composable(route = Screen.ProfileScreen.route) {
@@ -257,7 +277,6 @@ fun NavGraph(
                         profileViewModel = profileViewModel,
                         navController = navController,
                         mainViewModel = mainViewModel,
-                        status = status
                     )
                 }
                 composable(route = "addroute") {
@@ -266,7 +285,6 @@ fun NavGraph(
                         navController = navController,
                         mainViewModel = mainViewModel,
                         mapboxViewModel = mapboxViewModel,
-                        status = status
                     )
                 }
                 composable(route = "routeinfo") {
@@ -275,7 +293,6 @@ fun NavGraph(
                         mainViewModel = mainViewModel,
                         profileViewModel = profileViewModel,
                         locationForecastViewModel = locationForecastViewModel,
-                        status = status
                     )
                 }
                 composable(route = "saveroute") {
@@ -284,7 +301,6 @@ fun NavGraph(
                         navController = navController,
                         mainViewModel = mainViewModel,
                         mapboxViewModel = mapboxViewModel,
-                        status = status
                     )
                 }
                 composable(route = "selectboat") {

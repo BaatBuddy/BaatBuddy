@@ -20,12 +20,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
+import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
@@ -47,7 +47,7 @@ fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
     infoScreenViewModel: InfoScreenViewModel,
-    status: NetworkConnectivityObserver.Status
+    networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     // fetches all alerts (no arguments)
@@ -59,9 +59,12 @@ fun HomeScreen(
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
-    val context = LocalContext.current
 
-    initializeMap(mapboxViewModel, status, context)
+    //initializeMap(mapboxViewModel, status, context)
+    /*val status by networkConnectivityViewModel.connectionUIState.collectAsState()
+    LaunchedEffect(status) {
+        Log.d("InternetStatus", "$status")
+    }*/
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
