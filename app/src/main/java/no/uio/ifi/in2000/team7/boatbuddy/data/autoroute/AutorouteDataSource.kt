@@ -7,6 +7,7 @@ import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
+import java.io.IOException
 import java.net.UnknownHostException
 
 class AutorouteDataSource {
@@ -20,9 +21,6 @@ class AutorouteDataSource {
 
         var path: String = ""
         Log.d("Autoroute", "AutorouteDataSource ")
-
-
-
 
         if (course.isNotEmpty() && safetyDepth.isNotBlank() && safetyHeight.isNotBlank() && boatSpeed.isNotBlank()) {
 
@@ -52,14 +50,11 @@ class AutorouteDataSource {
 
                 middle += "%3B" + it.longitude().toString()
                 middle += "%2C" + it.latitude().toString()
-
-
+                
             }
 
             path = base + middle + end
             //Log.d("Autoroute", "Autoroute api call: $path") //Why is this not showing in logcat
-
-
         }
 
         return try {
@@ -76,8 +71,10 @@ class AutorouteDataSource {
 
         } catch (e: UnknownHostException) {
             APIStatus.Failed
+        } catch (e: IOException) {  // Handle network issues
+            Log.d("Autoroute", "Network error: ${e.message}")
+            APIStatus.Failed
         }
-
 
     }
 }

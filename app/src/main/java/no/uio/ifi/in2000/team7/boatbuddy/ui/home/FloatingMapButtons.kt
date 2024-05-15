@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 
@@ -33,6 +34,7 @@ fun FloatingMapButtons(
     homeViewModel: HomeViewModel,
     mapboxViewModel: MapboxViewModel,
     locationForecastViewModel: LocationForecastViewModel,
+    //networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()

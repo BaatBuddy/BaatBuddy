@@ -22,7 +22,7 @@ class NetworkConnectivityObserver @Inject constructor(
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    fun observe(): Flow<Status> {
+    suspend fun observe(): Flow<Status> {
         return callbackFlow {
             val callback = object : ConnectivityManager.NetworkCallback() {
 

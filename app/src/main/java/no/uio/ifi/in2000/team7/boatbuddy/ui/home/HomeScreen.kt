@@ -1,18 +1,24 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
@@ -60,11 +68,22 @@ fun HomeScreen(
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
 
-    //initializeMap(mapboxViewModel, status, context)
-    /*val status by networkConnectivityViewModel.connectionUIState.collectAsState()
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
+
     LaunchedEffect(status) {
         Log.d("InternetStatus", "$status")
-    }*/
+    }
+    if (status == NetworkConnectivityObserver.Status.Available) {
+        mapboxViewModel.initialize(
+            context = LocalContext.current,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(4.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+    }
 
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
@@ -79,11 +98,13 @@ fun HomeScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingMapButtons(
-                homeViewModel = homeViewModel,
-                mapboxViewModel = mapboxViewModel,
-                locationForecastViewModel = locationForecastViewModel,
-            )
+            if (status == NetworkConnectivityObserver.Status.Available) {
+                FloatingMapButtons(
+                    homeViewModel = homeViewModel,
+                    mapboxViewModel = mapboxViewModel,
+                    locationForecastViewModel = locationForecastViewModel,
+                )
+            }
         }
 
     ) { paddingValue ->
@@ -93,12 +114,47 @@ fun HomeScreen(
                 .padding(paddingValue)
         ) {
 
-            if (mapboxUIState.mapView != null) { // mapboxUIState.mapView can only be null if we didn't have internet access upon opening the app
+            if (mapboxUIState.mapView != null) {
                 AndroidView(
                     factory = { _ ->
-                        mapboxUIState.mapView!! // Her lages kartet
+                        mapboxUIState.mapView!!
                     }
                 )
+            }
+
+            if (status != NetworkConnectivityObserver.Status.Available && mapboxUIState.mapView == null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Spacer(modifier = Modifier.height(120.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "Empty Map Icon",
+                        modifier = Modifier.size(120.dp),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Du er ikke koblet til Internett",
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Du må koble til Internett for å kunne benytte deg av ruteplanleggeren.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                    )
+                }
             }
 
             if (homeScreenUIState.showBottomSheet) {
@@ -143,7 +199,6 @@ fun HomeScreen(
                 }
             }
 
-
         }
     }
 
@@ -166,30 +221,3 @@ fun HomeScreen(
         )
     }
 }
-
-@Composable
-fun initializeMap(
-    mapboxViewModel: MapboxViewModel,
-    status: NetworkConnectivityObserver.Status,
-    context: Context
-) {
-
-    LaunchedEffect(status) {
-        Log.d("InternetStatus", "$status")
-    }
-
-    // Initialize map
-    if (status == NetworkConnectivityObserver.Status.Available) {
-        mapboxViewModel.initialize(
-            context = context,
-            cameraOptions = CameraOptions.Builder()
-                .center(Point.fromLngLat(9.0, 61.5))
-                .zoom(4.0)
-                .bearing(0.0)
-                .pitch(0.0)
-                .build()
-        )
-    }
-
-}
-

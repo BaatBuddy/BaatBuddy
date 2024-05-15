@@ -21,6 +21,8 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.location
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -40,6 +42,8 @@ class MapboxRepository(
     private lateinit var mapView: MapView
     lateinit var context: Context
 
+    private var _isMapInitialized: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    var isMapInitialized: StateFlow<Boolean> = _isMapInitialized
 
     // user tracking on map
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
@@ -115,9 +119,9 @@ class MapboxRepository(
             mapboxMap.loadStyle(MapboxConstants.defaultStyle) {
                 initLocationComponent()
                 setupGesturesListener()
+                _isMapInitialized.value = true
             }
-
-
+            
         }
     }
 

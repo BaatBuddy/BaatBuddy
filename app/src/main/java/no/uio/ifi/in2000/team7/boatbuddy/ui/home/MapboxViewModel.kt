@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -49,7 +50,7 @@ class MapboxViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
     private val weatherCalculatorRepository: WeatherCalculatorRepository
 ) : ViewModel() {
-    
+
     private var _mapboxUIState: MutableStateFlow<MapboxUIState> = MutableStateFlow(MapboxUIState())
     var mapboxUIState: StateFlow<MapboxUIState> = _mapboxUIState
 
@@ -60,10 +61,21 @@ class MapboxViewModel @Inject constructor(
         if (initialized) return
         initialized = true
         createMap(context = context, cameraOptions = cameraOptions)
-        //Log.d("InitializeCall", "initialize map")
+        observeMapInitialization()
+        Log.d("InitializeCall", "initialize map")
+    }
+
+    private fun observeMapInitialization() {
+        viewModelScope.launch {
+            mapboxRepository.isMapInitialized.collect { isInitialized ->
+                Log.d("LoadMap", "Map initialized: $isInitialized")
+            }
+        }
     }
 
     private fun createMap(context: Context, cameraOptions: CameraOptions) {
+        //delay(5000L) // Lose internet access here
+
 
         val mapView =
             mapboxRepository.createMap(
