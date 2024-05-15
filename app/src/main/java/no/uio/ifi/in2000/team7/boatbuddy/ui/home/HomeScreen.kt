@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,19 +18,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
 import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
@@ -70,21 +65,6 @@ fun HomeScreen(
 
     val status by networkConnectivityViewModel.connectionUIState.collectAsState()
 
-    LaunchedEffect(status) {
-        Log.d("InternetStatus", "$status")
-    }
-    if (status == NetworkConnectivityObserver.Status.Available) {
-        mapboxViewModel.initialize(
-            context = LocalContext.current,
-            cameraOptions = CameraOptions.Builder()
-                .center(Point.fromLngLat(9.0, 61.5))
-                .zoom(4.0)
-                .bearing(0.0)
-                .pitch(0.0)
-                .build()
-        )
-    }
-
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
 
@@ -96,6 +76,7 @@ fun HomeScreen(
         homeViewModel.showBottomSheet()
     }
 
+    // Show map and buttons if we have internet connection, otherwise show info explaining why user needs internet access
     Scaffold(
         floatingActionButton = {
             if (status == NetworkConnectivityObserver.Status.Available) {
@@ -131,8 +112,8 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(120.dp))
                     Icon(
-                        imageVector = Icons.Outlined.Info,
-                        contentDescription = "Empty Map Icon",
+                        painter = painterResource(id = R.drawable.baseline_wifi_off_24),
+                        contentDescription = "WiFi Icon",
                         modifier = Modifier.size(120.dp),
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )

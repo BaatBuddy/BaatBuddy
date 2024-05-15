@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -79,9 +78,6 @@ fun NavGraph(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val status by networkConnectivityViewModel.connectionUIState.collectAsState()
-    LaunchedEffect(status) {
-        Log.d("InternetStatus", "$status")
-    }
     // Initialize map
     if (status == NetworkConnectivityObserver.Status.Available) {
         mapboxViewModel.initialize(

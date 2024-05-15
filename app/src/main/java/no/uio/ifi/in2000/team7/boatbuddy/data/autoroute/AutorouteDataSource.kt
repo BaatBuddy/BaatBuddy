@@ -50,7 +50,7 @@ class AutorouteDataSource {
 
                 middle += "%3B" + it.longitude().toString()
                 middle += "%2C" + it.latitude().toString()
-                
+
             }
 
             path = base + middle + end
@@ -68,11 +68,10 @@ class AutorouteDataSource {
 
             APIStatus.Success(data)
 
-
         } catch (e: UnknownHostException) {
             APIStatus.Failed
         } catch (e: IOException) {  // Handle network issues
-            Log.d("Autoroute", "Network error: ${e.message}")
+            //Log.d("Autoroute", "Network error: ${e.message}")
             APIStatus.Failed
         }
 
