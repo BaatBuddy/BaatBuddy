@@ -21,6 +21,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -103,6 +104,11 @@ fun CreateUserSegment(
 
             // name
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
+
                 value = createUserUIState.name,
                 onValueChange = {
                     if (it.length <= 20) {
@@ -119,12 +125,6 @@ fun CreateUserSegment(
                 isError = invalidMap["name"] ?: false,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -134,6 +134,10 @@ fun CreateUserSegment(
 
             // username
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.username,
                 onValueChange = {
                     if (it.length <= 20) {
@@ -144,22 +148,17 @@ fun CreateUserSegment(
                 label = {
                     Text(
                         text = "Brukernavn",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.primary
                     )
                 },
                 isError = invalidMap["username"] ?: false,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
                     .focusRequester(focusRequester)
+
             )
 
             Text(
@@ -174,6 +173,10 @@ fun CreateUserSegment(
             // boat
             // name
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.boatname,
                 onValueChange = {
                     if (it.length <= 20) {
@@ -192,12 +195,7 @@ fun CreateUserSegment(
                 isError = invalidMap["boatname"] ?: false,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
+
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -292,6 +290,10 @@ fun CreateUserSegment(
             }
 
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.boatSpeed,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
@@ -312,12 +314,7 @@ fun CreateUserSegment(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
+
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -326,10 +323,14 @@ fun CreateUserSegment(
 
 
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.safetyHeight,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
-                        profileViewModel.updateBoatSpeed(it)
+                        profileViewModel.updateBoatHeight(it)
                         text = it
                     }
                 },
@@ -346,12 +347,6 @@ fun CreateUserSegment(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
@@ -360,10 +355,14 @@ fun CreateUserSegment(
 
 
             OutlinedTextField(
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary
+                ),
                 value = createUserUIState.safetyDepth,
                 onValueChange = {
                     if (it.length <= 20 && it.isDigitsOnly()) {
-                        profileViewModel.updateBoatSpeed(it)
+                        profileViewModel.updateBoatDepth(it)
                         text = it
                     }
 
@@ -381,12 +380,6 @@ fun CreateUserSegment(
                     keyboardType = KeyboardType.Number
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    checkInputsUserProfile(
-                        createUserUIState,
-                        invalidMap,
-                        profileViewModel,
-                        navController
-                    )
                     keyboardController?.hide()
                 }),
                 modifier = Modifier
