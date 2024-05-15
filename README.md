@@ -1,4 +1,17 @@
-<h1> Team-7 - Boatbuddy </h1>
+# BÅTBUDDY
+
+Båtbuddy er en android app som forenkler planlegging av dagsturer for båtførere i Norge. Det er mulig å skissere en rute, generere, se været for ruten og lagre den. Denne appen er laget av 6 studenter i forbindelse med faget [IN2000](https://www.uio.no/studier/emner/matnat/ifi/IN2000/) på Universitetet i Oslo. 
+
+Dette prosjektet er laget av:
+
+- Marius Angelo Eullaran Fredrichsen (mafredri@ifi.uio.no)
+- Ånund Kielland Jore (aanundj@ifi.uio.no)
+- Halimah Babakarkhail (halimahb@uio.no)
+- Eida Iman Wared (eidaiw@ifi.uio.no)
+- Shannen Leigh Finnøy (shannen@ifi.uio.no)
+- Magnus Grønmo (magngro@ifi.uio.no)
+
+---
 
 ***
 
@@ -10,7 +23,7 @@
 
 ## Dokumentasjon
 
-Her kommer info om hvor dokumetasjonen ligger (?)
+Dokumentasjonen ligger her: 
 
 ## Hvordan kjøre appen
 
