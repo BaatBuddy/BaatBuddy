@@ -1,9 +1,12 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -11,10 +14,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -77,7 +82,7 @@ fun NavigatingWeatherCard(
     ElevatedCard(
         modifier = Modifier
             .padding(4.dp)
-            //.border(2.dp, borderColor)
+            //.border(5.dp, borderColor)
 
         
         ,
@@ -136,5 +141,48 @@ fun NavigatingWeatherCard(
 
             )
         }
+    }
+
+}
+
+
+@Composable
+fun BestWeatherButton(
+    onClick: () -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val rainbowColors = listOf(
+        Color.Red,
+        Color.Yellow,
+        Color.Green,
+        Color.Blue,
+        Color.Magenta
+    )
+    val colorIndex by infiniteTransition.animateValue(
+        initialValue = 0,
+        targetValue = rainbowColors.size - 1,
+        typeConverter = Int.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ), label = ""
+    )
+    val borderColor by animateColorAsState(rainbowColors[colorIndex])
+
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .border(
+                width = 2.dp,
+                brush = Brush.sweepGradient(rainbowColors),
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Text(
+            text = "Best weather",
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
     }
 }

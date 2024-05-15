@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import SaveRouteScreen
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -32,7 +33,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
@@ -44,6 +47,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StartTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.StopTrackingDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxUIState
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreen
@@ -73,6 +77,7 @@ fun NavGraph(
     homeViewModel: HomeViewModel,
     infoScreenViewModel: InfoScreenViewModel,
     userLocationViewModel: UserLocationViewModel,
+    networkConnectivityViewModel: NetworkConnectivityViewModel,
     onBoardingViewModel: OnBoardingViewModel,
     activity: ComponentActivity,
 ) {
@@ -81,9 +86,7 @@ fun NavGraph(
 
     // Internet connectivity
     val connectivityObserver = NetworkConnectivityObserver(context)
-    val status by connectivityObserver.observe().collectAsState(
-        initial = NetworkConnectivityObserver.Status.Available
-    )
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
     //Log.d("InternetStatus", "$status")
 
 
@@ -148,6 +151,14 @@ fun NavGraph(
             }
 
         }
+    // Observe Internet connection, initialize map, show snackbars
+    InitializeMap(status = status, mapboxViewModel = mapboxViewModel, context = context)
+    ShowSnackbars(
+        scope = scope,
+        snackbarHostState = snackbarHostState,
+        status = status,
+        mapboxUIState = mapboxUIState
+    )
 
         // notification setup
         val settingsActivityResultLauncher = rememberLauncherForActivityResult(
@@ -155,6 +166,7 @@ fun NavGraph(
         ) { _ ->
         }
 
+    // Show the dialog if required
 
         // Show the Notification dialog if required
         if (mainScreenUIState.showNotificationDialog && !NotificationManagerCompat.from(LocalContext.current)
@@ -281,6 +293,7 @@ fun NavGraph(
                             navController = navController,
                             profileViewModel = profileViewModel,
                             infoScreenViewModel = infoScreenViewModel,
+                            networkConnectivityViewModel = networkConnectivityViewModel,
                         )
                     }
                     composable(route = Screen.InfoScreen.route) {
@@ -371,6 +384,67 @@ fun NavGraph(
 
 }
 
+@Composable
+fun InitializeMap(
+    status: NetworkConnectivityObserver.Status,
+    mapboxViewModel: MapboxViewModel,
+    context: Context
+) {
 
+    if (status == NetworkConnectivityObserver.Status.Available) {
+        mapboxViewModel.initialize(
+            context = context,
+            cameraOptions = CameraOptions.Builder()
+                .center(Point.fromLngLat(9.0, 61.5))
+                .zoom(4.0)
+                .bearing(0.0)
+                .pitch(0.0)
+                .build()
+        )
+    }
+
+}
+
+@Composable
+fun ShowSnackbars(
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState,
+    status: NetworkConnectivityObserver.Status,
+    mapboxUIState: MapboxUIState
+) {
+
+    // If user does not have internet access, show snackbar
+    LaunchedEffect(status) {
+        if (status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Losing) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Du er ikke koblet til Internett",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
+
+    // if route is either too long or points is not close enough to the water
+    LaunchedEffect(mapboxUIState.lastRouteData) {
+        if (mapboxUIState.routeData is APIStatus.Failed
+            && mapboxUIState.lastRouteData is APIStatus.Loading
+        ) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = if (status == NetworkConnectivityObserver.Status.Available) {
+                        "Ruten er for lang eller inneholder punkter på land"
+                    } else {
+                        "Kan ikke generere rute uten tilgang til Internett"
+                    },
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+
+    }
+
+
+}
 
 

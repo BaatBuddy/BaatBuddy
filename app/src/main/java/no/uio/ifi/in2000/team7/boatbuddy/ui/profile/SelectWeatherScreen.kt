@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,11 +16,15 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
@@ -53,7 +60,7 @@ fun SelectWeatherScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Velg vær preferanse"
+                        text = "Værpreferanser"
                     )
                 },
                 navigationIcon = {
@@ -76,7 +83,7 @@ fun SelectWeatherScreen(
                             navController.popBackStack()
                         }
                     ) {
-                        Text(text = "Lagre preferanser")
+                        Text(text = "Lagre")
                     }
                 }
             )
@@ -99,6 +106,7 @@ fun SelectWeatherScreen(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     if (profileUIState.selectedWeather != null) {
                         WeatherSlider(
                             from = 10.0,
@@ -139,6 +147,8 @@ fun SelectWeatherScreen(
                                 )
                             }
                         )
+
+
                         OptionalWeatherSlider(
                             from = 10.0,
                             to = 25.0,
@@ -166,12 +176,14 @@ fun SelectWeatherScreen(
                                 )
                             }
                         )
+
+                        }
                     }
                 }
             }
         }
     }
-}
+
 
 @Composable
 fun WeatherSlider(
@@ -214,31 +226,37 @@ fun OptionalWeatherSlider(
     weatherType: String,
     changeValue: (Double?) -> Unit,
 ) {
-    var enabled by remember { mutableStateOf(value != null) }
+    var enabled by remember { mutableStateOf(false) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Checkbox(
-            checked = enabled,
-            onCheckedChange = {
-                enabled = it
-                if (enabled) {
-                    changeValue(15.0)
-                }
-            },
-        )
 
-        if (enabled && value != null) {
-            WeatherSlider(
-                from = from,
-                to = to,
-                value = value,
-                weatherType = weatherType,
-                changeValue = changeValue,
+            Checkbox(
+                checked = enabled,
+                onCheckedChange = {
+                    enabled = it
+                    if (enabled) {
+                        changeValue(15.0)
+                    }
+                },
+                colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.primary)
             )
-        } else {
-            changeValue(null)
-        }
+
+            if ( value != null) {
+                WeatherSlider(
+                    from = from,
+                    to = to,
+                    value = value,
+                    weatherType = weatherType,
+                    changeValue = changeValue,
+                )
+            } else {
+                changeValue(null)
+            }
+
+
+
     }
 
 }
+

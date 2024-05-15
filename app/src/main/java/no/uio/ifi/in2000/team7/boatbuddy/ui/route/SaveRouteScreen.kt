@@ -229,13 +229,13 @@ fun SaveRouteScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Avbryt",
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Exit",
+                            text = "Avbryt",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp
