@@ -44,7 +44,7 @@ fun RouteInfoScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
-    locationForecastViewModel: LocationForecastViewModel
+    locationForecastViewModel: LocationForecastViewModel,
 ) {
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
 

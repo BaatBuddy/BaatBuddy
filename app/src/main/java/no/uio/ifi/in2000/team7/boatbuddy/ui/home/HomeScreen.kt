@@ -4,26 +4,36 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
@@ -41,6 +51,7 @@ fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
     infoScreenViewModel: InfoScreenViewModel,
+    networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     // fetches all alerts (no arguments)
@@ -53,6 +64,8 @@ fun HomeScreen(
     val homeScreenUIState by homeViewModel.homeScreenUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
 
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
+
     // bottom sheet setup
     val sheetState = rememberModalBottomSheetState()
 
@@ -64,13 +77,16 @@ fun HomeScreen(
         homeViewModel.showBottomSheet()
     }
 
+    // Show map and buttons if we have internet connection, otherwise show info explaining why user needs internet access
     Scaffold(
         floatingActionButton = {
-            FloatingMapButtons(
-                homeViewModel = homeViewModel,
-                mapboxViewModel = mapboxViewModel,
-                locationForecastViewModel = locationForecastViewModel,
-            )
+            if (status == NetworkConnectivityObserver.Status.Available) {
+                FloatingMapButtons(
+                    homeViewModel = homeViewModel,
+                    mapboxViewModel = mapboxViewModel,
+                    locationForecastViewModel = locationForecastViewModel,
+                )
+            }
         }
 
     ) { paddingValue ->
@@ -79,11 +95,49 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValue)
         ) {
-            AndroidView(
-                factory = { _ ->
-                    mapboxUIState.mapView // Her lages kartet
+
+            if (mapboxUIState.mapView != null) {
+                AndroidView(
+                    factory = { _ ->
+                        mapboxUIState.mapView!!
+                    }
+                )
+            }
+
+            if (status != NetworkConnectivityObserver.Status.Available && mapboxUIState.mapView == null) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Spacer(modifier = Modifier.height(120.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_wifi_off_24),
+                        contentDescription = "WiFi Icon",
+                        modifier = Modifier.size(120.dp),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = "Du er ikke koblet til Internett",
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Du må koble til Internett for å kunne benytte deg av ruteplanleggeren.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                    )
                 }
-            )
+            }
 
             if (homeScreenUIState.showBottomSheet) {
 
@@ -129,7 +183,6 @@ fun HomeScreen(
                 }
             }
 
-
         }
     }
 
@@ -152,4 +205,3 @@ fun HomeScreen(
         )
     }
 }
-
