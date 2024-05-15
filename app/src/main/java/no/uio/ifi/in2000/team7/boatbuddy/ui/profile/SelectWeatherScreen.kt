@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -99,6 +101,7 @@ fun SelectWeatherScreen(
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     if (profileUIState.selectedWeather != null) {
                         WeatherSlider(
                             from = 10.0,
@@ -139,33 +142,38 @@ fun SelectWeatherScreen(
                                 )
                             }
                         )
-                        OptionalWeatherSlider(
-                            from = 10.0,
-                            to = 25.0,
-                            value = profileUIState.selectedWeather!!.waterTemperature,
-                            weatherType = "Vann temperatur: ${profileUIState.selectedWeather!!.waterTemperature}℃",
-                            changeValue = { waterTemperature: Double? ->
-                                profileViewModel.updateWeatherPreference(
-                                    profileUIState.selectedWeather!!.copy(
-                                        waterTemperature = waterTemperature
-                                    )
-                                )
-                            }
-                        )
 
-                        OptionalWeatherSlider(
-                            from = 0.0,
-                            to = 100.0,
-                            value = profileUIState.selectedWeather!!.relativeHumidity,
-                            weatherType = "Relativ fuktighet: ${profileUIState.selectedWeather!!.relativeHumidity}%",
-                            changeValue = { relativeHumidity: Double? ->
-                                profileViewModel.updateWeatherPreference(
-                                    profileUIState.selectedWeather!!.copy(
-                                        relativeHumidity = relativeHumidity
+                        profileUIState.selectedWeather!!.waterTemperature?.let {
+                            WeatherSlider(
+                                from = 10.0,
+                                to = 25.0,
+                                value = it,
+                                weatherType = "Vann temperatur: ${profileUIState.selectedWeather!!.waterTemperature}℃",
+                                changeValue = { waterTemperature: Double? ->
+                                    profileViewModel.updateWeatherPreference(
+                                        profileUIState.selectedWeather!!.copy(
+                                            waterTemperature = waterTemperature
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
+
+                        profileUIState.selectedWeather!!.relativeHumidity?.let {
+                            WeatherSlider(
+                                from = 0.0,
+                                to = 100.0,
+                                value = it,
+                                weatherType = "Relativ fuktighet: ${profileUIState.selectedWeather!!.relativeHumidity}%",
+                                changeValue = { relativeHumidity: Double? ->
+                                    profileViewModel.updateWeatherPreference(
+                                        profileUIState.selectedWeather!!.copy(
+                                            relativeHumidity = relativeHumidity
+                                        )
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
