@@ -113,7 +113,7 @@ fun OnBoarding(
                         onBoardingViewModel = onBoardingViewModel
                     )
 
-                    2 -> ExplainMakeRouteScreen()
+                    2 -> ExplainMakeRouteScreen(isDark = false)
                     3 -> ExplainGenerateRouteScreen()
                     4 -> ExplainWeatherScreen()
                     5 -> ExplainTrackingScreen()

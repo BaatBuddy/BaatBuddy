@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -24,11 +26,14 @@ import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team7.boatbuddy.R
 
 @Composable
-fun ExplainMakeRouteScreen() {
+fun ExplainMakeRouteScreen(
+    isDark: Boolean
+) {
     Scaffold { paddingValue ->
         Box(
             modifier = Modifier
                 .padding(paddingValue)
+                .background(if (isDark) MaterialTheme.colorScheme.onPrimaryContainer else Color.White)
         ) {
             Column(
                 modifier = Modifier
@@ -51,7 +56,8 @@ fun ExplainMakeRouteScreen() {
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .padding(vertical = 32.dp)
+                        .padding(vertical = 32.dp),
+                    color = if (isDark) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer
                 )
 
                 Text(
@@ -69,6 +75,7 @@ fun ExplainMakeRouteScreen() {
                     },
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
+                    color = if (isDark) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer
                 )
 
                 Text(
@@ -76,11 +83,12 @@ fun ExplainMakeRouteScreen() {
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
-                        .padding(vertical = 32.dp)
+                        .padding(vertical = 32.dp),
+                    color = if (isDark) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimaryContainer
                 )
 
                 Image(
-                    painter = painterResource(id = R.drawable.homescreen_click_route),
+                    painter = painterResource(id = R.drawable.homescreen_make_route),
                     contentDescription = "Hjemmeskjerm",
                     modifier = Modifier
                         .clip(RoundedCornerShape(16.dp))
