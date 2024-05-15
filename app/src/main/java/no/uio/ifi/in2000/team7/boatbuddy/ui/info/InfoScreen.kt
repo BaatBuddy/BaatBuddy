@@ -133,13 +133,14 @@ fun InfoScreen(
 
                 if (infoScreenUIState.selectedTab == 0) {
                     UserLocationWeatherInfo(
+                        // Shows info if user hasn't shared location
                         locationForecastViewModel = locationForecastViewModel,
                         userLocationViewModel = userLocationViewModel,
                     )
+
                 } else {
+
                     if (routeScreenUIState.pickedRouteMap == null) {
-
-
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,

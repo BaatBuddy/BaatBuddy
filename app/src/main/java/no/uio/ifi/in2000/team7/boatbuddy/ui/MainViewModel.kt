@@ -305,7 +305,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _mainScreenUIState.update {
                 it.copy(
-                    showOnBoarding = state
+                    showOnBoarding = false
                 )
             }
         }
