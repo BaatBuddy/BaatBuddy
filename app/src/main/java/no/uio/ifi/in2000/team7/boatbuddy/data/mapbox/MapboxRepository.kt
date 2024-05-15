@@ -121,7 +121,8 @@ class MapboxRepository(
                 setupGesturesListener()
                 _isMapInitialized.value = true
             }
-            
+            Log.d("IsMapInitialized", "$isMapInitialized.value")
+
         }
     }
 
