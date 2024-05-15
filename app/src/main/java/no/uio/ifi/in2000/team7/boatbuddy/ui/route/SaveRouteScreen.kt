@@ -31,8 +31,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -232,7 +230,7 @@ fun SaveRouteScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Exit",
+                            contentDescription = "Avbryt",
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -258,7 +256,8 @@ fun SaveRouteScreen(
                             routeDescription = routeScreenUIState.routeDescription,
                             route = mapboxUIState.generatedRoute?.route?.route
                         )
-
+                        mainViewModel.stopTrackingUser()
+                        mapboxViewModel
                         mainViewModel.showBottomBar()
                         navController.popBackStack()
                     },
