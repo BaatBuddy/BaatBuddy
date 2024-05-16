@@ -138,6 +138,7 @@ class MapboxRepository @Inject constructor(
                         stop {
                             literal(0.0)
                             literal(0.45)
+
                         }
                         stop {
                             literal(15.0)

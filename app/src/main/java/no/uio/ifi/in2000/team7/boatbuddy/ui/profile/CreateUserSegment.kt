@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import CreateBoatSegment
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
