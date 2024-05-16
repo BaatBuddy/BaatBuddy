@@ -16,8 +16,6 @@ Vi har forsøkt å følge MVVM struktur så godt som mulig gjennom appen. Vi har
 
 Noen steder kunne vi hatt enda tydeligere skille, men dette er noe vi er klar over og kunne håndtert dette gjennom prosessen ved å lagge til tagger i koden vår i GitHub, slik at vi kunne enklere komme tilbake til det.
 
-■ Beskrivelse av hvordan viktige objektorienterte prinsipper som lav kobling og høy kohesjon samt design patterns som MVVM og UDF er ivaretatt i løsningen burde også være med.
-
 ### **Design Patterns**
 
 ### **MVVM (Model-View-ViewModel)**
@@ -37,9 +35,6 @@ UDF-prinsippet er implementert ved å sikre at dataflyten i applikasjonen er env
 
 Dette prinsippet har vi tatt høyde for ved å bruke UI_state istedenfor remember der det trengs.
 
-■ Beskriv løsningen beregnet på lesere som skal jobbe med drift, vedlikehold og videreutvikling av løsningen. Beskriv hvilke teknologier og arkitektur som brukes i løsningen. Beskriv hvilket
-API-nivå (Android versjon) dere har valgt, og hvorfor.
-
 ### **Beskrivelse av løsningen for drift, vedlikehold og videreutvikling**
 
 ### **Teknologier brukt i appen**
@@ -54,18 +49,10 @@ API-nivå (Android versjon) dere har valgt, og hvorfor.
 - **GPS:** Fine location, sporing av brukere. Gir en mer nøyaktig lokasjon
 - **Internett: Brukes for å hente data fra API’ene og hente kartet.**
 
-Drift, vedlikehold og videreutviklig
-
-Drift:
-
-Velikehold
-
-- robusthet
-
 Videreutvikling:
 
-- laget egen,, replassere SKippo med selvlaget
-- gjøre brukere,,, profil,, rikere
+- lage egen løsning for å replassere Skippo
+- gjøre profilfunksjonen rikere
 - parkering-funksjon
 
 ### **Valg av API-nivå (Android versjon)**
