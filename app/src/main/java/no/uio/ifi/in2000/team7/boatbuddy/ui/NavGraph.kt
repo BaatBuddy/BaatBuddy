@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
-import SaveRouteScreen
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -69,6 +68,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectBoatScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.SelectWeatherScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteScreen
 
 
 @Composable

@@ -21,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,9 +52,7 @@ fun CreateBoatSegment(
     val profileUiState by profileViewModel.profileUIState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
-    var (text, setText) = remember {
-        mutableStateOf("Close keyboard on done ime action")
-    }
+
 
     val invalidMap = invalidMapIn ?: remember {
         mutableMapOf(
@@ -219,7 +216,6 @@ fun CreateBoatSegment(
             onValueChange = {
                 if (it.length <= 20 && it.isDigitsOnly()) {
                     profileViewModel.updateBoatSpeed(it)
-                    text = it
                 }
             },
             maxLines = 1,
@@ -259,7 +255,6 @@ fun CreateBoatSegment(
             onValueChange = {
                 if (it.length <= 20 && it.isDigitsOnly()) {
                     profileViewModel.updateBoatHeight(it)
-                    text = it
                 }
             },
             maxLines = 1,
@@ -299,7 +294,6 @@ fun CreateBoatSegment(
             onValueChange = {
                 if (it.length <= 20 && it.isDigitsOnly()) {
                     profileViewModel.updateBoatDepth(it)
-                    text = it
                 }
 
             },

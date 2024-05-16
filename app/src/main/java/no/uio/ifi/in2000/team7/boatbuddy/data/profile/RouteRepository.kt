@@ -26,7 +26,7 @@ class RouteRepository @Inject constructor(
 ) {
 
 
-    suspend fun getLastIDUsername(username: String, boatname: String): Int? {
+    private suspend fun getLastIDUsername(username: String, boatname: String): Int? {
         return routeDao.getLastIDUsernameBoat(username = username, boatname = boatname)
     }
 
@@ -68,15 +68,15 @@ class RouteRepository @Inject constructor(
         }
     }
 
-    suspend fun getStartTime(): String {
+    fun getStartTime(): String {
         return startTime
     }
 
-    suspend fun getFinishTime(): String {
+    fun getFinishTime(): String {
         return finishTime
     }
 
-    suspend fun setFinalFinishTime() {
+    fun setFinalFinishTime() {
         finishTime = sdf.format(Date())
     }
 

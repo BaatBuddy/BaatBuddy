@@ -5,7 +5,7 @@ import junit.framework.TestCase.assertEquals
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.distanceInPath
 import org.junit.Test
 
-class distanceInPathTest {
+class DistanceInPathTest {
 
     @Test
     fun `test distance in path with no points`() {

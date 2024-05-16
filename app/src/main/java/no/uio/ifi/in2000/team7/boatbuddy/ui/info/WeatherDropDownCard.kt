@@ -103,7 +103,6 @@ fun WeatherDropDownCard(
                 if (isDroppedDown) {
                     OceanTable(
                         dayForecast = dayForecast,
-                        isShort = false,
                     )
                 } else {
                     val middayWD = dayForecast.weatherData.filter {
@@ -114,7 +113,6 @@ fun WeatherDropDownCard(
                             weatherData = if (middayWD.size == 4) middayWD
                             else dayForecast.weatherData.take(4)
                         ),
-                        isShort = true
                     )
                 }
             }

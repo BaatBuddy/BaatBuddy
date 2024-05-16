@@ -46,9 +46,7 @@ fun RouteWeatherInfo(
     navController: NavController,
     mainViewModel: MainViewModel,
 ) {
-    val profileUIState by profileViewModel.profileUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
-    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     var loading by remember { mutableStateOf(true) }
 
 

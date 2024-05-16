@@ -9,7 +9,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
@@ -32,23 +31,6 @@ class UserLocationRepository @Inject constructor(
     private lateinit var locationCallback: LocationCallback
     var locationState by mutableStateOf<LocationResult?>(null)
 
-    fun getFusedLocationClient() = fusedLocationClient
-    fun getContext() = context
-
-    fun hasPermissions(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-    }
-
-    fun showLocationRequest(): Boolean {
-        return false
-    }
 
     fun fetchUserLocation(): Point? {
         val location = locationState?.lastLocation
@@ -70,32 +52,32 @@ class UserLocationRepository @Inject constructor(
     }
 
     private fun createLocationRequest() {
-        if (ContextCompat.checkSelfPermission(
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            locationRequest = LocationRequest.Builder(5000)
-                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                .setMinUpdateIntervalMillis(1000)
-                .build()
-        }
-        // If coarse location is granted
-        else if (ContextCompat.checkSelfPermission(
+            ) -> {
+                locationRequest = LocationRequest.Builder(5000)
+                    .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                    .setMinUpdateIntervalMillis(1000)
+                    .build()
+            }
+            // If coarse location is granted
+            ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.i("ASDASD", "noe")
-            locationRequest = LocationRequest.Builder(5000)
-                .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-                .setMinUpdateIntervalMillis(1000)
-                .build()
-        }
-        // No permission granted
-        else {
+            ) -> {
+                Log.i("ASDASD", "noe")
+                locationRequest = LocationRequest.Builder(5000)
+                    .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
+                    .setMinUpdateIntervalMillis(1000)
+                    .build()
+            }
+            // No permission granted
+            else -> {
 
-            return
+                return
+            }
         }
 
         val locationSettingsRequest = LocationSettingsRequest.Builder()
@@ -110,7 +92,6 @@ class UserLocationRepository @Inject constructor(
                 getLocation()
             } else {
                 // Handle exception?
-                val e = task.exception
             }
         }
     }

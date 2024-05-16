@@ -1,3 +1,5 @@
+package no.uio.ifi.in2000.team7.boatbuddy.ui.route
+
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -257,7 +258,6 @@ fun SaveRouteScreen(
                             route = mapboxUIState.generatedRoute?.route?.route
                         )
                         mainViewModel.stopTrackingUser()
-                        mapboxViewModel
                         mainViewModel.showBottomBar()
                         navController.popBackStack()
                     },

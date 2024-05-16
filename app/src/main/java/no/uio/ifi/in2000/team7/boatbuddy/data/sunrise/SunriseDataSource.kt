@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.sunrise
 
-import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import no.uio.ifi.in2000.team7.boatbuddy.data.APIClient.client
@@ -10,34 +9,8 @@ import java.net.UnknownHostException
 
 class SunriseDataSource {
 
-
-    // eventually use this as a test program as one of the ten
-    private fun validInput(lat: String, lon: String, date: String): Boolean {
-        return true
-        /* // checks if lat and lon is doubles and inside the -90 to 90 range
-        // must be > and not >=
-        try {
-            val latDouble = lat.toDouble()
-            val lonDouble = lon.toDouble()
-            if (-90 < max(latDouble, lonDouble) && max(latDouble, lonDouble) < 90) return false
-        } catch (e: NumberFormatException) {
-            return false
-        }
-
-        // checks for a valid date (format: YYYY-MM-DD)
-        val slicedDate: List<String> = date.split("-")
-        return !(booleanArrayOf(
-            slicedDate.size != 3,
-            slicedDate[0].length != 4,
-            slicedDate[1].length != 2,
-            slicedDate[2].length != 2,
-            slicedDate.any { it.isDigitsOnly() }
-        ).any())*/
-    }
-
     suspend fun getSunriseData(lat: String, lon: String, date: String): SunriseData? {
-        Log.i("ASDASD", "Sunrise")
-        
+
         var url: String = "weatherapi/sunrise/3.0/sun?lat=%s&lon=%s".format(lat, lon)
         if (date.isNotBlank()) {
             url += "&date=%s&offset=+01:00".format(date)

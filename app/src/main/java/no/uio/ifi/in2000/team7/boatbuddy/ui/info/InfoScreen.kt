@@ -200,7 +200,7 @@ fun WeatherCard(
     changeDay: () -> Unit,
 
     ) {
-    val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
+    val emojiString = scoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier

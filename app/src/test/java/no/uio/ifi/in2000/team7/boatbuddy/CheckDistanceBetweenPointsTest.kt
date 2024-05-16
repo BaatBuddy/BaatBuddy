@@ -6,7 +6,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherScore.dis
 import org.junit.Test
 
 
-class checkDistanceBetweenPointsTest {
+class CheckDistanceBetweenPointsTest {
 
     @Test
     fun testDistanceBetweenSamePoint() {

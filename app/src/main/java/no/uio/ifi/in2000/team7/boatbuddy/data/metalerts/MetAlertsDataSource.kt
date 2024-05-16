@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.metalerts
 
-import android.util.Log
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.request.get
@@ -13,10 +12,9 @@ import java.net.UnknownHostException
 class MetAlertsDataSource {
 
     suspend fun getMetAlertsData(lat: String, lon: String): MetAlertsData? {
-        Log.i("ASDASD", "Metalert")
-        
+
         return try {
-            var path: String = "weatherapi/metalerts/2.0/current.json"
+            var path = "weatherapi/metalerts/2.0/current.json"
             if (lat.isNotBlank() && lon.isNotBlank()) {
                 path += "?lat=%s&lon=%s".format(lat, lon)
             }
@@ -39,8 +37,8 @@ class MetAlertsDataSource {
                         awarenessResponse = properties.awarenessResponse,
                         awarenessSeriousness = properties.awarenessSeriousness, // LAGT TIL
                         eventAwarenessName = properties.eventAwarenessName, // LAGT TIL
-                        awareness_level = properties.awareness_level,
-                        awareness_type = properties.awareness_type,
+                        awarenessLevel = properties.awareness_level,
+                        awarenessType = properties.awareness_type,
                         consequences = properties.consequences,
                         certainty = properties.certainty,
                         geographicDomain = properties.geographicDomain,
@@ -48,7 +46,7 @@ class MetAlertsDataSource {
                         riskMatrixColor = properties.riskMatrixColor,
                         severity = properties.severity,
                         type = properties.type,
-                        affected_area = convertArea(
+                        affectedArea = convertArea(
                             affectedArea = it.geometry.coordinates,
                             areaType = it.geometry.type
                         ),
