@@ -10,9 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.sharp.ArrowBack
+import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,9 +46,7 @@ fun RouteWeatherInfo(
     navController: NavController,
     mainViewModel: MainViewModel,
 ) {
-    val profileUIState by profileViewModel.profileUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
-    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     var loading by remember { mutableStateOf(true) }
 
 
@@ -97,22 +100,54 @@ fun RouteWeatherInfo(
             )
         }
         if (locationForecastUIState.weekdayForecastRoute != null) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(scrollState)
-            ) {
-
-                locationForecastUIState.weekdayForecastRoute?.days?.let {
-                    it.toList().sortedBy { pair ->
-                        pair.second.date
-                    }.forEach { tld ->
-                        WeatherCard(
-                            dayForecast = tld.second,
-                            selectedDay = locationForecastUIState.selectedDayRoute,
-                            changeDay = { locationForecastViewModel.updateSelectedDayRoute(tld.second) },
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Row {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
+                            contentDescription = "beste dager retning",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Beste dager",
+                            color = MaterialTheme.colorScheme.primary
                         )
 
+                    }
+                    Row {
+                        Text(
+                            text = "Dårligste dager",
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
+                            contentDescription = "dårligste dager retning",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(scrollState)
+                ) {
+
+                    locationForecastUIState.weekdayForecastRoute?.days?.let {
+                        it.toList().sortedBy { pair ->
+                            pair.second.date
+                        }.forEach { tld ->
+                            WeatherCard(
+                                dayForecast = tld.second,
+                                selectedDay = locationForecastUIState.selectedDayRoute,
+                                changeDay = { locationForecastViewModel.updateSelectedDayRoute(tld.second) },
+                            )
+
+                        }
                     }
                 }
             }

@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog
@@ -36,8 +34,8 @@ data class MainScreenUIState(
     val showNotificationDialog: Boolean = false,
     val showNoUserDialog: Boolean = false,
 
-    val showOnBoarding: Boolean = false,
     val showDeleteRouteDialog: Boolean = false,
+    val launched: Boolean = false,
 )
 
 @HiltViewModel
@@ -45,14 +43,11 @@ class MainViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
     private val profileRepository: ProfileRepository,
     application: Application,
-    private val userLocationRepository: UserLocationRepository,
 ) : AndroidViewModel(application) {
 
     private val _mainScreenUIState = MutableStateFlow(MainScreenUIState())
     val mainScreenUIState = _mainScreenUIState.asStateFlow()
 
-    private val preferences =
-        getApplication<Application>().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE)
 
     init {
 
@@ -65,27 +60,19 @@ class MainViewModel @Inject constructor(
             }
         }
 
-        viewModelScope.launch {
-            val isFirstStart = preferences.getBoolean("firstStart", true)
-            updateShowOnBoarding(true)
-            if (isFirstStart) {
-                with(preferences.edit()) {
-                    putBoolean("firstStart", false)
-                    apply()
-                }
-            }
-        }
+        updateIsTracking()
 
-        viewModelScope.launch(Dispatchers.IO) {
+    }
+
+
+    fun updateLaunched(state: Boolean) {
+        viewModelScope.launch {
             _mainScreenUIState.update {
                 it.copy(
-                    showLocationDialog = userLocationRepository.showLocationRequest()
+                    launched = state
                 )
             }
         }
-
-        updateIsTracking()
-
     }
 
     // takes user to settings and depending on the API version which screen in the settings
@@ -169,9 +156,7 @@ class MainViewModel @Inject constructor(
             }
             mapboxRepository.startFollowUserOnMap()
             profileRepository.startTrackingUser()
-            val thread = Thread {
 
-            }
         }
     }
 
@@ -272,40 +257,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-
-    fun showNotificationDialog() {
-        viewModelScope.launch {
-            _mainScreenUIState.update {
-                it.copy(
-                    showNotificationDialog = true
-                )
-            }
-        }
-    }
-
-    fun showLocationAndNotificationDialog() {
-        viewModelScope.launch(Dispatchers.IO) {
-            showNotificationDialog()
-            delay(1500)
-            showLocationDialog()
-        }
-    }
-
     fun updateShowDeleteRouteDialog(state: Boolean) {
         viewModelScope.launch {
             _mainScreenUIState.update {
                 it.copy(
                     showDeleteRouteDialog = state
-                )
-            }
-        }
-    }
-
-    fun updateShowOnBoarding(state: Boolean) {
-        viewModelScope.launch {
-            _mainScreenUIState.update {
-                it.copy(
-                    showOnBoarding = false
                 )
             }
         }

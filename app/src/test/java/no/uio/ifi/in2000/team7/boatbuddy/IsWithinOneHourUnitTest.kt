@@ -6,7 +6,7 @@ import org.junit.Test
 class IsWithinOneHourUnitTest {
 
     @Test
-    fun IsWithinOneHourSameDay_IsFalse() {
+    fun isWithinOneHourSameDay_IsFalse() {
         // copy sunrise format (yyyy-MM-dd'T'hh-mm-ss'Z')
         val currentTime = "2024-05-09T10:00:00Z"
         val sunsetTime = "2024-05-09T11:00:00Z"
@@ -16,11 +16,11 @@ class IsWithinOneHourUnitTest {
 
 
 
-        assert(result == false)
+        assert(!result)
     }
 
     @Test
-    fun IsWithinOneHourSameDay_IsTrue() {
+    fun isWithinOneHourSameDay_IsTrue() {
         // copy sunrise format (yyyy-MM-dd'T'hh-mm-ss'Z')
         val currentTime = "2024-05-09T10:01:00Z"
         val sunsetTime = "2024-05-09T11:00:00Z"
@@ -30,11 +30,11 @@ class IsWithinOneHourUnitTest {
 
 
 
-        assert(result == true)
+        assert(result)
     }
 
     @Test
-    fun IsWithinOneHourDifferentDay_IsFalse() {
+    fun isWithinOneHourDifferentDay_IsFalse() {
         // copy sunrise format (yyyy-MM-dd'T'hh-mm-ss'Z')
         val currentTime = "2024-05-08T10:01:00Z"
         val sunsetTime = "2024-05-09T11:00:00Z"
@@ -44,11 +44,11 @@ class IsWithinOneHourUnitTest {
 
 
 
-        assert(result == false)
+        assert(!result)
     }
 
     @Test
-    fun IsWithinOneHourDifferentDay_IsTrue() {
+    fun isWithinOneHourDifferentDay_IsTrue() {
         // copy sunrise format (yyyy-MM-dd'T'hh-mm-ss'Z')
         val currentTime = "2024-05-10T10:00:00Z"
         val sunsetTime = "2024-05-09T11:00:00Z"
@@ -58,7 +58,7 @@ class IsWithinOneHourUnitTest {
 
 
 
-        assert(result == true)
+        assert(result)
     }
 
 }

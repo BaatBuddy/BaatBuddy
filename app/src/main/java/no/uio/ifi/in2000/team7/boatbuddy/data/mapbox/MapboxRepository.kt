@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.mapbox
 
 import android.content.Context
-import android.util.Log
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
@@ -12,7 +11,6 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.extension.style.expressions.generated.Expression
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.PuckBearing
-import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.addOnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
@@ -32,13 +30,14 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import javax.inject.Inject
 
 
-class MapboxRepository(
+class MapboxRepository @Inject constructor(
+    private val autorouteRepository: AutorouteRepository,
 ) {
 
     private lateinit var annotationRepository: AnnotationRepository
-    private val autorouteRepository = AutorouteRepository()
     private lateinit var mapView: MapView
     lateinit var context: Context
 
@@ -81,7 +80,7 @@ class MapboxRepository(
     fun createMap(context: Context, cameraOptions: CameraOptions): MapView {
 
         // consider a new solution for this
-        MapboxOptions.accessToken = MapboxConstants.token
+        MapboxOptions.accessToken = MapboxConstants.TOKEN
 
         mapView = MapView(context)
         this.context = mapView.context
@@ -91,7 +90,7 @@ class MapboxRepository(
         return mapView
     }
 
-    fun onMapReady(cameraOptions: CameraOptions) {
+    private fun onMapReady(cameraOptions: CameraOptions) {
 
         with(mapView) {
 
@@ -116,13 +115,11 @@ class MapboxRepository(
 
             // improve map later
             // eventually add layers with different functionality
-            mapboxMap.loadStyle(MapboxConstants.defaultStyle) {
+            mapboxMap.loadStyle(MapboxConstants.STYLE) {
                 initLocationComponent()
                 setupGesturesListener()
                 _isMapInitialized.value = true
             }
-            Log.d("IsMapInitialized", "$isMapInitialized.value")
-
         }
     }
 
@@ -164,7 +161,7 @@ class MapboxRepository(
     }
 
     private val initializationMutex = Mutex()
-    val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO)
     suspend fun panToUserOnMap() {
         scope.launch {
             initializationMutex.withLock {
@@ -192,53 +189,38 @@ class MapboxRepository(
             removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
             removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
         }
-        // mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
-    suspend fun panToPoint(cameraOptions: CameraOptions) {
-        mapView.mapboxMap.flyTo(cameraOptions = cameraOptions)
-    }
-
-    // TODO changed
-    suspend fun changeStyle(
-        style: String
-    ) {
-        mapView.mapboxMap.loadStyle(style) {}
-    }
 
     suspend fun toggleAlertVisibility() {
         annotationRepository.toggleAlertVisibility()
     }
 
     fun createLinePath(
-        points: List<Point>
+        points: List<Point>,
     ) {
         annotationRepository.addLineToMap(points = points)
     }
 
-    suspend fun convertListToPoint(points: List<List<Double>>): List<Point> = points.map {
+    fun convertListToPoint(points: List<List<Double>>): List<Point> = points.map {
         Point.fromLngLat(it[0], it[1])
     }
 
-    suspend fun createRoute(points: List<Point>) {
+    fun createRoute(points: List<Point>) {
         annotationRepository.createRoute(autoroutePoints = points)
     }
 
-    suspend fun toggleRouteClicking() {
+    fun toggleRouteClicking() {
         annotationRepository.toggleRouteClicking()
     }
 
-    suspend fun getRoutePoints(): List<Point> {
+    fun getRoutePoints(): List<Point> {
         return annotationRepository.getRoutePoints()
     }
 
     suspend fun fetchRouteData(): APIStatus {
         return autorouteRepository.getAutorouteData(
             course = annotationRepository.route.toList(),
-            // TODO needs to retrive data from the database (user profile)
-            safetyDepth = "5",
-            safetyHeight = "5",
-            boatSpeed = "5",
         )
     }
 
@@ -267,19 +249,14 @@ class MapboxRepository(
                     StandardCharsets.UTF_8.toString()
                 )
             }
-        // strokeWidth (double), strokeColor(hex), strokeOpacity(double), fillColor(hex), fillOpacity(double), path encoded string, access token
-        val formattedURL = unformattedURL.format(
+
+        return unformattedURL.format(
             4,
             "023047",
             1.0,
             encodedStringPath,
-            MapboxConstants.token
+            MapboxConstants.TOKEN
         )
-        Log.i("ASDASD", points.toString() + "ASDASDASD")
-
-
-
-        return formattedURL
     }
 
 }

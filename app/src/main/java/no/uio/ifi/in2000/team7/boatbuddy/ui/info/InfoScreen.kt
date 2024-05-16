@@ -76,7 +76,7 @@ fun InfoScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Været", fontWeight = FontWeight.Bold)
+                    Text(text = "Været")
                 }
             )
         }
@@ -142,7 +142,9 @@ fun InfoScreen(
 
                     if (routeScreenUIState.pickedRouteMap == null) {
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -199,7 +201,7 @@ fun WeatherCard(
     changeDay: () -> Unit,
 
     ) {
-    val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
+    val emojiString = scoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier

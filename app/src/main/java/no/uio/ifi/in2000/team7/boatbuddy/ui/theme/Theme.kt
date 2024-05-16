@@ -50,7 +50,7 @@ private val lightScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
 
-private val darkScheme = darkColorScheme(
+/*private val darkScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
@@ -86,7 +86,7 @@ private val darkScheme = darkColorScheme(
     surfaceContainer = surfaceContainerDark,
     surfaceContainerHigh = surfaceContainerHighDark,
     surfaceContainerHighest = surfaceContainerHighestDark,
-)
+)*/
 
 @Composable
 fun BoatbuddyTheme(

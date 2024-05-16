@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
@@ -51,7 +50,7 @@ fun HomeScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel,
     infoScreenViewModel: InfoScreenViewModel,
-    networkConnectivityViewModel: NetworkConnectivityViewModel
+    networkConnectivityViewModel: NetworkConnectivityViewModel,
 ) {
 
     // fetches all alerts (no arguments)
@@ -147,8 +146,9 @@ fun HomeScreen(
                     },
                     sheetState = sheetState,
                     containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    contentColor = Color.White
-                ) {
+                    contentColor = MaterialTheme.colorScheme.primaryContainer,
+
+                    ) {
                     if (mapboxUIState.routePoints.isNotEmpty()) {
                         locationForecastViewModel.loadWeekdayForecastRoute(
                             mapboxUIState.routePoints

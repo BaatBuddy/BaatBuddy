@@ -55,9 +55,7 @@ fun RouteScreen(
                 .fillMaxSize()
                 .padding(paddingValue)
         ) {
-            LazyColumn(
-
-            ) {
+            LazyColumn {
                 items(routeScreenUIState.routeMaps) {
                     RouteCard(
                         routeMap = it,
@@ -99,7 +97,9 @@ fun RouteScreen(
                                 text = "Du har ingen lagrede ruter enda.\nBruk funksjonen på hjemskjermen for å lagre en rute.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
                             )
                         }
                     }

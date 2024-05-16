@@ -1,14 +1,10 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
@@ -21,13 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.ExplainMakeRouteScreen
 
 @Composable
 fun ExplanationCard(
@@ -41,8 +35,12 @@ fun ExplanationCard(
             homeViewModel.updateShowExplanationCard(false)
         }
     ) {
+
+
         Card(
-            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimaryContainer)
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimaryContainer),
+            modifier = Modifier
+                .padding(vertical = 100.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -69,30 +67,38 @@ fun ExplanationCard(
                     Icon(imageVector = Icons.Filled.Close, contentDescription = null)
                 }
             }
+            ExplainMakeRouteScreen(isDark = true)
 
-            Image(
-                painter = painterResource(id = R.drawable.route_explenation),
-                contentDescription = "bilde av oslo med skissert rute",
-                modifier = modifier
-                    .clip(RoundedCornerShape(8.dp)),
-            )
-
-            // heading text
-
-
-            // info text
-            Text(
-                text = "Her kan man trykke på tegn rute knappen helt nederst i høyre hjørne" +
-                        " for å starte å tegne en rute på kartet. Deretter trykker man inn minst" +
-                        " 2 og opp til 10 punkter for å lage en skisse av ruten. \n\nNå kan man trykke" +
-                        " på generer rute knappen for å starte genereringen av en mer raffinert rute." +
-                        " \n\nVæret for ruten vil automatisk dukke opp på bunnen, men frykt ikke for å" +
-                        " fjerne den fordi man kan få informasjonen opp igjen med en 'vis vær' knapp.",
-                modifier = modifier
+            /*
+            Column(
+                modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 16.dp, top = 4.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.homescreen_make_route),
+                    contentDescription = "bilde av oslo med skissert rute",
+                    modifier = modifier
+                        .clip(RoundedCornerShape(8.dp)),
+                )
+
+                // heading text
+
+
+                // info text
+                Text(
+                    text = "Her kan man trykke på tegn rute knappen helt nederst i høyre hjørne" +
+                            " for å starte å tegne en rute på kartet. Deretter trykker man inn minst" +
+                            " 2 og opp til 10 punkter for å lage en skisse av ruten. \n\nNå kan man trykke" +
+                            " på generer rute knappen for å starte genereringen av en mer raffinert rute." +
+                            " \n\nVæret for ruten vil automatisk dukke opp på bunnen, men frykt ikke for å" +
+                            " fjerne den fordi man kan få informasjonen opp igjen med en 'vis vær' knapp.",
+                    modifier = modifier
+                        .padding(bottom = 16.dp, top = 4.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+            }*/
+
 
         }
     }

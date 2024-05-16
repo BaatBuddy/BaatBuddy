@@ -14,9 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.sharp.ArrowBack
+import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -139,23 +143,56 @@ fun SwipeUpContent(
         }
 
         if (weekdayForecastRoute != null) {
-            Row(
-                modifier = Modifier
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 12.dp)
-            ) {
-                weekdayForecastRoute.days.values
-                    .forEach { dayForecast ->
-                        NavigatingWeatherCard(
-                            dayForecast = dayForecast,
-                            profileViewModel = profileViewModel,
-                            mapboxViewModel = mapboxViewModel,
-                            infoScreenViewModel = infoScreenViewModel,
-                            homeViewModel = homeViewModel,
-                            locationForecastViewModel = locationForecastViewModel,
-                            navController = navController
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
+                            contentDescription = "beste dager retning",
+                            tint = MaterialTheme.colorScheme.primaryContainer
+                        )
+                        Text(
+                            text = "Beste dager",
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        )
+
+                    }
+                    Row {
+                        Text(
+                            text = "Dårligste dager",
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
+                            contentDescription = "dårligste dager retning",
+                            tint = MaterialTheme.colorScheme.primaryContainer
                         )
                     }
+                }
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 12.dp)
+                ) {
+                    weekdayForecastRoute.days.values.sortedByDescending { it.dayScore?.score }
+                        .forEach { dayForecast ->
+                            NavigatingWeatherCard(
+                                dayForecast = dayForecast,
+                                profileViewModel = profileViewModel,
+                                mapboxViewModel = mapboxViewModel,
+                                infoScreenViewModel = infoScreenViewModel,
+                                homeViewModel = homeViewModel,
+                                locationForecastViewModel = locationForecastViewModel,
+                                navController = navController
+                            )
+                        }
+                }
             }
 
 

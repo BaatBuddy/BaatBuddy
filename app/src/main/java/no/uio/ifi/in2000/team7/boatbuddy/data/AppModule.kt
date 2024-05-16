@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteDataSource
 import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.ProfileDatabase
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
@@ -14,6 +15,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecast
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.onboarding.OnboardingRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
@@ -27,7 +29,7 @@ object AppModule {
     @Singleton
     @Provides
     fun fetchDatabase(
-        @ApplicationContext app: Context
+        @ApplicationContext app: Context,
     ) = Room.databaseBuilder(app, ProfileDatabase::class.java, "users")
         .fallbackToDestructiveMigration()
         .build()
@@ -44,13 +46,15 @@ object AppModule {
     @Provides
     fun fetchProfileRepository(
         db: ProfileDatabase,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): ProfileRepository =
         ProfileRepository(db.userDao(), db.boatDao(), context = context)
 
     @Singleton
     @Provides
-    fun fetchAutorouteRepository(): AutorouteRepository = AutorouteRepository()
+    fun fetchAutorouteRepository(
+        db: ProfileDatabase,
+    ): AutorouteRepository = AutorouteRepository(AutorouteDataSource(), db.boatDao())
 
     @Singleton
     @Provides
@@ -67,7 +71,10 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchMapboxRepository(): MapboxRepository = MapboxRepository()
+    fun fetchMapboxRepository(
+        autorouteRepository: AutorouteRepository,
+    ): MapboxRepository =
+        MapboxRepository(autorouteRepository = autorouteRepository)
 
     @Singleton
     @Provides
@@ -85,17 +92,24 @@ object AppModule {
     @Provides
     fun fetchRouteRepository(
         db: ProfileDatabase,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        mapboxRepository: MapboxRepository,
     ): RouteRepository = RouteRepository(
         context = context,
         routeDao = db.routeDao(),
-        mapRepo = MapboxRepository()
+        mapRepo = mapboxRepository
     )
 
     @Singleton
     @Provides
     fun fetchUserLocationRepository(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): UserLocationRepository = UserLocationRepository(context = context)
+
+    @Singleton
+    @Provides
+    fun fetchOnboardingRepository(
+        @ApplicationContext context: Context,
+    ): OnboardingRepository = OnboardingRepository(context = context)
 
 }

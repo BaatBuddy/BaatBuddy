@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 
 @Composable
-fun OceanTable(dayForecast: DayForecast, isShort: Boolean) {
+fun OceanTable(dayForecast: DayForecast) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

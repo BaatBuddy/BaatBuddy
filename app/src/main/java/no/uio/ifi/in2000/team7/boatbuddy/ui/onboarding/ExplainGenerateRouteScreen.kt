@@ -67,18 +67,27 @@ fun ExplainGenerateRouteScreen() {
                         }
                         append("' knappen og vent.")
                     },
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
                 )
 
                 Text(
-                    text = "",
+                    text = "Her er det mulighet for å trykke på kortene for å se været i mer detalje.",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
-                        .padding(vertical = 32.dp)
+                        .padding(vertical = 32.dp, horizontal = 16.dp)
                 )
 
                 // TODO picture of finished bottomsheet with correct colors
+                Image(
+                    painter = painterResource(id = R.drawable.homescreen_bottomsheet),
+                    contentDescription = "Hjemmeskjerm",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
             }
         }
     }

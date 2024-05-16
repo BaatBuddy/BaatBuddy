@@ -98,6 +98,7 @@ object WeatherConverter {
     }
 
     // translates english weather terms to norwegian
+    /*
     fun translateSymbolCode(symbolCode: String): String {
         return when (symbolCode.replace("_", "").replace("night", "").replace("day", "")) {
             "clearsky" -> "Klarvær"
@@ -143,5 +144,5 @@ object WeatherConverter {
             "fog" -> "Tåke"
             else -> ""
         }
-    }
+    }*/
 }
