@@ -15,10 +15,6 @@ class ProfileRepository @Inject constructor(
     private val boatDao: BoatProfileDao,
     private val context: Context,
 ) {
-    suspend fun getUserByUsername(username: String): UserProfile {
-        return userDao.getUserByUsername(username = username)
-    }
-
     suspend fun addUser(
         username: String,
         name: String,
@@ -68,14 +64,14 @@ class ProfileRepository @Inject constructor(
         )
     }
 
-    suspend fun startTrackingUser() {
+    fun startTrackingUser() {
         val username = getSelectedUser()?.username
         if (username != null) {
             userDao.startTrackingUsername(username = username)
         }
     }
 
-    suspend fun stopTrackingUser() {
+    fun stopTrackingUser() {
         val username = getSelectedUser()?.username
         if (username != null) {
             userDao.stopTrackingUsername(username = username)
@@ -87,7 +83,7 @@ class ProfileRepository @Inject constructor(
         }
     }
 
-    suspend fun selectUser(username: String) {
+    fun selectUser(username: String) {
         userDao.selectUser(username = username)
     }
 
@@ -96,15 +92,15 @@ class ProfileRepository @Inject constructor(
         boatDao.selectBoatUsername(boatname = boatname, username = username)
     }
 
-    suspend fun unselectUser() {
+    fun unselectUser() {
         userDao.unselectUser()
     }
 
-    suspend fun getSelectedUser(): UserProfile? {
+    fun getSelectedUser(): UserProfile? {
         return userDao.getSelectedUser()
     }
 
-    suspend fun getAllUsers(): List<UserProfile> {
+    fun getAllUsers(): List<UserProfile> {
         return userDao.getAllUsers()
     }
 
@@ -116,15 +112,11 @@ class ProfileRepository @Inject constructor(
         return boatDao.getSelectedBoatUsername(username = username)
     }
 
-    suspend fun selectBoatUsername(boatname: String, username: String) {
-        boatDao.selectBoatUsername(boatname = boatname, username = username)
-    }
-
-    suspend fun unselectBoatUsername(username: String) {
+    private suspend fun unselectBoatUsername(username: String) {
         boatDao.unselectBoatUsername(username = username)
     }
 
-    suspend fun replaceWeatherPreference(weatherPreferences: WeatherPreferences) {
+    fun replaceWeatherPreference(weatherPreferences: WeatherPreferences) {
         userDao.replaceWeatherPreferences(weatherPreferences)
     }
 

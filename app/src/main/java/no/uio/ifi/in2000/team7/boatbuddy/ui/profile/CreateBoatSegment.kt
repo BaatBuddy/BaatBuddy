@@ -1,3 +1,5 @@
+package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
+
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,9 +38,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserUIState
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileUIState
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
 fun CreateBoatSegment(
@@ -53,9 +51,7 @@ fun CreateBoatSegment(
     val profileUiState by profileViewModel.profileUIState.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
-    var (text, setText) = remember {
-        mutableStateOf("Close keyboard on done ime action")
-    }
+
 
     val invalidMap = invalidMapIn ?: remember {
         mutableMapOf(
@@ -219,7 +215,6 @@ fun CreateBoatSegment(
             onValueChange = {
                 if (it.length <= 20 && it.isDigitsOnly()) {
                     profileViewModel.updateBoatSpeed(it)
-                    text = it
                 }
             },
             maxLines = 1,
@@ -259,7 +254,6 @@ fun CreateBoatSegment(
             onValueChange = {
                 if (it.length <= 20 && it.isDigitsOnly()) {
                     profileViewModel.updateBoatHeight(it)
-                    text = it
                 }
             },
             maxLines = 1,
@@ -299,7 +293,6 @@ fun CreateBoatSegment(
             onValueChange = {
                 if (it.length <= 20 && it.isDigitsOnly()) {
                     profileViewModel.updateBoatDepth(it)
-                    text = it
                 }
 
             },

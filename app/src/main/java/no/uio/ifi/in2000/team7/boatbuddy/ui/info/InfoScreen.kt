@@ -40,13 +40,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NetworkConnectivityViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
+import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -59,11 +61,14 @@ fun InfoScreen(
     profileViewModel: ProfileViewModel,
     mapboxViewModel: MapboxViewModel,
     navController: NavController,
+    networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
     val profileUIState by profileViewModel.profileUIState.collectAsState()
+    //val userLocationUIState by userLocationViewModel.userLocationUIState.collectAsState()
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
 
     if (profileUIState.updateWeather) {
         locationForecastViewModel.updateScore()
@@ -84,8 +89,6 @@ fun InfoScreen(
         Box(
             modifier = Modifier
                 .padding(contentPadding)
-
-
         ) {
             Column {
                 TabRow(
@@ -132,14 +135,48 @@ fun InfoScreen(
                 }
 
                 if (infoScreenUIState.selectedTab == 0) {
-                    UserLocationWeatherInfo(
-                        locationForecastViewModel = locationForecastViewModel,
-                        userLocationViewModel = userLocationViewModel,
-                    )
+                    if (status != Status.AVAILABLE) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(120.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_wifi_off_24),
+                                contentDescription = "WiFi Icon",
+                                modifier = Modifier.size(120.dp),
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            Text(
+                                text = "Du er ikke koblet til Internett",
+                                style = MaterialTheme.typography.headlineSmall,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "Du må koble til Internett for å kunne se værforholdene i ditt område.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            )
+                        }
+                    } else {
+                        UserLocationWeatherInfo(
+                            locationForecastViewModel = locationForecastViewModel,
+                            userLocationViewModel = userLocationViewModel,
+                        )
+                    }
+
+
                 } else {
                     if (routeScreenUIState.pickedRouteMap == null) {
-
-
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -147,7 +184,6 @@ fun InfoScreen(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-
 
                             Icon(
                                 imageVector = Icons.Outlined.Info,
@@ -175,7 +211,6 @@ fun InfoScreen(
                             )
                         }
 
-
                     } else {
                         RouteWeatherInfo(
                             routeMap = routeScreenUIState.pickedRouteMap!!,
@@ -192,7 +227,6 @@ fun InfoScreen(
     }
 }
 
-
 @Composable
 fun WeatherCard(
     dayForecast: DayForecast,
@@ -200,7 +234,7 @@ fun WeatherCard(
     changeDay: () -> Unit,
 
     ) {
-    val emojiString = ScoreToEmoji(dayForecast.dayScore?.score) ?: ""
+    val emojiString = scoreToEmoji(dayForecast.dayScore?.score) ?: ""
     val timeLocationData = dayForecast.middayWeatherData
     Card(
         modifier = Modifier
@@ -263,105 +297,4 @@ fun WeatherIcon(symbolCode: String, modifier: Modifier) {
         modifier = modifier
     )
 }
-
-
-/*
-@Composable
-fun NotificationCard( // må etterhvert hente inn posisjon
-    awarenessSeriousness: String,
-    consequences: String,
-    description: String, resourceInstruction: String,
-    riskMatrixColor: String, showMessage: Boolean,
-    height: Dp, // Accept dynamic height
-    onCardClickMax: () -> Unit,
-    onCardClickMin: () -> Unit,// Denne funksjonen vil bli kalt når hele kortet klikkes
-    onDismissRequested: () -> Unit
-) {
-    //img: String
-    val minimerButtonColor = ButtonDefaults.buttonColors(
-        containerColor = Color.Black
-    )
-    val xButtonColor = ButtonDefaults.buttonColors(
-        containerColor = Color.Black
-    )
-
-    Card(
-        modifier = Modifier
-            .wrapContentSize(Alignment.Center)
-            .clickable { onCardClickMax() }
-            .size(width = 500.dp, height = height)
-            .background(Color.Blue)
-
-    )
-    {
-        Row {
-            Button(
-                onClick = onDismissRequested,
-                modifier = Modifier
-                    .wrapContentSize(Alignment.TopEnd), // MÅ FÅ FLYTTA TIL TOPP HØYRE
-                colors = xButtonColor
-            )
-            {
-                Text("X")
-            }
-            Button(
-                onClick = onCardClickMin,
-                modifier = Modifier
-                    .wrapContentSize(Alignment.TopStart), // MÅ FÅ FLYTTA TIL TOPP HØYRE
-                colors = minimerButtonColor
-            )
-            {
-                Text("-")
-            }
-        }
-        Text(
-            text = "$awarenessSeriousness ", // CHANGED BASED ON METALERT CHANGE
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center),
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "$consequences",
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center),
-            textAlign = TextAlign.Center,
-        )
-        // Image(
-        // painter = painterResource(id = R.drawable.farevarsel),
-        //   contentDescription = "Icon",
-        //  modifier = Modifier
-        //    .fillMaxWidth()
-        //    .wrapContentSize(Alignment.Center)
-        //    .size(200.dp)
-        // )
-        Text(
-            text = description,
-            modifier = Modifier
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-
-            )
-        Text(
-            text = resourceInstruction,
-            modifier = Modifier
-                .fillMaxWidth(),
-            textAlign = TextAlign.Center,
-
-            )
-        // FARGE UTIFRA HVOR FARLIG, GUL, ORANSJE ELLER RØDT
-        Text(
-            text = "",
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = Color(android.graphics.Color.parseColor(riskMatrixColor)),
-                )
-        )
-    }
-}
-
- */
-
 

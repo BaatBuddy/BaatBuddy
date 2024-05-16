@@ -9,14 +9,13 @@ object PolygonPosition {
         lat: Double,
         featureData: List<FeatureData>
     ): List<FeatureData> {
-        val asd = featureData.filter { fd ->
-            fd.affected_area.any { area ->
+        return featureData.filter { fd ->
+            fd.affectedArea.any { area ->
                 area.any { polygon ->
                     checkUserLocationPolygon(points = polygon, lon = lon, lat = lat)
                 }
             }
         }
-        return asd
     }
 
     // http://www.philliplemons.com/posts/ray-casting-algorithm#:~:text=The%20algorithm%20starts%20with%20P,as%20seen%20in%20Figure%202 + gpt

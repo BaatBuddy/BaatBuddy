@@ -33,9 +33,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,9 +47,10 @@ fun RouteInfoScreen(
     mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
     locationForecastViewModel: LocationForecastViewModel,
+    networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
-
+    val status by networkConnectivityViewModel.connectionUIState.collectAsState()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -119,10 +122,12 @@ fun RouteInfoScreen(
                     ) {
                         Button(
                             onClick = {
-                                locationForecastViewModel.deselectWeekDayForecastRoute()
-                                mainViewModel.displayRouteOnMap(route.route)
-                                profileViewModel.updatePickedRoute(routeUIState.selectedRouteMap)
-                                navController.navigate(Screen.HomeScreen.route)
+                                if (status == Status.AVAILABLE) {
+                                    locationForecastViewModel.deselectWeekDayForecastRoute()
+                                    mainViewModel.displayRouteOnMap(route.route)
+                                    profileViewModel.updatePickedRoute(routeUIState.selectedRouteMap)
+                                    navController.navigate(Screen.HomeScreen.route)
+                                }
                             },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp)
@@ -133,7 +138,11 @@ fun RouteInfoScreen(
                         Button(
                             onClick = {
                                 // TODO: Add delete route functionality
-                                mainViewModel.updateShowDeleteRouteDialog(true)
+
+
+                                    mainViewModel.updateShowDeleteRouteDialog(true)
+
+
                             },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(8.dp),

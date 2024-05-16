@@ -89,17 +89,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getUser(username: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = profileRepository.getUserByUsername(username = username)
-            _profileUIState.update {
-                it.copy(
-                    selectedUser = user
-                )
-            }
-        }
-    }
-
     fun addUser(
         username: String,
         name: String,
@@ -122,7 +111,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     // use this one to update boats only too
-    fun updateSelectedUser() {
+    private fun updateSelectedUser() {
         viewModelScope.launch(Dispatchers.IO) {
             val user = profileRepository.getSelectedUser()
             if (user != null) {
@@ -428,7 +417,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun startUpdateWeather() {
+    private fun startUpdateWeather() {
         viewModelScope.launch {
             _profileUIState.update {
                 it.copy(

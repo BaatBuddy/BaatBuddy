@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
-import android.util.Log
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfileDao
 import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
@@ -14,7 +13,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.TimeWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
-import java.math.RoundingMode
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -27,10 +25,8 @@ class WeatherCalculatorRepository @Inject constructor(
     private val locationForecastRepository: LocationForecastRepository,
     private val userDao: UserProfileDao,
 ) {
-    // val sunriseRepository = SunriseRepository()
 
-
-    suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
+    private suspend fun fetchPathWeatherData(points: List<Point>): List<PathWeatherData> {
 
         return selectPointsFromPath(points).mapNotNull { point ->
             val lat = point.latitude().toString()
@@ -55,17 +51,17 @@ class WeatherCalculatorRepository @Inject constructor(
                         lat = lat.toDouble(),
                         lon = lon.toDouble(),
                         time = ld.time,
-                        waveHeight = od.sea_surface_wave_height,
-                        waterTemperature = od.sea_water_temperature,
-                        waterDirection = od.sea_water_to_direction,
-                        windSpeed = ld.wind_speed,
-                        windSpeedOfGust = ld.wind_speed_of_gust,
-                        airTemperature = ld.air_temperature,
-                        cloudAreaFraction = ld.cloud_area_fraction,
-                        fogAreaFraction = ld.fog_area_fraction,
-                        relativeHumidity = ld.relative_humidity,
-                        precipitationAmount = ld.precipitation_amount,
-                        symbolCode = ld.symbol_code
+                        waveHeight = od.seaSurfaceWaveHeight,
+                        waterTemperature = od.seaWaterTemperature,
+                        waterDirection = od.seaWaterToDirection,
+                        windSpeed = ld.windSpeed,
+                        windSpeedOfGust = ld.windSpeedOfGust,
+                        airTemperature = ld.airTemperature,
+                        cloudAreaFraction = ld.cloudAreaFraction,
+                        fogAreaFraction = ld.fogAreaFraction,
+                        relativeHumidity = ld.relativeHumidity,
+                        precipitationAmount = ld.precipitationAmount,
+                        symbolCode = ld.symbolCode
                     )
                 } else {
                     TimeWeatherData(
@@ -75,14 +71,14 @@ class WeatherCalculatorRepository @Inject constructor(
                         waveHeight = null,
                         waterTemperature = null,
                         waterDirection = null,
-                        windSpeed = ld.wind_speed,
-                        windSpeedOfGust = ld.wind_speed_of_gust,
-                        airTemperature = ld.air_temperature,
-                        cloudAreaFraction = ld.cloud_area_fraction,
-                        fogAreaFraction = ld.fog_area_fraction,
-                        relativeHumidity = ld.relative_humidity,
-                        precipitationAmount = ld.precipitation_amount,
-                        symbolCode = ld.symbol_code
+                        windSpeed = ld.windSpeed,
+                        windSpeedOfGust = ld.windSpeedOfGust,
+                        airTemperature = ld.airTemperature,
+                        cloudAreaFraction = ld.cloudAreaFraction,
+                        fogAreaFraction = ld.fogAreaFraction,
+                        relativeHumidity = ld.relativeHumidity,
+                        precipitationAmount = ld.precipitationAmount,
+                        symbolCode = ld.symbolCode
                     )
                 }
             }
@@ -180,7 +176,7 @@ class WeatherCalculatorRepository @Inject constructor(
         )
     }
 
-    suspend fun updateWeekForecastScore(weekForecast: WeekForecast): WeekForecast {
+    fun updateWeekForecastScore(weekForecast: WeekForecast): WeekForecast {
         val weatherPreferences = userDao.getSelectedUser()?.preferences
 
         val dateScores = calculateScoreWeekDay(

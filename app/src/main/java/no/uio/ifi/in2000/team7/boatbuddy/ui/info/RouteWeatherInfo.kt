@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import no.uio.ifi.in2000.team7.boatbuddy.model.route.RouteMap
-import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.SaveRouteButton
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteButton
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
@@ -46,9 +46,7 @@ fun RouteWeatherInfo(
     navController: NavController,
     mainViewModel: MainViewModel,
 ) {
-    val profileUIState by profileViewModel.profileUIState.collectAsState()
     val locationForecastUIState by locationForecastViewModel.locationForecastUIState.collectAsState()
-    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
     var loading by remember { mutableStateOf(true) }
 
 

@@ -62,50 +62,44 @@ fun OnBoarding(
                             Text(text = "Forrige")
                         }
                     }
-                    if (onBoardingUIState.index == 6) {
-                        Button(
-                            onClick = {
-                                onBoardingViewModel.updateShowOnBoarding(false)
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 4.dp)
-                                .height(40.dp),
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(text = "Ferdig")
+
+                    when (onBoardingUIState.index) {
+                        6 -> {
+                            Button(
+                                onClick = {
+                                    onBoardingViewModel.updateShowOnBoarding(false)
+                                },
+                                modifier = Modifier
+                                    .weight(1f),
+                            ) {
+                                Text(text = "Ferdig")
+                            }
+
                         }
 
-                    } else if (onBoardingUIState.index == 1) {
-                        Button(
-                            onClick = {
-                                onBoardingViewModel.goToNextScreen()
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 4.dp)
-                                .height(40.dp),
-                            shape = RoundedCornerShape(4.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                disabledContainerColor = Color.Gray,
-                                disabledContentColor = Color.White
-                            ),
-                            enabled = onBoardingUIState.isDoneCreatingUser
-                        ) {
-                            Text(text = "Neste")
+                        1 -> {
+                            Button(
+                                onClick = {
+                                    onBoardingViewModel.goToNextScreen()
+                                },
+                                modifier = Modifier
+                                    .weight(1f),
+                                enabled = onBoardingUIState.isDoneCreatingUser
+                            ) {
+                                Text(text = "Neste")
+                            }
                         }
-                    } else {
-                        Button(
-                            onClick = {
-                                onBoardingViewModel.goToNextScreen()
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 4.dp)
-                                .height(40.dp),
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(text = if (onBoardingUIState.index == 0) "Kom i gang!" else "Neste")
+
+                        else -> {
+                            Button(
+                                onClick = {
+                                    onBoardingViewModel.goToNextScreen()
+                                },
+                                modifier = Modifier
+                                    .weight(1f),
+                            ) {
+                                Text(text = if (onBoardingUIState.index == 0) "Kom i gang!" else "Neste")
+                            }
                         }
                     }
                 }

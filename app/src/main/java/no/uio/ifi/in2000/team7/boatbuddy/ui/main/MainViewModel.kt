@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.ui.main
 
 import android.app.Application
 import android.content.Intent
@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog
@@ -44,7 +43,6 @@ class MainViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
     private val profileRepository: ProfileRepository,
     application: Application,
-    private val userLocationRepository: UserLocationRepository,
 ) : AndroidViewModel(application) {
 
     private val _mainScreenUIState = MutableStateFlow(MainScreenUIState())
@@ -58,18 +56,6 @@ class MainViewModel @Inject constructor(
             _mainScreenUIState.update {
                 it.copy(
                     splashScreenReady = true
-                )
-            }
-        }
-
-        viewModelScope.launch {
-
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            _mainScreenUIState.update {
-                it.copy(
-                    showLocationDialog = userLocationRepository.showLocationRequest()
                 )
             }
         }
@@ -170,9 +156,7 @@ class MainViewModel @Inject constructor(
             }
             mapboxRepository.startFollowUserOnMap()
             profileRepository.startTrackingUser()
-            val thread = Thread {
 
-            }
         }
     }
 
@@ -268,17 +252,6 @@ class MainViewModel @Inject constructor(
             _mainScreenUIState.update {
                 it.copy(
                     showNotificationDialog = false
-                )
-            }
-        }
-    }
-
-
-    fun showNotificationDialog() {
-        viewModelScope.launch {
-            _mainScreenUIState.update {
-                it.copy(
-                    showNotificationDialog = true
                 )
             }
         }

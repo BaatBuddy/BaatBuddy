@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,14 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +34,7 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.BoatProfile
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.UserProfile
 import no.uio.ifi.in2000.team7.boatbuddy.model.preference.WeatherPreferences
-import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
 
 @Composable
 fun ProfileScreen(
@@ -191,7 +182,7 @@ fun UserCard(user: UserProfile, profileViewModel: ProfileViewModel) {
                 )
             }
 
-            if(profileUiState.selectedUser == null){
+            if (profileUiState.selectedUser == null) {
                 Icon(
 
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -259,13 +250,13 @@ fun WeatherPreferencesCard(
             weatherPreferences.waterTemperature?.let {
                 WeatherPreferenceItem(
                     label = "Vanntemperatur:",
-                    value = it.toString() + "℃"
+                    value = "$it℃"
                 )
             }
             weatherPreferences.relativeHumidity?.let {
                 WeatherPreferenceItem(
                     label = "Relativ fuktighet:",
-                    value = it.toString() + "%"
+                    value = "$it%"
                 )
             }
         }

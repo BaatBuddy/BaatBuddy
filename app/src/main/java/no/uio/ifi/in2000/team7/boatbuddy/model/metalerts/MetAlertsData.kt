@@ -14,8 +14,8 @@ data class FeatureData(
     val awarenessSeriousness: String?, // LAGT TIL
     val eventAwarenessName: String?, // LAGT TIL
     val description: String, // LAGT TIL
-    val awareness_level: String,
-    val awareness_type: String,
+    val awarenessLevel: String,
+    val awarenessType: String,
     val consequences: String?,
     val certainty: String,
     val geographicDomain: String?,
@@ -24,11 +24,6 @@ data class FeatureData(
     val severity: String,
     val type: String, // consider removing (always "Feature")
     val event: String,
-    val affected_area: List<List<List<List<Double>>>>
+    val affectedArea: List<List<List<List<Double>>>>
 
 )
-
-
-/*posisjon, farevarsel, vurdering osv.
-* val coordinates: List<List<List<List<Any>>>>,*/
-

@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.ui.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -10,19 +10,19 @@ import no.uio.ifi.in2000.team7.boatbuddy.R
 
 sealed class Screen(val route: String, val icon: Any, val label: String) {
 
-    object HomeScreen :
+    data object HomeScreen :
         Screen(route = "homescreen", icon = R.drawable.baseline_maps_24, label = "Utforsk")
 
-    object InfoScreen :
+    data object InfoScreen :
         Screen(route = "infoscreen", icon = R.drawable.baseline_weather_24, label = "Været")
 
-    object TrackingScreen :
+    data object TrackingScreen :
         Screen(route = "trackingscreen", icon = R.drawable.baseline_record, label = "Spor")
 
-    object RouteScreen :
+    data object RouteScreen :
         Screen(route = "routescreen", icon = R.drawable.baseline_route, label = "Ruter")
 
-    object ProfileScreen :
+    data object ProfileScreen :
         Screen(route = "profilescreen", icon = Icons.Filled.Person, label = "Profil")
 
 }

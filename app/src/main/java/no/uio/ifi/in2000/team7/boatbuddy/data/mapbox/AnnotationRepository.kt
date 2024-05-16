@@ -127,7 +127,7 @@ class AnnotationRepository(
         return polygonAnnotationManager.create(polygonAnnotationOptions)
     }
 
-    suspend fun addAlertPolygons() {
+    private suspend fun addAlertPolygons() {
         val polygons = polygonAnnotationManager.annotations
         if (alertData == null) {
             val fetchedData = metAlertsRepository.getMetAlertsData(
@@ -149,7 +149,7 @@ class AnnotationRepository(
 
 
         alertData?.forEach { featureData ->
-            featureData.affected_area.forEach { area ->
+            featureData.affectedArea.forEach { area ->
 
                 val alertArea = area.map { polygon ->
                     polygon.map { coordinate ->
@@ -184,7 +184,7 @@ class AnnotationRepository(
     }
 
     // click listener for metalert polygon
-    fun addPolygonClickListener() {
+    private fun addPolygonClickListener() {
         val context = mapView.context
         polygonAnnotationManager.addClickListener { clickedPolygon ->
             if (isAlertClickable) {
@@ -240,7 +240,7 @@ class AnnotationRepository(
         }
     }
 
-    fun createCardView(
+    private fun createCardView(
         context: Context,
         featureData: FeatureData
     ): LinearLayout {

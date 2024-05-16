@@ -34,21 +34,21 @@ interface UserProfileDao {
 
 
     // selection
-    @Query("UPDATE userprofile SET isSelected = true WHERE username LIKE :username")
+    @Query("UPDATE userprofile SET isSelected = 1 WHERE username LIKE :username")
     fun selectUser(username: String)
 
     @Query("SELECT * FROM userprofile WHERE isSelected")
     fun getSelectedUser(): UserProfile?
 
-    @Query("UPDATE userprofile SET isSelected = false")
+    @Query("UPDATE userprofile SET isSelected = 0")
     fun unselectUser()
 
 
     // tracking
-    @Query("UPDATE userprofile SET isTracking = true WHERE username LIKE :username")
+    @Query("UPDATE userprofile SET isTracking = 1 WHERE username LIKE :username")
     fun startTrackingUsername(username: String)
 
-    @Query("UPDATE userprofile SET isTracking = false WHERE username LIKE :username")
+    @Query("UPDATE userprofile SET isTracking = 0 WHERE username LIKE :username")
     fun stopTrackingUsername(username: String)
 
     // weather

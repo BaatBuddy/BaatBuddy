@@ -47,7 +47,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/}"
+            excludes += "/META-INF/*}"
         }
     }
 }
@@ -56,7 +56,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
     implementation("androidx.activity:activity-compose:1.9.0")
 
     implementation(platform("androidx.compose:compose-bom:2024.05.00"))
@@ -75,19 +75,19 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     //ktor
-    val ktor_version = "2.3.10"
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-client-android:$ktor_version")
-    implementation("io.ktor:ktor-client-logging:$ktor_version")
+    val ktorVersion = "2.3.10"
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-client-android:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging:$ktorVersion")
     implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("io.ktor:ktor-serialization-gson:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    val lifecycle_version = "2.7.0"
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    val lifecycleVersion = "2.8.0"
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 
     //For navigation
     val navVersion = "2.7.7"
@@ -111,11 +111,11 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Room
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-ktx:$room_version")
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-ktx:$roomVersion")
     //implementation ("androidx.room:room-runtime:$room_version")
     // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.49")
@@ -132,9 +132,9 @@ dependencies {
     kaptTest("com.google.dagger:hilt-compiler:2.46.1")
 
     // Worker
-    val work_version = "2.9.0"
-    implementation("androidx.work:work-runtime-ktx:$work_version")
-    
+    val workVersion = "2.9.0"
+    implementation("androidx.work:work-runtime-ktx:$workVersion")
+
 
 }
 

@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.location
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -25,12 +24,9 @@ class UpdateDataWorker @AssistedInject constructor(
         if (userLocation != null) {
             metAlertsRepository.updateAlertData()
             sunriseRepository.updateSunriseData(userLocation)
-            Log.i("ASDASD", "HAR LOKASJON")
         } else {
-            Log.i("ASDASD", "HAR IKKE LOKASJON?")
             return Result.retry()
         }
-        Log.i("ASDASD", "WORK BITCH WORK!")
 
         return Result.success()
     }

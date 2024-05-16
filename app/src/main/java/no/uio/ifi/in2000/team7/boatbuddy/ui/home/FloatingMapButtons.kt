@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
@@ -25,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 
@@ -34,7 +32,6 @@ fun FloatingMapButtons(
     homeViewModel: HomeViewModel,
     mapboxViewModel: MapboxViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    //networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
@@ -64,7 +61,7 @@ fun FloatingMapButtons(
         // toggles the alert to be visible
         FloatingActionButton(
             onClick = {
-                mapboxViewModel.toggleAlertVisibility();
+                mapboxViewModel.toggleAlertVisibility()
             },
             shape = CircleShape,
             containerColor =
