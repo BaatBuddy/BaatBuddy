@@ -176,7 +176,7 @@ class WeatherCalculatorRepository @Inject constructor(
         )
     }
 
-    suspend fun updateWeekForecastScore(weekForecast: WeekForecast): WeekForecast {
+    fun updateWeekForecastScore(weekForecast: WeekForecast): WeekForecast {
         val weatherPreferences = userDao.getSelectedUser()?.preferences
 
         val dateScores = calculateScoreWeekDay(

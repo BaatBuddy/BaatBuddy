@@ -1,3 +1,5 @@
+package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
+
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,9 +38,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.R
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.CreateUserUIState
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileUIState
-import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
 fun CreateBoatSegment(
