@@ -355,6 +355,7 @@ fun NavGraph(
                             mainViewModel = mainViewModel,
                             profileViewModel = profileViewModel,
                             locationForecastViewModel = locationForecastViewModel,
+                            networkConnectivityViewModel = networkConnectivityViewModel
 
                             )
                     }
