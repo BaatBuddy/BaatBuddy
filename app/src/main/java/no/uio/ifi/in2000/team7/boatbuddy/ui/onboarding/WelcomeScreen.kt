@@ -54,8 +54,7 @@ fun WelcomeScreen() {
 
                 // this is boat buddy text
                 Text(
-                    text = "Båtbuddy er en app som forenkler planlegging av dagsturer for båtførere i Norge. " +
-                            "Her kan man skissere en rute, generere, se været for ruten og lagre den!",
+                    text = "BåtBuddy forenkler planlegging av dagsturer for norske båtførere!  Lagre din rute: Skisser - Generer - Se været",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                 )
