@@ -10,6 +10,9 @@ Mermaidkoden ligger i diagrams-mappen: <a href="https://github.uio.no/IN2000-V24
 
 
 - Klassediagram i UML
+- Se diagrammet nærmere her eller i diagrams-mappen: <a href="https://tinyurl.com/978kwmnu">HER</a>
+
+
 <img width="1511" alt="Screenshot 2024-05-16 at 21 17 05" src="https://media.github.uio.no/user/8216/files/5ca54efb-f526-4145-b93a-0b9ae44f02a7">
 
 
