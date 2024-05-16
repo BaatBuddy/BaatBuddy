@@ -1,4 +1,5 @@
-Mermaidkoden ligger i diagrams-mappen: HER
+Mermaidkoden ligger i diagrams-mappen: <a href="https://github.uio.no/IN2000-V24/team-7/blob/marius-feature-document/diagrams/routeplanning_diagram.md">HER</a>
+
 
 - Rikt bilde
 <img width="1371" alt="Rikt bilde (1)" src="https://media.github.uio.no/user/8216/files/ca8d222f-e770-4712-a667-6b822b89fe9a">
