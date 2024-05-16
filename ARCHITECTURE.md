@@ -47,7 +47,7 @@ Dette prinsippet har vi tatt høyde for ved å bruke UI_state istedenfor remembe
 - **Coroutines:** For å håndtere asynkrone oppgaver på en enkel og strukturert måte.
 - **Material Design:** Brukt for å sikre en konsistent UI-opplevelse.
 - **GPS:** Fine location, sporing av brukere. Gir en mer nøyaktig lokasjon
-- **Internett: Brukes for å hente data fra API’ene og hente kartet.**
+- **Internett**: Brukes for å hente data fra API’ene og hente kartet.
 
 Videreutvikling:
 
