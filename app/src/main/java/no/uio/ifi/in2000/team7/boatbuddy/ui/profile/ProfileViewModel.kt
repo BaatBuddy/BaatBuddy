@@ -89,17 +89,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun getUser(username: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = profileRepository.getUserByUsername(username = username)
-            _profileUIState.update {
-                it.copy(
-                    selectedUser = user
-                )
-            }
-        }
-    }
-
     fun addUser(
         username: String,
         name: String,

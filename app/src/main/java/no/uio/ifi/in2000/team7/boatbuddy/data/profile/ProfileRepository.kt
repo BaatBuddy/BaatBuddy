@@ -15,10 +15,6 @@ class ProfileRepository @Inject constructor(
     private val boatDao: BoatProfileDao,
     private val context: Context,
 ) {
-    fun getUserByUsername(username: String): UserProfile {
-        return userDao.getUserByUsername(username = username)
-    }
-
     suspend fun addUser(
         username: String,
         name: String,
