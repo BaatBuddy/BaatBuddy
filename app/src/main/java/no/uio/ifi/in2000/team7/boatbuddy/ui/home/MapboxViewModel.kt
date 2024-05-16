@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.Route
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
-import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.autoroute.AutorouteData
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
@@ -47,7 +46,6 @@ data class MapboxUIState(
 @HiltViewModel
 class MapboxViewModel @Inject constructor(
     private val mapboxRepository: MapboxRepository,
-    private val weatherCalculatorRepository: WeatherCalculatorRepository,
 ) : ViewModel() {
 
     private var _mapboxUIState: MutableStateFlow<MapboxUIState> = MutableStateFlow(MapboxUIState())

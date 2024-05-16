@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteDataSource
 import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.database.ProfileDatabase
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.userlocation.UserLocationRepository
@@ -51,7 +52,9 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchAutorouteRepository(): AutorouteRepository = AutorouteRepository()
+    fun fetchAutorouteRepository(
+        db: ProfileDatabase,
+    ): AutorouteRepository = AutorouteRepository(AutorouteDataSource(), db.boatDao())
 
     @Singleton
     @Provides
@@ -68,7 +71,10 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun fetchMapboxRepository(): MapboxRepository = MapboxRepository()
+    fun fetchMapboxRepository(
+        autorouteRepository: AutorouteRepository,
+    ): MapboxRepository =
+        MapboxRepository(autorouteRepository = autorouteRepository)
 
     @Singleton
     @Provides
@@ -87,10 +93,11 @@ object AppModule {
     fun fetchRouteRepository(
         db: ProfileDatabase,
         @ApplicationContext context: Context,
+        mapboxRepository: MapboxRepository,
     ): RouteRepository = RouteRepository(
         context = context,
         routeDao = db.routeDao(),
-        mapRepo = MapboxRepository()
+        mapRepo = mapboxRepository
     )
 
     @Singleton

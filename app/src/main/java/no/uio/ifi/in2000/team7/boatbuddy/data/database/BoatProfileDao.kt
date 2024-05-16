@@ -24,4 +24,7 @@ interface BoatProfileDao {
 
     @Query("UPDATE boatprofile SET isSelected = true WHERE username LIKE :username AND boatname LIKE :boatname")
     suspend fun selectBoatUsername(boatname: String, username: String)
+
+    @Query("SELECT * FROM boatprofile AS b INNER JOIN userprofile AS u ON (b.username = u.username) WHERE u.isSelected AND b.isSelected")
+    suspend fun getSelectedBoatSelectedUser(): BoatProfile?
 }

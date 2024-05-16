@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.test.espresso.base.MainThread
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecastRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator.WeatherCalculatorRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecastData
@@ -32,7 +29,6 @@ data class LocationForecastUIState(
 
 @HiltViewModel
 class LocationForecastViewModel @Inject constructor(
-    private val locationForecastRepository: LocationForecastRepository,
     private val weatherCalculatorRepository: WeatherCalculatorRepository,
 ) : ViewModel() {
 
@@ -40,41 +36,8 @@ class LocationForecastViewModel @Inject constructor(
         MutableStateFlow(LocationForecastUIState())
     val locationForecastUIState: StateFlow<LocationForecastUIState> = _locationForecastUIState
 
-    private var initialized = false
-    private var lastPos = ""
-
     private var routeInit = false
     private var userInit = false
-
-    @MainThread
-    fun initialize(point: Point, altitude: String = "") {
-        initialized = lastPos == point.toJson()
-
-        if (initialized) return
-
-        initialized = true
-        lastPos = point.toJson()
-        loadLocationForecast(point, altitude)
-    }
-
-    // keeping altitude as optional if the function is not going to be private
-    private fun loadLocationForecast(
-        point: Point,
-        altitude: String = ""
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-
-            val locationForecast =
-                locationForecastRepository.getLocationForecastData(point, altitude)
-
-            _locationForecastUIState.update {
-                it.copy(
-                    locationForecast = locationForecast,
-                )
-            }
-
-        }
-    }
 
     fun deselectWeekDayForecastRoute() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -112,9 +75,6 @@ class LocationForecastViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val weekdayForecast =
                 weatherCalculatorRepository.getWeekdayForecastData(listOf(point))
-            weekdayForecast.days.forEach {
-                Log.i("ASDASD", it.toString())
-            }
             if (weekdayForecast.days.isEmpty()) {
                 return@launch
             }
@@ -130,7 +90,7 @@ class LocationForecastViewModel @Inject constructor(
     }
 
     fun updateSelectedDayUser(
-        dayForecast: DayForecast
+        dayForecast: DayForecast,
     ) {
         viewModelScope.launch {
             _locationForecastUIState.update {
@@ -142,7 +102,7 @@ class LocationForecastViewModel @Inject constructor(
     }
 
     fun updateSelectedDayRoute(
-        dayForecast: DayForecast
+        dayForecast: DayForecast,
     ) {
         viewModelScope.launch {
             _locationForecastUIState.update {
@@ -150,12 +110,6 @@ class LocationForecastViewModel @Inject constructor(
                     selectedDayRoute = dayForecast
                 )
             }
-        }
-    }
-
-    fun refreshInitUser() {
-        viewModelScope.launch {
-            userInit = false
         }
     }
 
