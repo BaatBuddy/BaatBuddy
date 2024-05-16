@@ -1,3 +1,4 @@
+test
 ```mermaid
 classDiagram
 
@@ -147,8 +148,76 @@ class ProfileRepository {
 
     addUser(username~String~, name~String~, boatname~String~, boatSpeed~String~, safetyDepth~String~, safetyHeight~String~)
     addBoat(username~String~, boatname~String~, boatSpeed~String~, safetyDepth~String~, safetyHeight~String~)
+    startTrackingUser()
+    stopTrackingUser()
+    selectUser(username~String~)
+    selectBoat(boatname~String~, username~String~)
+    unselectUser()
+    getSelectedUser(): UserProfile
+    getALlUsers() List~UserProfile~
+    getALlBoatsUsername(username~String~) List~BoatProfile~
+    getSelectedBoatUsername(username~String~) BoatProfile
+    unselectBoatUSername(username~String~)
+    replaceWeatherPreference(weatherPreferences)
 }
 
+class RouteRepository {
+    routeDao~RouteDao~
+    context~Context~
+    mapRepo~MapboxRepository~
+
+    getLastIDUsername(username~String~, boatname~String~) Int
+    addRouteUsername(username~String~, boatname~String~, routename~String~, routeDescription~String~, route~List~Point~~)
+    getAllRoutesUsername(usernamne~String~) List~RouteMap~
+    getStartTime() String
+    getFinishTime() String
+    setFinalFInishTime()
+    getTemporaryRouteView(points~List~Point~~) String
+    deleteRoute(routeMap~RouteMap~)
+}
+
+class SunriseDataSource {
+    getSunriseData(lat~String~, lon~String~, date~String~) SunriseData
+}
+
+class SunriseRepository {
+    dataSource~SunriseDataSource~
+    getSunriseData(lat~String~, lon~String~, date~String~) SunriseData
+    updateSunriseData(point~Point~)
+}
+
+class WeatherCalculatorRepository {
+    oceanForecastRepository~OceanForecastRepository~
+    locationForecastRepository~LocationForecastRepository~
+    userDao~UserProfileDao~
+
+    fetchPathWeatherData(points~List~Point~~) List~PathWeatherData~
+    getWeekdayForecastData(points~List~Point~~) WeekForecast
+    updateWeekForecastScore(weekForecast: WeekForecast) WeekForecast
+    convertDateToDay(date~String~) String
+}
+
+class WeatherScore {
+    calculateWaves(realData~Double~, preferredData~Double~) Double
+    calculatePercentages(realData~Double~, preferredData~Double~) Double
+    calculateTemp(realData~Double~, preferredData~Double~) Double
+    calculateSpeed(realData~Double~, preferredData~Double~) Double
+    calculateHour(timeWeatherData~TimeWeatherData~, weatherPreferences~WeatherPreferences~) Double
+    calculateData(timeWeatherData~List~TimeWeatherData~~, weatherPreferences~WeatherPreferences~) Double
+    selectWeatherDataFromDay(twd~List~TimeWeatherData~~) List~TimeWeatherData~
+    getAvg(sum~Double~, size~Int~) Double
+    calculateScorePath(pathWeatherData~List~PathWeatherData~~, weatherPreferences~WeatherPreferences~)
+    calculateScoreWeekDay(weekForecast~WeekForecast~, weatherPreferences~WeatherPrerences~) List~DateScore~
+    selectPointsFromPath(points~List~Point~~) List~Point~
+}
+
+class APIClient {
+    client~HttpClient~
+}
+
+class PolygonPosition {
+    checkUserLocationAlertAreas(lon~Double~, lat~Double~, featureData~ListFeatureData~) List~FeatureData~
+}
 
 
 
