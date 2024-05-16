@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +46,8 @@ fun WeatherDropDownCard(
                 rotation = if (isDroppedDown) -90f
                 else 0f
             }
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .animateContentSize(),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainer),
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         elevation = CardDefaults.cardElevation(

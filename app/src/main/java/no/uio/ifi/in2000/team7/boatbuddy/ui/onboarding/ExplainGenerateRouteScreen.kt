@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,18 +68,27 @@ fun ExplainGenerateRouteScreen() {
                         }
                         append("' knappen og vent.")
                     },
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
                 )
 
                 Text(
-                    text = "",
+                    text = "Her er det mulighet for å trykke på kortene for å se været i mer detalje.",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier
-                        .padding(vertical = 32.dp)
+                        .padding(vertical = 32.dp, horizontal = 16.dp)
                 )
 
                 // TODO picture of finished bottomsheet with correct colors
+                Image(
+                    painter = painterResource(id = R.drawable.homescreen_bottomsheet),
+                    contentDescription = "Hjemmeskjerm",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
             }
         }
     }

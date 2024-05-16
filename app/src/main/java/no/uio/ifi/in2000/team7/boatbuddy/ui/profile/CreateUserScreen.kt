@@ -1,6 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import android.util.Log
+import CreateBoatSegment
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -88,11 +88,6 @@ fun CreateUserScreen(
                     profileViewModel = profileViewModel,
                     navController = navController
                 )
-
-                CreateBoatSegment(
-                    profileViewModel = profileViewModel,
-                    navController = navController
-                )
             }
 
         }
@@ -100,40 +95,4 @@ fun CreateUserScreen(
 
     }
 
-}
-
-fun checkInputsUserProfile(
-    createUserUIState: CreateUserUIState,
-    invalidMap: MutableMap<String, Boolean>,
-    profileViewModel: ProfileViewModel,
-    navController: NavController,
-) {
-    val username = createUserUIState.username
-    val name = createUserUIState.name
-    val boatname = createUserUIState.boatname
-    val boatSpeed = createUserUIState.boatSpeed
-    val safetyDepth = createUserUIState.safetyDepth
-    val safetyHeight = createUserUIState.safetyHeight
-
-    invalidMap["username"] = username.isBlank()
-    invalidMap["name"] = name.isBlank()
-    invalidMap["boatname"] = boatname.isBlank()
-    invalidMap["boatSpeed"] = boatSpeed.isBlank()
-    invalidMap["safetyDepth"] = safetyDepth.isBlank()
-    invalidMap["safetyHeight"] = safetyHeight.isBlank()
-
-    Log.i("ASDASD", invalidMap.toString())
-    if (invalidMap.all { !it.value }) {
-        profileViewModel.addUser(
-            username = username,
-            name = name,
-            boatname = boatname,
-            boatSpeed = boatSpeed,
-            safetyDepth = safetyDepth,
-            safetyHeight = safetyHeight
-        )
-
-        profileViewModel.clearCreateProfile()
-        navController.popBackStack()
-    }
 }
