@@ -14,9 +14,10 @@ class LocationForecastDataSource {
     suspend fun getLocationForecastData(
         lat: String,
         lon: String,
-        altitude: String
+        altitude: String,
     ): LocationForecastData? {
 
+        // construct url
         var path = "weatherapi/locationforecast/2.0/complete"
 
         if (lat.isNotBlank() && lon.isNotBlank()) {
@@ -26,6 +27,7 @@ class LocationForecastDataSource {
             }
         }
 
+        // attempt fetching data
         return try {
             //order of args -> lat, lon, altitude
             val results = client.get(path)
@@ -36,6 +38,7 @@ class LocationForecastDataSource {
             val coordinates = data.geometry.coordinates
             val timeseries = data.properties.timeseries
 
+            // transform data into more usable data
             LocationForecastData(
                 lon = coordinates[0],
                 lat = coordinates[1],

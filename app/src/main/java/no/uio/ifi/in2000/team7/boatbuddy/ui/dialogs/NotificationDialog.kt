@@ -5,6 +5,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
+// dialog for asking user notification permission
 @Composable
 fun NotificationDialog(navigateToSettings: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(

@@ -69,7 +69,7 @@ class LocationService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    //
+    // start tracking process
     private fun start() {
         val locationNotificationId = 1
         alertedSunset = false
@@ -79,7 +79,7 @@ class LocationService : Service() {
 
         val pendingIntent = createPendingIntent()
 
-        // Create Notification Channels if Android version is Oreo (API 26) or higher
+        // check for version and handle it differently
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val locationChannel = NotificationChannel(
                 "location",
@@ -128,9 +128,11 @@ class LocationService : Service() {
                         AlertNotificationCache.featureData
                     )
 
+                // add points to tracked route
                 points.add(Point.fromLngLat(lon, lat))
 
 
+                // handle time in cache
                 if (startTime.isBlank()) {
                     startTime = sdf.format(Date())
                 }
@@ -141,7 +143,7 @@ class LocationService : Service() {
                     .build()
                 notificationManager.notify(locationNotificationId, updatedLocationNotification)
 
-                // Identify newly entered alerts
+                // check for new alert areas
                 val newlyEntered = currentAlerts.map { it.event }.toSet() - enteredAlerts
                 for (alert in newlyEntered.map { event -> currentAlerts.first { it.event == event } }) {
                     enteredAlerts.add(alert.event)
@@ -153,7 +155,7 @@ class LocationService : Service() {
                     )
                 }
 
-                // Identify exited alerts
+                // check for exited alert areas
                 val exited = enteredAlerts - currentAlerts.map { it.event }.toSet()
                 for (alert in exited.map { event -> currentAlerts.first { it.event == event } }) {
                     enteredAlerts.remove(alert.event) // Remove the alert from the entered set
@@ -164,6 +166,7 @@ class LocationService : Service() {
                         notificationManager
                     )
                 }
+                // send a push notification if user is tracking within one hour of sunset
                 if (isWithinOneHour(
                         currentTime = sunriseDf.format(Date()),
                         sunsetTime = sunsetToday
@@ -193,6 +196,7 @@ class LocationService : Service() {
             }.launchIn(serviceScope)
     }
 
+    // metalert notification builder
     private fun sendAlertNotification(
         alert: FeatureData,
         enterExitMessage: String,
@@ -252,7 +256,8 @@ class LocationService : Service() {
 
     }
 
-    fun initisializeAlerts(featureData: List<FeatureData>) {
+    // fill list with data
+    fun initializeAlerts(featureData: List<FeatureData>) {
         AlertNotificationCache.featureData = featureData
     }
 

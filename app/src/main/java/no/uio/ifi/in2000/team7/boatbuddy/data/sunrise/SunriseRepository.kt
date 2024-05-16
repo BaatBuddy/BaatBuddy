@@ -16,6 +16,7 @@ class SunriseRepository(
         return dataSource.getSunriseData(lat, lon, date)
     }
 
+    // updates cache
     suspend fun updateSunriseData(point: Point) {
         val lat = point.latitude().toString()
         val lon = point.longitude().toString()

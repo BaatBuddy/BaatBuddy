@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter
 
+// helping composable for alert icon
 @Composable
 fun AlertIcon(event: String, riskMatrixColor: String, modifier: Modifier) {
     Icon(

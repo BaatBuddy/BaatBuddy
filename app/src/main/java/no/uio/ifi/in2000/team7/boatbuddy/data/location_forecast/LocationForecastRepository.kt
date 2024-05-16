@@ -6,17 +6,19 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.LocationForecast
 interface LocationForecastRepo {
     suspend fun getLocationForecastData(
         point: Point,
-        altitude: String = "0"
+        altitude: String = "0",
     ): LocationForecastData?
 }
 
 class LocationForecastRepository(
-    private val dataSource: LocationForecastDataSource = LocationForecastDataSource()
+    private val dataSource: LocationForecastDataSource = LocationForecastDataSource(),
 ) : LocationForecastRepo {
-    override suspend fun getLocationForecastData(
-        point: Point, altitude: String
 
-    ): LocationForecastData? {
+    // fetch weather data
+    override suspend fun getLocationForecastData(
+        point: Point, altitude: String,
+
+        ): LocationForecastData? {
         val lon = point.longitude().toString()
         val lat = point.latitude().toString()
         return dataSource.getLocationForecastData(lon = lon, lat = lat, altitude = altitude)

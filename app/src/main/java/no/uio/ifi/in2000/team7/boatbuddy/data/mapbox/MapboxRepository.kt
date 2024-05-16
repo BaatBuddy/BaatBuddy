@@ -51,6 +51,7 @@ class MapboxRepository @Inject constructor(
         )
     }
 
+    // rotation of phone listener
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         mapView.mapboxMap.setCamera(
             CameraOptions.Builder()
@@ -61,6 +62,7 @@ class MapboxRepository @Inject constructor(
         mapView.gestures.focalPoint = mapView.mapboxMap.pixelForCoordinate(it)
     }
 
+    // cancel any following of pucker on map if user swipes on map
     private val onMoveListener = object : OnMoveListener {
         override fun onMoveBegin(detector: MoveGestureDetector) {
             onCameraTrackingDismissed()
@@ -75,6 +77,7 @@ class MapboxRepository @Inject constructor(
         }
     }
 
+    // initialize mapview for ui
     fun createMap(context: Context, cameraOptions: CameraOptions): MapView {
 
         // consider a new solution for this
@@ -87,6 +90,8 @@ class MapboxRepository @Inject constructor(
 
         return mapView
     }
+
+    // set style and zoom inn on spot
 
     private fun onMapReady(cameraOptions: CameraOptions) {
 
@@ -121,6 +126,7 @@ class MapboxRepository @Inject constructor(
         }
     }
 
+    // setup for pucker on map, size and graphics
     private fun initLocationComponent() {
         with(mapView.location) {
             updateSettings {
@@ -148,6 +154,7 @@ class MapboxRepository @Inject constructor(
         }
     }
 
+    // starts following user on map and rotate map based on rotation of phone
     fun startFollowUserOnMap() {
         with(mapView.location) {
             addOnIndicatorPositionChangedListener(
@@ -159,6 +166,8 @@ class MapboxRepository @Inject constructor(
         }
     }
 
+
+    // pans to user on creation of map
     private val initializationMutex = Mutex()
     private val scope = CoroutineScope(Dispatchers.IO)
     suspend fun panToUserOnMap() {
@@ -191,10 +200,12 @@ class MapboxRepository @Inject constructor(
     }
 
 
+    // toggle click listeners for alert polygons
     suspend fun toggleAlertVisibility() {
         annotationRepository.toggleAlertVisibility()
     }
 
+    // adds lines between points
     fun createLinePath(
         points: List<Point>,
     ) {
@@ -205,10 +216,12 @@ class MapboxRepository @Inject constructor(
         Point.fromLngLat(it[0], it[1])
     }
 
+    // create a route (wipe lines and add a new one)
     fun createRoute(points: List<Point>) {
         annotationRepository.createRoute(autoroutePoints = points)
     }
 
+    // toggling of drawing a route on the map (click listeners)
     fun toggleRouteClicking() {
         annotationRepository.toggleRouteClicking()
     }
@@ -217,12 +230,14 @@ class MapboxRepository @Inject constructor(
         return annotationRepository.getRoutePoints()
     }
 
+    // generate a route with autoroute
     suspend fun fetchRouteData(): APIStatus {
         return autorouteRepository.getAutorouteData(
             course = annotationRepository.route.toList(),
         )
     }
 
+    // drawing on map functions
     fun refreshRoute() {
         annotationRepository.refreshRoute()
     }
@@ -235,6 +250,7 @@ class MapboxRepository @Inject constructor(
         annotationRepository.redoClick()
     }
 
+    // mapbox static map generating URI
     suspend fun generateMapURI(points: List<Point>): String {
 
 

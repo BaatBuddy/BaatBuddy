@@ -20,6 +20,7 @@ class AutorouteRepository @Inject constructor(
         course: List<Point>,
     ): APIStatus {
 
+        // get selected user boatsize else use default
         val boat = boatDao.getSelectedBoatSelectedUser()
 
         // check if its valid

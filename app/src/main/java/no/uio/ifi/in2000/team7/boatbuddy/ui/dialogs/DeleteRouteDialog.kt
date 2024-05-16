@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+// dialog if user wants to delete a route
 @Composable
 fun DeleteRouteDialog(
     onDismissRequest: () -> Unit,

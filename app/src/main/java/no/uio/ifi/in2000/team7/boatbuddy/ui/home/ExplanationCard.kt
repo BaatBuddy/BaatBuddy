@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.ExplainMakeRouteScreen
 
+// popup card for instructions
 @Composable
 fun ExplanationCard(
     homeViewModel: HomeViewModel,

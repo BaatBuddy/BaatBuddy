@@ -11,6 +11,7 @@ import java.net.UnknownHostException
 
 class AutorouteDataSource {
 
+    // get path data by points based on boatsize and course
     suspend fun getAutoRouteData(
         course: List<Point>,
         safetyDepth: String,
@@ -18,6 +19,8 @@ class AutorouteDataSource {
         boatSpeed: String,
     ): APIStatus {
 
+
+        // create url
         var path = ""
 
         if (course.isNotEmpty() && safetyDepth.isNotBlank() && safetyHeight.isNotBlank() && boatSpeed.isNotBlank()) {
@@ -46,6 +49,7 @@ class AutorouteDataSource {
             path = base + middle + end
         }
 
+        // attempt fetching data
         return try {
             val results = client.get(path)
 

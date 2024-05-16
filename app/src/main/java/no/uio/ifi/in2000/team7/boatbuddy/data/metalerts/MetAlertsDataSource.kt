@@ -26,6 +26,7 @@ class MetAlertsDataSource {
 
             val data: MetAlertsAPI = results.body()
 
+            // transform data to more usable data
             MetAlertsData(
                 lang = data.lang,
                 lastChange = data.lastChange,
@@ -35,8 +36,8 @@ class MetAlertsDataSource {
                         start = it.`when`.interval[0],
                         end = it.`when`.interval[1],
                         awarenessResponse = properties.awarenessResponse,
-                        awarenessSeriousness = properties.awarenessSeriousness, // LAGT TIL
-                        eventAwarenessName = properties.eventAwarenessName, // LAGT TIL
+                        awarenessSeriousness = properties.awarenessSeriousness,
+                        eventAwarenessName = properties.eventAwarenessName,
                         awarenessLevel = properties.awareness_level,
                         awarenessType = properties.awareness_type,
                         consequences = properties.consequences,
@@ -51,13 +52,13 @@ class MetAlertsDataSource {
                             areaType = it.geometry.type
                         ),
                         event = properties.event,
-                        description = properties.description // LAGT TIL
+                        description = properties.description
                     )
                 }
             )
 
         } catch (
-            e: UnknownHostException
+            e: UnknownHostException,
         ) {
             null
         } catch (e: ConnectTimeoutException) {
@@ -66,9 +67,10 @@ class MetAlertsDataSource {
 
     }
 
+    // convert metalert special polygon special way of polygons to a more understandable one
     private fun convertArea(
         affectedArea: List<List<List<Any>>>,
-        areaType: String
+        areaType: String,
     ): List<List<List<List<Double>>>> {
         return when (areaType) {
             "MultiPolygon" -> affectedArea.map { area ->

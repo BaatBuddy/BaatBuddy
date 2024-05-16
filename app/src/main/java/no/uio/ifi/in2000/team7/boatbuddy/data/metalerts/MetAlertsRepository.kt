@@ -27,6 +27,7 @@ class MetAlertsRepository(
         return metalertData
     }
 
+    // returns a list of FeatureData that one of the points are inside of
     suspend fun getAlertsForPoints(points: List<Point>): List<FeatureData> {
         val fds = mutableSetOf<FeatureData>()
         metalertData = dataSource.getMetAlertsData("", "")
@@ -42,6 +43,7 @@ class MetAlertsRepository(
         return fds.toList().distinctBy { it.event }
     }
 
+    // updates cache
     suspend fun updateAlertData() {
         val metalertData = dataSource.getMetAlertsData("", "")
         AlertNotificationCache.featureData = metalertData?.features!!

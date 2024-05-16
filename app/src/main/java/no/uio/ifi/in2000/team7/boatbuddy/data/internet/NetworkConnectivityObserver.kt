@@ -14,9 +14,10 @@ import javax.inject.Inject
 
 class NetworkConnectivityObserver @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val context: Context,
 ) {
 
+    // listen to internett access
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 

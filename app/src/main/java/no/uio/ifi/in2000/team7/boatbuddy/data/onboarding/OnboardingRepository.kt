@@ -7,6 +7,8 @@ import javax.inject.Inject
 class OnboardingRepository @Inject constructor(
     @ApplicationContext context: Context,
 ) {
+
+    // check if is first time
     private val preferences =
         context.getSharedPreferences("firstStart", Context.MODE_PRIVATE)
 

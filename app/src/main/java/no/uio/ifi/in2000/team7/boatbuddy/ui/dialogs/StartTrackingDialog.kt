@@ -43,11 +43,13 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.main.Screen
 import java.util.concurrent.TimeUnit
 
+
+// dialog that enables user to start tracking their route
 @Composable
 fun StartTrackingDialog(
     navController: NavController,
     mainViewModel: MainViewModel,
-    userLocationViewModel: UserLocationViewModel
+    userLocationViewModel: UserLocationViewModel,
 ) {
     val context = LocalContext.current
     val userLocationUIState by userLocationViewModel.userLocationUIState.collectAsState()
@@ -95,6 +97,7 @@ fun StartTrackingDialog(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        // cancel tracking
                         Button(
                             onClick = {
                                 mainViewModel.hideDialog()
@@ -119,6 +122,7 @@ fun StartTrackingDialog(
                             )
                         }
 
+                        // start worker and tracking
                         Button(
                             onClick = {
                                 if (navController.currentDestination?.route != Screen.HomeScreen.route) {

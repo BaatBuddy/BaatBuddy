@@ -70,7 +70,7 @@ fun HomeScreen(
 
     // foreground location setup
     val locationService = LocationService()
-    metAlertsUIState.metalerts?.features?.let { locationService.initisializeAlerts(it) }
+    metAlertsUIState.metalerts?.features?.let { locationService.initializeAlerts(it) }
 
     if (mapboxUIState.routeData is APIStatus.Success && !homeScreenUIState.showBottomSheetInitialized) {
         homeViewModel.showBottomSheet()

@@ -32,7 +32,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.AlertPolygon
 import no.uio.ifi.in2000.team7.boatbuddy.model.metalerts.FeatureData
 
 class AnnotationRepository(
-    private val mapView: MapView
+    private val mapView: MapView,
 ) {
     private val metAlertsRepository = MetAlertsRepository()
     private val alertPolygons = mutableListOf<AlertPolygon>()
@@ -56,6 +56,7 @@ class AnnotationRepository(
     val route: MutableList<Point> = mutableListOf()
 
     init {
+        // setup for default click listening on map
         runBlocking {
             addPolygonClickListener()
             addRouteClickListener()
@@ -63,6 +64,8 @@ class AnnotationRepository(
     }
 
     // functions for the polyline manager
+
+    // creates straight lines between all points in list
     fun addLineToMap(
         points: List<Point>, // order of point matter
     ): PolylineAnnotation {
@@ -78,10 +81,11 @@ class AnnotationRepository(
     }
 
     // functions for the polygon manager
+    // create a geometric figure on map with a set of fill color and border color
     private fun addPolygonToMap(
         points: List<List<Point>>,
-        fColor: String = "",
-        olColor: String = ""
+        fColor: String = "", // fill
+        olColor: String = "", // border
     ): PolygonAnnotation {
         // string in hex value format
         val fillColor: String
@@ -242,7 +246,7 @@ class AnnotationRepository(
 
     private fun createCardView(
         context: Context,
-        featureData: FeatureData
+        featureData: FeatureData,
     ): LinearLayout {
         val metalertCardView = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
