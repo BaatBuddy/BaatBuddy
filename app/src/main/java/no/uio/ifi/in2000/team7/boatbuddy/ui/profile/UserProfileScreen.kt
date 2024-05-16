@@ -2,7 +2,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,11 +80,14 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+
             ) {
                 Text(
                     text = "Valgt profil",
                     fontSize = 32.sp,
-                    fontWeight = FontWeight.W900
+                    fontWeight = FontWeight.W900,
+                    modifier = Modifier
+                        .padding(top = 16.dp)
                 )
                 profileUIState.selectedUser?.let {
                     UserCard(
@@ -118,7 +118,7 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                             profileUIState.selectedUser?.username?.let {
                                 profileViewModel.selectBoat(
                                     boatname = profileUIState.selectedBoat!!.boatname,
-                                    username =  profileUIState.selectedBoat!!.username
+                                    username = profileUIState.selectedBoat!!.username
                                 )
                             }
                             profileViewModel.stopSelectingBoats()
@@ -133,7 +133,10 @@ fun UserProfileScreen(profileViewModel: ProfileViewModel, navController: NavCont
                 ) {
                     Text(text = "Liste over båter")
                     Spacer(modifier = Modifier.width(10.dp))
-                    Icon(imageVector = Icons.AutoMirrored.Outlined.List, contentDescription = "List icon")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.List,
+                        contentDescription = "List icon"
+                    )
 
 
                 }
