@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
 
     class AutorouteDataSource {
@@ -19,16 +20,6 @@ classDiagram
         sdf~SimpleDateFormat~
         startTime~String~
         finishTime~String~
-    }
-
-    class UpdataDataWorker {
-        appContext~Context~
-        params~WorkerParams~
-        metAlertsRepository~MetALertsRepository~
-        sunriseRepository~SunriseRepository~
-        userLocationRepository~UserLocationRepository~
-
-        doWork() Result
     }
 
     class LocationForecastDataSource {
@@ -421,69 +412,74 @@ classDiagram
 
     }
 
-AutorouteDataSource -- AutorouteData
-AutorouteData -- AutorouteRepository
-AutorouteRepository -- BoatProfileDao
+AutorouteDataSource "1" -- "1" AutorouteData
+AutorouteData "1" -- "1" AutorouteRepository
+AutorouteRepository "1" -- "1" BoatProfileDao
 
-LocationForecastDataSource -- LocationForecastData 
-LocationForecastData -- LocationForecastRepository
-LocationForecastDataSource -- APIClient
+LocationForecastDataSource "1" -- "1" LocationForecastData 
+LocationForecastData "1" -- "1" LocationForecastRepository
+LocationForecastDataSource "1" -- "1" APIClient
 
-OceanForecastDataSource -- OceanForecastData
-OceanForecastData -- OceanForecastRepository
-OceanForecastDataSource -- APIClient
+OceanForecastDataSource "1" -- "1" OceanForecastData
+OceanForecastData "1" -- "1" OceanForecastRepository
+OceanForecastDataSource "1" -- "1" APIClient
 
-SunriseDataSource -- SunriseData
-SunriseData -- SunriseRepository
-SunriseDataSource -- APIClient
+SunriseDataSource "1" -- "1" SunriseData
+SunriseData "1" -- "1" SunriseRepository
+SunriseDataSource "1" -- "1" APIClient
 
-MetAlertsDataSource -- MetAlertsData
-MetAlertsData -- MetAlertsRepository
-MetAlertsDataSource -- APIClient
-MetAlertsViewModel -- MetAlertsRepository 
+MetAlertsDataSource "1" -- "1" MetAlertsData
+MetAlertsData "1" -- "1" MetAlertsRepository
+MetAlertsDataSource "1" -- "1" APIClient
+MetAlertsViewModel "1" -- "1" MetAlertsRepository 
 
-MapboxRepository -- AnnotationRepository
-MapboxRepository -- AutorouteRepository
+MapboxRepository "1" -- "1" AnnotationRepository
+MapboxRepository "1" -- "1" AutorouteRepository
 
-ProfileRepository -- UserProfileDao
-ProfileRepository -- BoatProfileDao
+ProfileRepository "1" -- "1" UserProfileDao
+ProfileRepository "1" -- "1" BoatProfileDao
 
-RouteRepository -- RouteDao
-RouteRepository -- MapboxRepository
+RouteRepository "1" -- "1" RouteDao
+RouteRepository "1" -- "1" MapboxRepository
 
-WeatherCalculatorRepository -- OceanForecastRepository
-WeatherCalculatorRepository -- LocationForecastRepository
-WeatherCalculatorRepository -- UserProfileDao
-WeatherCalculatorRepository -- WeatherScore
+WeatherCalculatorRepository "1" -- "1" OceanForecastRepository
+WeatherCalculatorRepository "1" -- "1" LocationForecastRepository
+WeatherCalculatorRepository "1" -- "1" UserProfileDao
+WeatherCalculatorRepository "1" -- "1" WeatherScore
 
-MapboxCiewModel -- MapboxRepository
-MapboxViewModel -- AlertPolygon
+MapboxViewModel "1" -- "1" MapboxRepository
+MapboxViewModel "1" -- "1" AlertPolygon
 
-UserLocationViewModel -- UserLocationRepository
+UserLocationViewModel "1" -- "1" UserLocationRepository
 
-LocationForecastViewModel -- WeatherCalculatorRepository
+LocationForecastViewModel "1" -- "1" WeatherCalculatorRepository
 
 
 
-OnBoardingViewModel -- OnboardingRepository
+OnboardingViewModel "1" -- "1" OnboardingRepository
 
-ProfileViewModel -- ProfileRepository
-ProfileViewModel -- RouteRepository
+ProfileViewModel "1" -- "1" ProfileRepository
+ProfileViewModel "1" -- "1" RouteRepository
 
-NavGraph -- MainViewModel
-NavGraph -- MetAlertsViewModel
-NavGraph -- OnboardingViewModel
-NavGraph -- UserLocationViewModel
-NavGraph -- LocationForecastViewModel
-NavGraph -- ProfileViewModel
-NavGraph -- HomeViewModel
-NavGraph -- InfoScreenViewModel
-NavGraph -- NetworkConnectivityViewModel
+MainActivity "1" -- "1" MainViewModel
+MainActivity "1" -- "1" MetAlertsViewModel
+MainActivity "1" -- "1" OnboardingViewModel
+MainActivity "1" -- "1" UserLocationViewModel
+MainActivity "1" -- "1" LocationForecastViewModel
+MainActivity "1" -- "1" ProfileViewModel
+MainActivity "1" -- "1" HomeViewModel
+MainActivity "1" -- "1" InfoScreenViewModel
+MainActivity "1" -- "1" NetworkConnectivityViewModel
 
-PolygonPosition -- MetAlertsViewModel
+PolygonPosition <-- MetAlertsViewModel: contains
 
-WeatherConverter -- AnnotationRepository
+WeatherConverter "1" -- "1" AnnotationRepository
 
-MainViewModel -- Dialog
+MainViewModel --> Dialog: contains
 
-AnnotationRepository -- AlertPolygon
+AnnotationRepository --> AlertPolygon
+
+MetAlertsRepository --> AlertNotificationCache: contains
+SunriseRepository --> AlertNotificationCache: contains
+RouteRepository --> AlertNotificationCache: contains
+```
