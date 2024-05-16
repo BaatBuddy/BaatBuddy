@@ -90,10 +90,8 @@ fun NavGraph(
 
 
     // Internet connectivity
-    val connectivityObserver = NetworkConnectivityObserver(context)
     val status by networkConnectivityViewModel.connectionUIState.collectAsState()
     //Log.d("InternetStatus", "$status")
-
 
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
@@ -336,6 +334,7 @@ fun NavGraph(
                             profileViewModel = profileViewModel,
                             mapboxViewModel = mapboxViewModel,
                             navController = navController,
+                            networkConnectivityViewModel = networkConnectivityViewModel
                         )
                     }
                     composable(route = Screen.ProfileScreen.route) {
