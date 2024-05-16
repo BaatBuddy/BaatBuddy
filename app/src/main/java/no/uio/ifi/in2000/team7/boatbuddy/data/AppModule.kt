@@ -15,6 +15,7 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.location_forecast.LocationForecast
 import no.uio.ifi.in2000.team7.boatbuddy.data.mapbox.MapboxRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.metalerts.MetAlertsRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.oceanforecast.OceanForecastRepository
+import no.uio.ifi.in2000.team7.boatbuddy.data.onboarding.OnboardingRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.ProfileRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.profile.RouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.data.sunrise.SunriseRepository
@@ -104,5 +105,11 @@ object AppModule {
     fun fetchUserLocationRepository(
         @ApplicationContext context: Context,
     ): UserLocationRepository = UserLocationRepository(context = context)
+
+    @Singleton
+    @Provides
+    fun fetchOnboardingRepository(
+        @ApplicationContext context: Context,
+    ): OnboardingRepository = OnboardingRepository(context = context)
 
 }

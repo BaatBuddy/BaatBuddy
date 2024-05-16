@@ -76,7 +76,7 @@ fun InfoScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Været", fontWeight = FontWeight.Bold)
+                    Text(text = "Været")
                 }
             )
         }
@@ -141,7 +141,9 @@ fun InfoScreen(
 
 
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {

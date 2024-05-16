@@ -18,13 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @Composable
 fun OnBoarding(
     onBoardingViewModel: OnBoardingViewModel,
-    mainViewModel: MainViewModel,
     profileViewModel: ProfileViewModel,
     navController: NavController,
 ) {
@@ -60,7 +58,7 @@ fun OnBoarding(
                     if (onBoardingUIState.index == 6) {
                         Button(
                             onClick = {
-                                mainViewModel.updateShowOnBoarding(false)
+                                onBoardingViewModel.updateShowOnBoarding(false)
                             },
                             modifier = Modifier
                                 .weight(1f),
@@ -113,7 +111,7 @@ fun OnBoarding(
                         onBoardingViewModel = onBoardingViewModel
                     )
 
-                    2 -> ExplainMakeRouteScreen()
+                    2 -> ExplainMakeRouteScreen(isDark = false)
                     3 -> ExplainGenerateRouteScreen()
                     4 -> ExplainWeatherScreen()
                     5 -> ExplainTrackingScreen()

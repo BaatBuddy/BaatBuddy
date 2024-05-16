@@ -1,14 +1,10 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -66,28 +62,11 @@ class MainActivity : ComponentActivity() {
                     userLocationViewModel = userLocationViewModel,
                     networkConnectivityViewModel = networkConnectivityViewModel,
                     onBoardingViewModel = onBoardingViewModel,
+                    activity = this,
                 )
             }
         }
 
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                mapboxViewModel.panToUser()
-            }
-
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) -> {
-                mainViewModel.showLocationDialog()
-            }
-
-            else -> {
-                mainViewModel.showLocationDialog()
-            }
-        }
     }
 }
 

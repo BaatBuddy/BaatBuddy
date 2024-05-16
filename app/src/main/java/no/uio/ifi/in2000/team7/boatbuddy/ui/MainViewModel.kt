@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import android.util.Log
@@ -36,8 +35,8 @@ data class MainScreenUIState(
     val showNotificationDialog: Boolean = false,
     val showNoUserDialog: Boolean = false,
 
-    val showOnBoarding: Boolean = false,
     val showDeleteRouteDialog: Boolean = false,
+    val launched: Boolean = false,
 )
 
 @HiltViewModel
@@ -51,8 +50,6 @@ class MainViewModel @Inject constructor(
     private val _mainScreenUIState = MutableStateFlow(MainScreenUIState())
     val mainScreenUIState = _mainScreenUIState.asStateFlow()
 
-    private val preferences =
-        getApplication<Application>().getSharedPreferences("APP_PREFERENCES", Context.MODE_PRIVATE)
 
     init {
 
@@ -66,14 +63,7 @@ class MainViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val isFirstStart = preferences.getBoolean("firstStart", true)
-            updateShowOnBoarding(true)
-            if (isFirstStart) {
-                with(preferences.edit()) {
-                    putBoolean("firstStart", false)
-                    apply()
-                }
-            }
+
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -86,6 +76,17 @@ class MainViewModel @Inject constructor(
 
         updateIsTracking()
 
+    }
+
+
+    fun updateLaunched(state: Boolean) {
+        viewModelScope.launch {
+            _mainScreenUIState.update {
+                it.copy(
+                    launched = state
+                )
+            }
+        }
     }
 
     // takes user to settings and depending on the API version which screen in the settings
@@ -283,29 +284,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun showLocationAndNotificationDialog() {
-        viewModelScope.launch(Dispatchers.IO) {
-            showNotificationDialog()
-            delay(1500)
-            showLocationDialog()
-        }
-    }
-
     fun updateShowDeleteRouteDialog(state: Boolean) {
         viewModelScope.launch {
             _mainScreenUIState.update {
                 it.copy(
                     showDeleteRouteDialog = state
-                )
-            }
-        }
-    }
-
-    fun updateShowOnBoarding(state: Boolean) {
-        viewModelScope.launch {
-            _mainScreenUIState.update {
-                it.copy(
-                    showOnBoarding = state
                 )
             }
         }
