@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
@@ -38,7 +41,7 @@ fun OnBoarding(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(10.dp)
+                        .height(20.dp)
                 )
                 Row(
                     modifier = Modifier
@@ -50,11 +53,16 @@ fun OnBoarding(
                                 onBoardingViewModel.goToLastScreen()
                             },
                             modifier = Modifier
-                                .weight(1f),
+                                .weight(1f)
+                                .padding(end = 4.dp)
+                                .height(40.dp),
+                            shape = RoundedCornerShape(4.dp)
+
                         ) {
                             Text(text = "Forrige")
                         }
                     }
+
                     when (onBoardingUIState.index) {
                         6 -> {
                             Button(
@@ -62,7 +70,10 @@ fun OnBoarding(
                                     onBoardingViewModel.updateShowOnBoarding(false)
                                 },
                                 modifier = Modifier
-                                    .weight(1f),
+                                    .weight(1f)
+                                    .padding(end = 4.dp)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(4.dp),
                             ) {
                                 Text(text = "Ferdig")
                             }
@@ -75,8 +86,15 @@ fun OnBoarding(
                                     onBoardingViewModel.goToNextScreen()
                                 },
                                 modifier = Modifier
-                                    .weight(1f),
-                                enabled = onBoardingUIState.isDoneCreatingUser
+                                    .weight(1f)
+                                    .padding(end = 4.dp)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                enabled = onBoardingUIState.isDoneCreatingUser,
+                                colors = ButtonDefaults.buttonColors(
+                                    disabledContainerColor = Color.Gray,
+                                    disabledContentColor = Color.LightGray
+                                )
                             ) {
                                 Text(text = "Neste")
                             }
@@ -88,7 +106,10 @@ fun OnBoarding(
                                     onBoardingViewModel.goToNextScreen()
                                 },
                                 modifier = Modifier
-                                    .weight(1f),
+                                    .weight(1f)
+                                    .padding(end = 4.dp)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(4.dp),
                             ) {
                                 Text(text = if (onBoardingUIState.index == 0) "Kom i gang!" else "Neste")
                             }

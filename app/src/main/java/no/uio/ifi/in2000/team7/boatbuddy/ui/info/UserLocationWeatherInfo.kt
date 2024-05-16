@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.Manifest
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
@@ -17,9 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.sharp.ArrowBack
-import androidx.compose.material.icons.automirrored.sharp.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -65,75 +61,44 @@ fun UserLocationWeatherInfo(
                 .verticalScroll(rememberScrollState())
         ) {
             if (locationForecastUIState.weekdayForecastUser != null) {
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
-                                contentDescription = "beste dager retning",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "Beste dager",
-                                color = MaterialTheme.colorScheme.primary
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                ) {
+
+                    locationForecastUIState.weekdayForecastUser?.days?.let {
+                        it.toList().sortedBy { pair ->
+                            pair.second.date
+                        }.forEach { tld ->
+                            WeatherCard(
+                                dayForecast = tld.second,
+                                selectedDay = locationForecastUIState.selectedDayUser,
+                                changeDay = {
+                                    locationForecastViewModel.updateSelectedDayUser(
+                                        tld.second
+                                    )
+                                },
                             )
 
-                        }
-                        Row {
-                            Text(
-                                text = "Dårligste dager",
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
-                                contentDescription = "dårligste dager retning",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
                         }
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                    ) {
-
-                        locationForecastUIState.weekdayForecastUser?.days?.let {
-                            it.toList().sortedBy { pair ->
-                                pair.second.date
-                            }.forEach { tld ->
-                                WeatherCard(
-                                    dayForecast = tld.second,
-                                    selectedDay = locationForecastUIState.selectedDayUser,
-                                    changeDay = {
-                                        locationForecastViewModel.updateSelectedDayUser(
-                                            tld.second
-                                        )
-                                    },
-                                )
-
-                            }
-                        }
-                    }
-                }
-                locationForecastUIState.selectedDayUser?.let {
-                    WeatherDropDownCard(
-                        dayForecast = it,
-                        isWeather = true
-                    )
-                }
-                locationForecastUIState.selectedDayUser?.let {
-                    WeatherDropDownCard(
-                        dayForecast = it,
-                        isWeather = false
-                    )
                 }
             }
+            locationForecastUIState.selectedDayUser?.let {
+                WeatherDropDownCard(
+                    dayForecast = it,
+                    isWeather = true
+                )
+            }
+            locationForecastUIState.selectedDayUser?.let {
+                WeatherDropDownCard(
+                    dayForecast = it,
+                    isWeather = false
+                )
+            }
+
         }
     } else {
         Scaffold { paddingValue ->
@@ -153,7 +118,7 @@ fun UserLocationWeatherInfo(
                             painter = painterResource(id = R.drawable.baseline_location_off_24),
                             contentDescription = "Location Icon",
                             modifier = Modifier.size(120.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -162,7 +127,9 @@ fun UserLocationWeatherInfo(
                             text = "Vi trenger din posisjon",
                             style = MaterialTheme.typography.headlineSmall,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -171,7 +138,9 @@ fun UserLocationWeatherInfo(
                             text = "For å kunne vise værforholdene i ditt område, trenger vi din posisjon. \n Trykk på knappen nedenfor for å dele posisjon.",
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
                         )
 
                         Spacer(modifier = Modifier.height(25.dp))
@@ -179,7 +148,6 @@ fun UserLocationWeatherInfo(
                         Button(
                             onClick = {
                                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                                Log.d("UserLocation", "$userLocationUIState.userLocation")
                             }
                         ) {
                             Text(text = "Del posisjon")
@@ -189,5 +157,6 @@ fun UserLocationWeatherInfo(
             }
         }
     }
+
 
 }

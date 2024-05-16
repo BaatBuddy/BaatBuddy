@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.route
 
-import android.util.Log
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -37,7 +36,6 @@ fun SaveRouteButton(
                 navController.navigate("saveroute")
                 mainViewModel.hideBottomBar()
             } else {
-                Log.d("SwipeUpContent", "Ingen bruker lagret")
                 mainViewModel.showNoUserDialog()
             }
         },

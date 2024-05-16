@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -122,7 +121,6 @@ fun NavGraph(
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     mapboxViewModel.panToUser()
-                    Log.i("ASDASD", "first")
 
                 }
 
@@ -130,12 +128,10 @@ fun NavGraph(
                     activity as Activity,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) -> {
-                    Log.i("ASDASD", "thing")
                     mainViewModel.showLocationDialog()
                 }
 
                 else -> {
-                    Log.i("ASDASD", "Else")
 
                     mainViewModel.showLocationDialog()
                 }
@@ -179,6 +175,7 @@ fun NavGraph(
         val settingsActivityResultLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { _ ->
+            mainViewModel.showNotificationDialog()
         }
 
         // Show the dialog if required
@@ -357,7 +354,7 @@ fun NavGraph(
                             locationForecastViewModel = locationForecastViewModel,
                             networkConnectivityViewModel = networkConnectivityViewModel
 
-                            )
+                        )
                     }
                     composable(route = "saveroute") {
                         SaveRouteScreen(

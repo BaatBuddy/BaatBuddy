@@ -86,12 +86,6 @@ fun RouteInfoScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = route.boatname,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Text(
                         text = route.routename,
                         style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -102,9 +96,15 @@ fun RouteInfoScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Text(
+                        text = route.boatname,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
                         text = "${route.start} - ${route.finish}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     AsyncImage(

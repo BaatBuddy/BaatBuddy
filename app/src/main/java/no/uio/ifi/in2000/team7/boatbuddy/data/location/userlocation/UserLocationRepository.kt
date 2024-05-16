@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Looper
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,7 +23,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class UserLocationRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private lateinit var locationRequest: LocationRequest
@@ -56,7 +55,8 @@ class UserLocationRepository @Inject constructor(
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) -> {
+            ),
+            -> {
                 locationRequest = LocationRequest.Builder(5000)
                     .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                     .setMinUpdateIntervalMillis(1000)
@@ -66,8 +66,8 @@ class UserLocationRepository @Inject constructor(
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) -> {
-                Log.i("ASDASD", "noe")
+            ),
+            -> {
                 locationRequest = LocationRequest.Builder(5000)
                     .setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
                     .setMinUpdateIntervalMillis(1000)
@@ -106,10 +106,8 @@ class UserLocationRepository @Inject constructor(
             override fun onLocationAvailability(p0: LocationAvailability) {
                 super.onLocationAvailability(p0)
                 if (!p0.isLocationAvailable) {
-                    Log.i("ASDASD", " FIKK IKKE TILGANG")
                     return
                 }
-                Log.i("ASDASD", " FIKK TILGANG")
             }
         }
     }

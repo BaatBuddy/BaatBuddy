@@ -138,8 +138,8 @@ fun RouteWeatherInfo(
                 ) {
 
                     locationForecastUIState.weekdayForecastRoute?.days?.let {
-                        it.toList().sortedBy { pair ->
-                            pair.second.date
+                        it.toList().sortedByDescending { pair ->
+                            pair.second.dayScore?.score
                         }.forEach { tld ->
                             WeatherCard(
                                 dayForecast = tld.second,
