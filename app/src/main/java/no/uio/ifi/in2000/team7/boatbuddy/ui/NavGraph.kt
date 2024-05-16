@@ -195,6 +195,7 @@ fun NavGraph(
         val settingsActivityResultLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { _ ->
+            mainViewModel.showNotificationDialog()
         }
 
         // Show the dialog if required
