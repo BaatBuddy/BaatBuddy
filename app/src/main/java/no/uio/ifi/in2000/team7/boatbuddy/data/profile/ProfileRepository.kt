@@ -15,6 +15,7 @@ class ProfileRepository @Inject constructor(
     private val boatDao: BoatProfileDao,
     private val context: Context,
 ) {
+    // adds a user to database
     suspend fun addUser(
         username: String,
         name: String,
@@ -44,6 +45,7 @@ class ProfileRepository @Inject constructor(
         )
     }
 
+    // adds a boat to database
     suspend fun addBoat(
         username: String,
         boatname: String,
@@ -64,6 +66,7 @@ class ProfileRepository @Inject constructor(
         )
     }
 
+    // change value in case user is outside of app
     fun startTrackingUser() {
         val username = getSelectedUser()?.username
         if (username != null) {
@@ -83,6 +86,7 @@ class ProfileRepository @Inject constructor(
         }
     }
 
+    // select a new user (change isSelected value)
     fun selectUser(username: String) {
         userDao.selectUser(username = username)
     }
@@ -116,6 +120,7 @@ class ProfileRepository @Inject constructor(
         boatDao.unselectBoatUsername(username = username)
     }
 
+    // changes weather preferences
     fun replaceWeatherPreference(weatherPreferences: WeatherPreferences) {
         userDao.replaceWeatherPreferences(weatherPreferences)
     }

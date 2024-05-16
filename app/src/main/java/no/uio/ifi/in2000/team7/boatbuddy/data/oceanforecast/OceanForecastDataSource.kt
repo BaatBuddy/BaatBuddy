@@ -13,6 +13,7 @@ class OceanForecastDataSource {
     suspend fun getOceanForecastData(lat: String, lon: String): OceanForecastData? {
 
         return try {
+            //construct URL
             var path = "weatherapi/oceanforecast/2.0/complete"
             if (lat.isNotBlank() && lon.isNotBlank()) {
                 path += "?lat=%s&lon=%s".format(lat, lon)
@@ -26,6 +27,7 @@ class OceanForecastDataSource {
 
             val properties = data.properties
 
+            // transform data to more usable data
             OceanForecastData(
                 lat = data.geometry.coordinates[1],
                 lon = data.geometry.coordinates[0],

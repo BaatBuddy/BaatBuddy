@@ -31,6 +31,7 @@ import androidx.work.WorkManager
 import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
+// dialog for if user wants to stop tracking
 @Composable
 fun StopTrackingDialog(
     navController: NavController,
@@ -83,6 +84,7 @@ fun StopTrackingDialog(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    // user wants to continue
                     Button(
                         onClick = {
                             mainViewModel.hideDialog()
@@ -107,6 +109,7 @@ fun StopTrackingDialog(
                             fontWeight = FontWeight.Bold
                         )
                     }
+                    // user is potentially finished, navigate to add route
                     Button(
                         onClick = {
                             mainViewModel.hideBottomBar()

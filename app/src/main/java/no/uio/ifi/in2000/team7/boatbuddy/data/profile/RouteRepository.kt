@@ -23,12 +23,12 @@ class RouteRepository @Inject constructor(
     @ApplicationContext val context: Context,
     private val mapRepo: MapboxRepository,
 ) {
-
-
+    // get the biggest id in database for selected user
     private suspend fun getLastIDUsername(username: String, boatname: String): Int? {
         return routeDao.getLastIDUsernameBoat(username = username, boatname = boatname)
     }
 
+    // add route to user
     suspend fun addRouteUsername(
         username: String,
         boatname: String,
@@ -55,6 +55,7 @@ class RouteRepository @Inject constructor(
         }
     }
 
+    // gets all routes for a selected user
     suspend fun getAllRoutesUsername(username: String): List<RouteMap> {
 
         return routeDao.getAllRoutesUsername(username = username).map {
@@ -78,6 +79,7 @@ class RouteRepository @Inject constructor(
         finishTime = sdf.format(Date())
     }
 
+    // temp route for display of possibly about to be saved routes
     suspend fun getTemporaryRouteView(points: List<Point>?): String {
         return mapRepo.generateMapURI(points = points ?: AlertNotificationCache.points)
     }

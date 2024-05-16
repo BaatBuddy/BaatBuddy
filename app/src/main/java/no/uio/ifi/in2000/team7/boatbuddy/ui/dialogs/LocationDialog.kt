@@ -5,6 +5,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
+// dialog for asking user location permission
 @Composable
 fun LocationDialog(launchRequest: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(

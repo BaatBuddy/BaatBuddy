@@ -7,9 +7,10 @@ interface OceanForecastRepo {
 }
 
 class OceanForecastRepository(
-    private val dataSource: OceanForecastDataSource = OceanForecastDataSource()
+    private val dataSource: OceanForecastDataSource = OceanForecastDataSource(),
 ) : OceanForecastRepo {
 
+    // fetch ocean data
     override suspend fun getOceanForecastData(
         lat: String,
         lon: String,

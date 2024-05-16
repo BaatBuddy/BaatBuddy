@@ -7,7 +7,7 @@ object PolygonPosition {
     fun checkUserLocationAlertAreas(
         lon: Double,
         lat: Double,
-        featureData: List<FeatureData>
+        featureData: List<FeatureData>,
     ): List<FeatureData> {
         return featureData.filter { fd ->
             fd.affectedArea.any { area ->
@@ -19,10 +19,11 @@ object PolygonPosition {
     }
 
     // http://www.philliplemons.com/posts/ray-casting-algorithm#:~:text=The%20algorithm%20starts%20with%20P,as%20seen%20in%20Figure%202 + gpt
+    // raycasting algorithm that checks if a point is inside a polygon
     fun checkUserLocationPolygon(
         points: List<List<Double>>,
         lon: Double,
-        lat: Double
+        lat: Double,
     ): Boolean {
 
         if (points.size < 3) return false // Not a polygon

@@ -19,6 +19,7 @@ class UpdateDataWorker @AssistedInject constructor(
     private val userLocationRepository: UserLocationRepository,
 ) : CoroutineWorker(appContext, params) {
 
+    // fetch new data with worker
     override suspend fun doWork(): Result {
         val userLocation = userLocationRepository.fetchUserLocation()
         if (userLocation != null) {

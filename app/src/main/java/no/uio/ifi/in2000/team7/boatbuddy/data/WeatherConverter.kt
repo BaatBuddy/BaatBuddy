@@ -9,13 +9,14 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 
+// helping object for formatting and finding icons from Met/Yr
 object WeatherConverter {
     // fetches drawable from a english alert event
     @SuppressLint("DiscouragedApi")
     fun convertAlertResId(
         event: String,
         riskMatrixColor: String,
-        context: Context
+        context: Context,
     ): Int {
 
         val iconName = when (event) {
@@ -68,7 +69,7 @@ object WeatherConverter {
     @SuppressLint("DiscouragedApi")
     fun convertWeatherResId(
         symbolCode: String,
-        context: Context
+        context: Context,
     ): Int {
         return context.resources.getIdentifier(symbolCode, "drawable", context.packageName)
     }

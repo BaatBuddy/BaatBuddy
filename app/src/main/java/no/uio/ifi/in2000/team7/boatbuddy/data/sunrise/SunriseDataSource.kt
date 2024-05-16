@@ -11,13 +11,13 @@ class SunriseDataSource {
 
     suspend fun getSunriseData(lat: String, lon: String, date: String): SunriseData? {
 
+        // args-order -> lat , lon , date ("YYYY-MM-DD")
         var url: String = "weatherapi/sunrise/3.0/sun?lat=%s&lon=%s".format(lat, lon)
         if (date.isNotBlank()) {
             url += "&date=%s&offset=+01:00".format(date)
         }
 
         return try {
-            // args-order -> lat , lon , date ("YYYY-MM-DD")
             val results = client.get(url)
 
             // checks if the api-call is valid
@@ -27,6 +27,7 @@ class SunriseDataSource {
 
             val properties = data.properties
 
+            // transform data
             SunriseData(
                 lon = data.geometry.coordinates[0],
                 lat = data.geometry.coordinates[1],

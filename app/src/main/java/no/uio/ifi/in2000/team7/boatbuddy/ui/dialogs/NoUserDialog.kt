@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 
+// dialog for when user doesn't have a selected profile
 @Composable
 fun NoUserDialog(
     onDismissRequest: () -> Unit,
