@@ -20,7 +20,7 @@ sequenceDiagram
 
     User ->> BåtBuddy: opens app
     
-    BåtBuddy ->> Met API: sends get request to MET
+    BåtBuddy ->> MET API: sends get request to MET
     MET API -->> BåtBuddy: returns 400 Error
 
     BåtBuddy ->> User: displays no internett access snackbar

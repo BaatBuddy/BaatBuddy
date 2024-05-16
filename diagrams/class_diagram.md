@@ -1,9 +1,75 @@
-test
+
 ```mermaid
 classDiagram
 
-AutorouteDataSource -- AutorouteRepository
+AutorouteDataSource -- AutorouteData
+AutorouteData -- AutorouteRepository
 AutorouteRepository -- BoatProfileDao
+
+LocationForecastDataSource -- LocationForecastData 
+LocationForecastData -- LocationForecastRepository
+LocationForecastDataSource -- APIClient
+
+OceanForecastDataSource -- OceanForecastData
+OceanForecastData -- OceanForecastRepository
+OceanForecastDataSource -- APIClient
+
+SunriseDataSource -- SunriseData
+SunriseData -- SunriseRepository
+SunriseDataSource -- APIClient
+
+MetAlertsDataSource -- MetAlertsData
+MetAlertsData -- MetAlertsRepository
+MetAlertsDataSource -- APIClient
+MetAlertsViewModel -- MetAlertsRepository 
+
+MapboxRepository -- AnnotationRepository
+MapboxRepository -- AutorouteRepository
+
+ProfileRepository -- UserProfileDao
+ProfileRepository -- BoatProfileDao
+
+RouteRepository -- RouteDao
+RouteRepository -- MapboxRepository
+
+WeatherCalculatorRepository -- OceanForecastRepository
+WeatherCalculatorRepository -- LocationForecastRepository
+WeatherCalculatorRepository -- UserProfileDao
+WeatherCalculatorRepository -- WeatherScore
+
+MapboxCiewModel -- MapboxRepository
+MapboxViewModel -- AlertPolygon
+
+UserLocationViewModel -- UserLocationRepository
+
+LocationForecastViewModel -- WeatherCalculatorRepository
+
+
+
+OnBoardingViewModel -- OnboardingRepository
+
+ProfileViewModel -- ProfileRepository
+ProfileViewModel -- RouteRepository
+
+NavGraph -- MainViewModel
+NavGraph -- MetAlertsViewModel
+NavGraph -- OnBoardingViewModel
+NavGraph -- UserLocationViewModel
+NavGraph -- LocationForecastViewModel
+NavGraph -- ProfileViewModel
+NavGraph -- HomeViewModel
+NavGraph -- InfoScreenViewModel
+NavGraph -- NetworkConnectivityViewModel
+
+PolygonPosition -- MetAlertsViewModel
+
+WeatherConverter -- AnnotationRepository
+
+MainViewModel -- Dialog
+
+AnnotationRepository -- AlertPolygon
+
+
 
 
 
@@ -83,7 +149,7 @@ class AnnotationRepository {
     redoClick()
 }
 
-class MpaboxRepository {
+class MapboxRepository {
     autorouteRepository~AutorouteRepository~
     annotationRepository~AnnotationRepository~
     mapView~MapView~
@@ -253,34 +319,10 @@ class LocationForecastData {
     timeseries~List~TimeLocationData~~
 }
 
-class LocationForecastAPI {
-    geometry~Geometry~
-    properties~Properties~
-    type: String
-}
-
-class AlertPolygons {
-    polygonAnnotation~PolygonAnnotation~
-    featureData~FeatureData~
-}
-
 class MetAlertsData {
     lang~String~
     lastChange~String~
     features~List~FeatureData~~
-}
-
-class MetAlertsAPI {
-    features~List~Feature~~
-    lang~String~
-    lastChange~String~
-    type~String~
-}
-
-class OceanForecastAPI {
-    geometry~Geometry~
-    properties~Properties~
-    type~String~
 }
 
 class OceanForecastData {
@@ -291,53 +333,6 @@ class OceanForecastData {
 
     timeseries~List~TimeOceanData~~
 
-}
-
-class WeatherPreferences {
-    waveHeight~Double~
-    windSpeed~Double~
-    airTemperature~Double~
-    cloudAreaFraction~Double~
-    waterTemperature~Double~
-    relativeHumidity~Double~
-    precipitationAmount~Double~
-    fogAreaFraction~Double~
-}
-
-class TimeWeatherData {
-    lat~Double~
-    lon~Double~
-    time~String~
-    waveHeight~Double~
-    waterTemperature~Double~
-    waterDirection~Double~
-    windSpeed~Double~
-    windSpeedOfGust~Double~
-    airTemperature~Double~
-    cloudAreaFraction~Double~
-    fogAreaFraction~Double~
-    relativeHumidity~Double~
-    precipitationAmount~Double~
-    symbolCode~String~
-}
-
-class DateScore {
-    date~String~
-    score~Double~
-}
-
-class RouteMap {
-    route~Route~
-    mapURL~String~
-}
-
-class SunriseAPI {
-    copyright~String~
-    geometry~Geometry~
-    licenseURL~String~
-    properties~Properties~
-    type~String~
-    when~When~
 }
 
 class SunriseData {
@@ -354,12 +349,6 @@ class SunriseData {
     solarmidnightTime~String
     solarmidnightElevation~Double~
     solarmidnightVisible~Boolean~
-}
-
-class APIStatus {
-    Success~APIStatus~
-    Loading~APIStatus~
-    Failed~APIStatus~
 }
 
 class HomeViewModel {
