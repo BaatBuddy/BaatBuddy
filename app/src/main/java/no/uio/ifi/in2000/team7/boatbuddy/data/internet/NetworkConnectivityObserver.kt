@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.data.internet
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -9,15 +9,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
 import javax.inject.Inject
 
 class NetworkConnectivityObserver @Inject constructor(
     @ApplicationContext
     private val context: Context
 ) {
-    enum class Status {
-        NoStatus, Available, Unavailable, Losing, Lost
-    }
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -28,22 +26,22 @@ class NetworkConnectivityObserver @Inject constructor(
 
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    launch { send(Status.Available) }
+                    launch { send(Status.AVAILABLE) }
                 }
 
                 override fun onLosing(network: Network, maxMsToLive: Int) {
                     super.onLosing(network, maxMsToLive)
-                    launch { send(Status.Losing) }
+                    launch { send(Status.LOSING) }
                 }
 
                 override fun onLost(network: Network) {
                     super.onLost(network)
-                    launch { send(Status.Lost) }
+                    launch { send(Status.LOST) }
                 }
 
                 override fun onUnavailable() {
                     super.onUnavailable()
-                    launch { send(Status.Unavailable) }
+                    launch { send(Status.UNAVAILABLE) }
                 }
 
             }

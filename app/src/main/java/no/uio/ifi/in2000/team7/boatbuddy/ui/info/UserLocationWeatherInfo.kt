@@ -64,83 +64,79 @@ fun UserLocationWeatherInfo(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            if (userLocationUIState.userLocation != null) {
-                if (locationForecastUIState.weekdayForecastUser != null) {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp)
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
-                                    contentDescription = "beste dager retning",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    text = "Beste dager",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+            if (locationForecastUIState.weekdayForecastUser != null) {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Sharp.ArrowBack,
+                                contentDescription = "beste dager retning",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "Beste dager",
+                                color = MaterialTheme.colorScheme.primary
+                            )
 
-                            }
-                            Row {
-                                Text(
-                                    text = "Dårligste dager",
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
-                                    contentDescription = "dårligste dager retning",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
                         }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .horizontalScroll(rememberScrollState())
-                        ) {
-
-                            locationForecastUIState.weekdayForecastUser?.days?.let {
-                                it.toList().sortedBy { pair ->
-                                    pair.second.date
-                                }.forEach { tld ->
-                                    WeatherCard(
-                                        dayForecast = tld.second,
-                                        selectedDay = locationForecastUIState.selectedDayUser,
-                                        changeDay = {
-                                            locationForecastViewModel.updateSelectedDayUser(
-                                                tld.second
-                                            )
-                                        },
-                                    )
-
-                                }
-                            }
+                        Row {
+                            Text(
+                                text = "Dårligste dager",
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Sharp.ArrowForward,
+                                contentDescription = "dårligste dager retning",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
-                    locationForecastUIState.selectedDayUser?.let {
-                        WeatherDropDownCard(
-                            dayForecast = it,
-                            isWeather = true
-                        )
-                    }
-                    locationForecastUIState.selectedDayUser?.let {
-                        WeatherDropDownCard(
-                            dayForecast = it,
-                            isWeather = false
-                        )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                    ) {
+
+                        locationForecastUIState.weekdayForecastUser?.days?.let {
+                            it.toList().sortedBy { pair ->
+                                pair.second.date
+                            }.forEach { tld ->
+                                WeatherCard(
+                                    dayForecast = tld.second,
+                                    selectedDay = locationForecastUIState.selectedDayUser,
+                                    changeDay = {
+                                        locationForecastViewModel.updateSelectedDayUser(
+                                            tld.second
+                                        )
+                                    },
+                                )
+
+                            }
+                        }
                     }
                 }
-
+                locationForecastUIState.selectedDayUser?.let {
+                    WeatherDropDownCard(
+                        dayForecast = it,
+                        isWeather = true
+                    )
+                }
+                locationForecastUIState.selectedDayUser?.let {
+                    WeatherDropDownCard(
+                        dayForecast = it,
+                        isWeather = false
+                    )
+                }
             }
         }
     } else {
-        Scaffold(
-        ) { paddingValue ->
+        Scaffold { paddingValue ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()

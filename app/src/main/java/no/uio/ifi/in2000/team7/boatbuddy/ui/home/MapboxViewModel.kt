@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.espresso.base.MainThread
@@ -53,33 +52,15 @@ class MapboxViewModel @Inject constructor(
 
     private var initialized = false
 
-    /*private val _undoClick = MutableLiveData(false)
-    val undoClick: LiveData<Boolean> = _undoClick
-
-    private val _redoClick = MutableLiveData(false)
-    val redoClick: LiveData<Boolean> = _redoClick*/
-
     @MainThread
     fun initialize(context: Context, cameraOptions: CameraOptions) {
         if (initialized) return
         initialized = true
         createMap(context = context, cameraOptions = cameraOptions)
-        observeMapInitialization()
-        Log.d("InitializeCall", "initialize map")
         panToUser()
     }
 
-    private fun observeMapInitialization() {
-        viewModelScope.launch {
-            mapboxRepository.isMapInitialized.collect { isInitialized ->
-                Log.d("LoadMap", "Map initialized: $isInitialized")
-            }
-        }
-    }
-
     private fun createMap(context: Context, cameraOptions: CameraOptions) {
-        //delay(5000L) // Lose internet access here
-
 
         val mapView =
             mapboxRepository.createMap(

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.ui.Screen
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.Screen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.scoreToEmoji

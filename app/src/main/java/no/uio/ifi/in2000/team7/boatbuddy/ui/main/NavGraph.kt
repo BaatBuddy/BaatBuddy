@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.ui.main
 
 import android.Manifest
 import android.app.Activity
@@ -39,10 +39,10 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
+import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.DeleteRouteDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.LocationDialog
 import no.uio.ifi.in2000.team7.boatbuddy.ui.dialogs.NoUserDialog
@@ -70,7 +70,6 @@ import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteInfoScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.RouteScreen
 import no.uio.ifi.in2000.team7.boatbuddy.ui.route.SaveRouteScreen
 
-
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -88,10 +87,8 @@ fun NavGraph(
 ) {
     val context = LocalContext.current
 
-
     // Internet connectivity
     val status by networkConnectivityViewModel.connectionUIState.collectAsState()
-    //Log.d("InternetStatus", "$status")
 
     val mainScreenUIState by mainViewModel.mainScreenUIState.collectAsState()
     val routeUIState by profileViewModel.routeScreenUIState.collectAsState()
@@ -99,7 +96,7 @@ fun NavGraph(
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-
+    val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
     if (onBoardingUIState.showOnBoarding) {
         OnBoarding(
@@ -109,17 +106,14 @@ fun NavGraph(
         )
     } else {
 
-        mapboxViewModel.initialize(
-            context = context,
-            cameraOptions = CameraOptions.Builder()
-                .center(Point.fromLngLat(9.0, 61.5))
-                .zoom(5.0)
-                .bearing(0.0)
-                .pitch(0.0)
-                .build()
+        // Observe Internet connection, initialize map, show snackbars
+        InitializeMap(status = status, mapboxViewModel = mapboxViewModel, context = context)
+        ShowSnackbars(
+            scope = scope,
+            snackbarHostState = snackbarHostState,
+            status = status,
+            mapboxUIState = mapboxUIState
         )
-
-        val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()
 
         if (!mainScreenUIState.launched) {
             when {
@@ -152,7 +146,7 @@ fun NavGraph(
 
         // If user does not have internet access, show snackbar
         LaunchedEffect(status) {
-            if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
+            if (status == Status.LOST || status == Status.UNAVAILABLE || status == Status.LOSING) {
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         message = "Du er ikke koblet til Internett",
@@ -169,7 +163,7 @@ fun NavGraph(
             ) {
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        message = if (status == NetworkConnectivityObserver.Status.Available) {
+                        message = if (status == Status.AVAILABLE) {
                             "Ruten er for lang eller inneholder punkter på land"
                         } else {
                             "Kan ikke generere rute uten tilgang til Internett"
@@ -180,14 +174,6 @@ fun NavGraph(
             }
 
         }
-        // Observe Internet connection, initialize map, show snackbars
-        InitializeMap(status = status, mapboxViewModel = mapboxViewModel, context = context)
-        ShowSnackbars(
-            scope = scope,
-            snackbarHostState = snackbarHostState,
-            status = status,
-            mapboxUIState = mapboxUIState
-        )
 
         // notification setup
         val settingsActivityResultLauncher = rememberLauncherForActivityResult(
@@ -400,6 +386,7 @@ fun NavGraph(
                     StartTrackingDialog(
                         navController = navController,
                         mainViewModel = mainViewModel,
+                        userLocationViewModel = userLocationViewModel
                     )
                 } else if (mainScreenUIState.showDialog == ShowFinishDialog) {
                     StopTrackingDialog(
@@ -417,12 +404,12 @@ fun NavGraph(
 
 @Composable
 fun InitializeMap(
-    status: NetworkConnectivityObserver.Status,
+    status: Status,
     mapboxViewModel: MapboxViewModel,
     context: Context,
 ) {
 
-    if (status == NetworkConnectivityObserver.Status.Available) {
+    if (status == Status.AVAILABLE) {
         mapboxViewModel.initialize(
             context = context,
             cameraOptions = CameraOptions.Builder()
@@ -440,13 +427,13 @@ fun InitializeMap(
 fun ShowSnackbars(
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
-    status: NetworkConnectivityObserver.Status,
+    status: Status,
     mapboxUIState: MapboxUIState,
 ) {
 
     // If user does not have internet access, show snackbar
     LaunchedEffect(status) {
-        if (status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Losing) {
+        if (status == Status.UNAVAILABLE || status == Status.LOST || status == Status.LOSING) {
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = "Du er ikke koblet til Internett",
@@ -463,7 +450,7 @@ fun ShowSnackbars(
         ) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = if (status == NetworkConnectivityObserver.Status.Available) {
+                    message = if (status == Status.AVAILABLE) {
                         "Ruten er for lang eller inneholder punkter på land"
                     } else {
                         "Kan ikke generere rute uten tilgang til Internett"
