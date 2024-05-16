@@ -3,7 +3,6 @@ package no.uio.ifi.in2000.team7.boatbuddy.ui.main
 import android.app.Application
 import android.content.Intent
 import android.provider.Settings
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.mapbox.geojson.Point
@@ -211,12 +210,10 @@ class MainViewModel @Inject constructor(
                     showLocationDialog = false
                 )
             }
-            Log.i("ASDASD", "IKKE UIHEI")
         }
     }
 
     fun showLocationDialog() {
-        Log.i("ASDASD", "HDBFHEWBGUWEB")
         viewModelScope.launch(Dispatchers.IO) {
             _mainScreenUIState.update {
                 it.copy(
@@ -241,6 +238,16 @@ class MainViewModel @Inject constructor(
             _mainScreenUIState.update {
                 it.copy(
                     showNoUserDialog = false
+                )
+            }
+        }
+    }
+
+    fun showNotificationDialog() {
+        viewModelScope.launch {
+            _mainScreenUIState.update {
+                it.copy(
+                    showNotificationDialog = true
                 )
             }
         }

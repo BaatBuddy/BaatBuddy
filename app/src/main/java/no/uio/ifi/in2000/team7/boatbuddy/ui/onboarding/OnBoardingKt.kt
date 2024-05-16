@@ -70,7 +70,10 @@ fun OnBoarding(
                                     onBoardingViewModel.updateShowOnBoarding(false)
                                 },
                                 modifier = Modifier
-                                    .weight(1f),
+                                    .weight(1f)
+                                    .padding(end = 4.dp)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(4.dp),
                             ) {
                                 Text(text = "Ferdig")
                             }
@@ -83,8 +86,15 @@ fun OnBoarding(
                                     onBoardingViewModel.goToNextScreen()
                                 },
                                 modifier = Modifier
-                                    .weight(1f),
-                                enabled = onBoardingUIState.isDoneCreatingUser
+                                    .weight(1f)
+                                    .padding(end = 4.dp)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                enabled = onBoardingUIState.isDoneCreatingUser,
+                                colors = ButtonDefaults.buttonColors(
+                                    disabledContainerColor = Color.Gray,
+                                    disabledContentColor = Color.LightGray
+                                )
                             ) {
                                 Text(text = "Neste")
                             }
@@ -96,7 +106,10 @@ fun OnBoarding(
                                     onBoardingViewModel.goToNextScreen()
                                 },
                                 modifier = Modifier
-                                    .weight(1f),
+                                    .weight(1f)
+                                    .padding(end = 4.dp)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(4.dp),
                             ) {
                                 Text(text = if (onBoardingUIState.index == 0) "Kom i gang!" else "Neste")
                             }

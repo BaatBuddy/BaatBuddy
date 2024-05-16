@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
 import com.mapbox.geojson.Point
@@ -131,14 +130,11 @@ class LocationService : Service() {
 
                 points.add(Point.fromLngLat(lon, lat))
 
-                Log.i("ASDASD", points.toString())
 
                 if (startTime.isBlank()) {
                     startTime = sdf.format(Date())
                 }
                 finishTime = sdf.format(Date())
-
-                Log.i("ASDASD", sunsetToday)
 
                 val updatedLocationNotification = locationNotificationBuilder
                     .setContentText("Lokasjon: (lat: $lat, lon: $lon)")
@@ -201,7 +197,7 @@ class LocationService : Service() {
         alert: FeatureData,
         enterExitMessage: String,
         pendingIntent: PendingIntent,
-        notificationManager: NotificationManager
+        notificationManager: NotificationManager,
     ) {
         val resId = convertAlertResId(alert.event, alert.riskMatrixColor, this)
         val bitmapIcon =

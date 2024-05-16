@@ -1,9 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
-import android.util.Log
-
 fun scoreToEmoji(score: Double?): String? {
-    Log.d("S2E", "$score")
     return when (score) {
         null -> null
         in Double.NEGATIVE_INFINITY..0.0, in 101.0..Double.POSITIVE_INFINITY -> throw IllegalArgumentException(

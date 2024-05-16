@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -337,8 +336,6 @@ fun checkInputsBoatProfile(
     profileViewModel: ProfileViewModel,
     navController: NavController,
 ) {
-    Log.i("ASDASD", "ASD ASD ASD A")
-
     val username = profileUIState.selectedUser?.username ?: ""
     val boatname = createUserUIState.boatname
     val boatSpeed = createUserUIState.boatSpeed

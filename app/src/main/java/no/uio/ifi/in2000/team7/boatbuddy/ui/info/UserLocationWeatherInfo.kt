@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.info
 
 import android.Manifest
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
@@ -119,7 +118,7 @@ fun UserLocationWeatherInfo(
                             painter = painterResource(id = R.drawable.baseline_location_off_24),
                             contentDescription = "Location Icon",
                             modifier = Modifier.size(120.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -128,7 +127,9 @@ fun UserLocationWeatherInfo(
                             text = "Vi trenger din posisjon",
                             style = MaterialTheme.typography.headlineSmall,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -137,7 +138,9 @@ fun UserLocationWeatherInfo(
                             text = "For å kunne vise værforholdene i ditt område, trenger vi din posisjon. \n Trykk på knappen nedenfor for å dele posisjon.",
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
                         )
 
                         Spacer(modifier = Modifier.height(25.dp))
@@ -145,7 +148,6 @@ fun UserLocationWeatherInfo(
                         Button(
                             onClick = {
                                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                                Log.d("UserLocation", "$userLocationUIState.userLocation")
                             }
                         ) {
                             Text(text = "Del posisjon")

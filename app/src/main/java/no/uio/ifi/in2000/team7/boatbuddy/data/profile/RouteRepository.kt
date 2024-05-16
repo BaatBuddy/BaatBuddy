@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.profile
 
 import android.content.Context
-import android.util.Log
 import com.mapbox.geojson.Point
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,7 @@ import javax.inject.Inject
 class RouteRepository @Inject constructor(
     private val routeDao: RouteDao,
     @ApplicationContext val context: Context,
-    private val mapRepo: MapboxRepository
+    private val mapRepo: MapboxRepository,
 ) {
 
 
@@ -60,7 +59,6 @@ class RouteRepository @Inject constructor(
 
         return routeDao.getAllRoutesUsername(username = username).map {
             withContext(Dispatchers.Main) {
-                Log.i("ASDASD", it.route.toString())
                 val mapURL = mapRepo.generateMapURI(it.route)
                 RouteMap(route = it, mapURL = mapURL)
             }

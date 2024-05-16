@@ -40,14 +40,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.R
 import no.uio.ifi.in2000.team7.boatbuddy.data.WeatherConverter.convertWeatherResId
 import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.DayForecast
-import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,13 +61,12 @@ fun InfoScreen(
     profileViewModel: ProfileViewModel,
     mapboxViewModel: MapboxViewModel,
     navController: NavController,
-    networkConnectivityViewModel: NetworkConnectivityViewModel
+    networkConnectivityViewModel: NetworkConnectivityViewModel,
 ) {
 
     val infoScreenUIState by infoScreenViewModel.infoScreenUIState.collectAsState()
     val routeScreenUIState by profileViewModel.routeScreenUIState.collectAsState()
     val profileUIState by profileViewModel.profileUIState.collectAsState()
-    //val userLocationUIState by userLocationViewModel.userLocationUIState.collectAsState()
     val status by networkConnectivityViewModel.connectionUIState.collectAsState()
 
     if (profileUIState.updateWeather) {
@@ -164,7 +163,10 @@ fun InfoScreen(
                                 text = "Du må koble til Internett for å kunne se værforholdene i ditt område.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+
                             )
                         }
                     } else {
@@ -207,7 +209,7 @@ fun InfoScreen(
                                 text = "Du må velge en rute for å kunne se værvarselet for din rute. \n Bruk funksjonen på hjemskjermen for å velge en rute.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                             )
                         }
 

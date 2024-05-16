@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.ui.profile
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -199,7 +198,6 @@ fun checkInputsUserProfile(
     invalidMap["safetyDepth"] = safetyDepth.isBlank()
     invalidMap["safetyHeight"] = safetyHeight.isBlank()
 
-    Log.i("ASDASD", invalidMap.toString())
     if (invalidMap.all { !it.value }) {
         profileViewModel.addUser(
             username = username,
