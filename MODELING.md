@@ -12,10 +12,12 @@ Mermaidkoden ligger i diagrams-mappen: <a href="https://github.uio.no/IN2000-V24
 - Use case diagram
 <img width="1194" alt="Screenshot 2024-05-16 at 18 51 54" src="https://media.github.uio.no/user/8216/files/7a614ee6-8107-402d-aff8-1015ac4edda0">
 
--Use case diagram
+- Use case diagram
+<img width="1018" alt="Screenshot 2024-05-16 at 20 25 14" src="https://media.github.uio.no/user/8216/files/4b459f1b-6fce-4399-8692-acf1cd98441f">
 
 
--Sekvensdiagram
+
+- Sekvensdiagram
 <img width="906" alt="Screenshot 2024-05-16 at 18 55 48" src="https://media.github.uio.no/user/8216/files/8807c840-0984-416a-9803-a61b8e172a2b">
 
 <img width="395" alt="Screenshot 2024-05-16 at 18 56 33" src="https://media.github.uio.no/user/8216/files/7ac77b6f-ab6a-42e4-aacf-25e0fd3b4d20">
