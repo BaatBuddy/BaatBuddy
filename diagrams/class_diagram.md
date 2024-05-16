@@ -2,6 +2,12 @@ test
 ```mermaid
 classDiagram
 
+AutorouteDataSource -- AutorouteRepository
+AutorouteRepository -- BoatProfileDao
+
+
+
+
 class AutorouteDataSource {
     getAutoRouteData(course~Point~, safetyDepth~String~, safetyHeight~String~, boatSpeed~String~) APIStatus
 }
@@ -217,10 +223,288 @@ class APIClient {
 
 class PolygonPosition {
     checkUserLocationAlertAreas(lon~Double~, lat~Double~, featureData~ListFeatureData~) List~FeatureData~
+    checkUserLocationPolygon(lon~Double~, lat~Double~, points~List~List~Double~~~) Boolean
+
 }
 
+class WeatherConverter {
+    convertAlertResId(event~String~, riskMatrixColor~String~, context~Context~) Int
+    convertLanguage(alertEvent~String~) String
+    convertWeatherResId(symbolCode~String~, context~Context~)
+    bitmapFromDrawableRes(context~Context~, resourceId~Int~) Bitmap
+    convertDrawableToBitmap(sourceDrawable~Drawable~) Bitmap
+}
+
+class AutorouteData {
+    geometry~Geometry~
+    properties~Properties~
+    wayPoints~List~Int~~
+}
+
+class Dialog {
+    ShowStartDialog~Dialog~
+    ShowFinishDialog~Dialog~
+    ShowNoDialog~Dialog~
+}
+
+class LocationForecastData {
+    lon~Double~
+    lat~Double~
+    timeseries~List~TimeLocationData~~
+}
+
+class LocationForecastAPI {
+    geometry~Geometry~
+    properties~Properties~
+    type: String
+}
+
+class AlertPolygons {
+    polygonAnnotation~PolygonAnnotation~
+    featureData~FeatureData~
+}
+
+class MetAlertsData {
+    lang~String~
+    lastChange~String~
+    features~List~FeatureData~~
+}
+
+class MetAlertsAPI {
+    features~List~Feature~~
+    lang~String~
+    lastChange~String~
+    type~String~
+}
+
+class OceanForecastAPI {
+    geometry~Geometry~
+    properties~Properties~
+    type~String~
+}
+
+class OceanForecastData {
+    lat~Double~
+    lon~Double~
+
+    updatedAt~String~
+
+    timeseries~List~TimeOceanData~~
+
+}
+
+class WeatherPreferences {
+    waveHeight~Double~
+    windSpeed~Double~
+    airTemperature~Double~
+    cloudAreaFraction~Double~
+    waterTemperature~Double~
+    relativeHumidity~Double~
+    precipitationAmount~Double~
+    fogAreaFraction~Double~
+}
+
+class TimeWeatherData {
+    lat~Double~
+    lon~Double~
+    time~String~
+    waveHeight~Double~
+    waterTemperature~Double~
+    waterDirection~Double~
+    windSpeed~Double~
+    windSpeedOfGust~Double~
+    airTemperature~Double~
+    cloudAreaFraction~Double~
+    fogAreaFraction~Double~
+    relativeHumidity~Double~
+    precipitationAmount~Double~
+    symbolCode~String~
+}
+
+class DateScore {
+    date~String~
+    score~Double~
+}
+
+class RouteMap {
+    route~Route~
+    mapURL~String~
+}
+
+class SunriseAPI {
+    copyright~String~
+    geometry~Geometry~
+    licenseURL~String~
+    properties~Properties~
+    type~String~
+    when~When~
+}
+
+class SunriseData {
+    lon~Double~
+    lat~Double~
+    interval~List~String~~
+    sunriseTime~String~
+    sunriseAzimuth~Double~
+    sunsetTime~String~
+    sunsetAzimuth~Double~
+    solarnoonTime~String
+    solarnoonElevation~Double~
+    solarnoonVisible~Boolean~
+    solarmidnightTime~String
+    solarmidnightElevation~Double~
+    solarmidnightVisible~Boolean~
+}
+
+class APIStatus {
+    Success~APIStatus~
+    Loading~APIStatus~
+    Failed~APIStatus~
+}
+
+class HomeViewModel {
+    application~Application~
+    homeScreenUIState~MutableStateFlow~HomeScreenUIState~~
+    showBottomSheet()
+    hideBottomSheet()
+    resetBottomSheet()
+    updateShowExplanationCard(state~Boolean~)
+    updateShowWeatherAlertInfoCard(featureData~FeatureData~)
+}
+
+class MapboxViewModel {
+    mapboxRepository~MapboxRepository~
+    mapboxUIState~StateFlow~MapboxUIState~~
+    initialized~Boolean~
+
+    initialize(context~Context~, cameraOptions~CameraOptions~)
+    observeMapInitialization()
+    createMap(context~Context~, cameraOptions~CameraOptions~)
+    panToUser()
+    toggleAlertVisibility()
+    toggleRouteClicking()
+    updateRoute()
+    generateRoute()
+    emptyGeneratedRoute()
+    refreshRoute()
+    undoClick()
+    redoClick()
+    updateGeneratedRoute(state~Boolean~)
+    updateIsDrawingRoute(state~Boolean~)
+}
+
+class UserLocationViewModel {
+    userLocationRepository~UserLocationRepository~
+    userLocationUIState~StateFlow~UserLocationUIState~~
+    requestLocationPermission()
+    fetchUserLocation()
+}
+
+class InfoScreenViewModel {
+    infoScreenUIState~StateFlow~InfoScreenUIState~~
+    selectTab(tabIndex~Int~)
+}
+
+class LocationForecastViewModel {
+    weatherCalculatorRepository~WeatherCalculatorRepository~
+    locationForecastUIState~StateFlow~LocationForecastUIState~~
+    routeInit~Boolean~
+    userInit~Boolean~
+    deselectWeekDayForecastRoute()
+    loadWeekdayForecastRoute(points~List~Point~~)
+    loadWeekdayForecastUser(point~Point~)
+    updateSelectedDayUser(dayForecast~DayForecast~)
+    updateSelectedDayRoute(dayForecast~DayForecast~)
+    refreshInitRoute()
+    updateScore()
+}
+
+class MetAlertsViewModel {
+    repository~MetAlertsRepository~
+    metalertsUIState~StateFlow~MetAlertsUIState~~
+    initialized~Boolean~
+    lastPos~String~
+
+    initialize(lat~String~, lon~String~)
+    loadMetalerts(lat~String~, lon~String~)
+    getAlerts(points~List~Point~~)
+}
+
+class OnboardingViewModel {
+    onboardingRepository~OnboardingRepository~
+    onboardingUIState~StateFlow~onboardingUIState~~
+    updateShowOnBoarding(state~Boolean~)
+    goToLastScreen()
+    goToNextScreen()
+    updateProgressValue()
+}
+
+class ProfileViewModel {
+    profileUIState~StateFlow~ProfileUIState~~ createUserUIState~StateFlow~CreateUserUIState~~
+    routeScreenUIState~StateFlow~RouteScreenUIState~~
+
+    selectUser(username~String~)
+    selectBoat(boatname~String~, username~String~)
+    addUser(username~String~, name~String~, boatname~String~,boatSpeed~String~,safetyDepth~String~,safetyHeight~String~)
+    updateSelectedUser()
+    updateSelectedBoat()
+    updateRoutes()
+    unselectUser()
+    getAllUsers()
+    getAllBoatsUsername()
+    addBoat(username~String~,boatname~String~,boatSpeed~String~,safetyDepth~String~,safetyHeight~String~)
+    updateCreateUsername(username~String~)
+    updateCreateName(name~String~)
+    updateBoatName(name~String~)
+    updateBoatHeight(height~String~)
+    updateBoatDepth(depth~String~)
+    updateBoatSpeed(speed~String~)
+    clearCreateProfile()
+    addRouteToProfile(username~String~,boatname~String~,routename~String~,routeDescription~String~,route~List~Point~~)
+    updateRouteName(routeName~String~)
+    updateCurrentRouteTime()
+    updateRouteDescription(routeDescription~String~)
+    updateSelectedRoute(routeMap~RouteMap~)
+    updatePickedRoute(routeMap~RouteMap~)
+    updateCurrentRoute(points~List~Point~~)
+    startSelectingBoats()
+    stopSelectingBoats()
+    updateWeatherPreference(weatherPreferences~WeatherPreferences~)
+    replaceWeatherPreference(weatherPreferences~WeatherPreferences~)
+    startUpdateWeather()
+    stopUpdateWeather()
+    deleteSelectedRoute()
 
 
+}
+
+class MainViewModel {
+    mapboxRepository~MapboxRepository~
+    profileRepository~ProfileRepository~
+    application~Application~
+    mainScreenUIState~StateFlow~MainScreenUIState~~
+
+    updateLaunched(state~Boolean~)
+    navigateToNotificationSettings()
+    updateIsTracking()
+    showStartDialog()
+    showFinishDialog()
+    hideDialog()
+    selectScreen(screenIndex~Int~)
+    startFollowUserOnMap()
+    stopFollowUserOnMap()
+    stopTrackingUser()
+    showBottomBar()
+    hideBottomBar()
+    displayRouteOnMap(points~List~Point~~)
+    hideLocationDialog()
+    showLocationDialog()
+    showNoUserDialog()
+    hideNoUserDialog()
+    hideNotificationDialog()
+    updateShowDeleteRouteDialog(state~Boolean~)
+
+}
 
 
 ```
