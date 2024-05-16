@@ -6,6 +6,8 @@ Mermaidkoden ligger i diagrams-mappen: <a href="https://github.uio.no/IN2000-V24
 
 
 - Arkitekturskisse
+![image](https://media.github.uio.no/user/8216/files/22777704-ce7b-496d-aca8-5cee6b3ed6bf)
+
 
 - Klassediagram i UML
 
