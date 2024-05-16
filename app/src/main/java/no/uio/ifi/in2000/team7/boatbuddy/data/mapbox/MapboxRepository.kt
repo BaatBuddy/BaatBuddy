@@ -32,13 +32,14 @@ import no.uio.ifi.in2000.team7.boatbuddy.data.autoroute.AutorouteRepository
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import javax.inject.Inject
 
 
-class MapboxRepository(
+class MapboxRepository @Inject constructor(
+    private val autorouteRepository: AutorouteRepository,
 ) {
 
     private lateinit var annotationRepository: AnnotationRepository
-    private val autorouteRepository = AutorouteRepository()
     private lateinit var mapView: MapView
     lateinit var context: Context
 
@@ -201,7 +202,7 @@ class MapboxRepository(
 
     // TODO changed
     suspend fun changeStyle(
-        style: String
+        style: String,
     ) {
         mapView.mapboxMap.loadStyle(style) {}
     }
@@ -211,7 +212,7 @@ class MapboxRepository(
     }
 
     fun createLinePath(
-        points: List<Point>
+        points: List<Point>,
     ) {
         annotationRepository.addLineToMap(points = points)
     }
@@ -235,10 +236,6 @@ class MapboxRepository(
     suspend fun fetchRouteData(): APIStatus {
         return autorouteRepository.getAutorouteData(
             course = annotationRepository.route.toList(),
-            // TODO needs to retrive data from the database (user profile)
-            safetyDepth = "5",
-            safetyHeight = "5",
-            boatSpeed = "5",
         )
     }
 
