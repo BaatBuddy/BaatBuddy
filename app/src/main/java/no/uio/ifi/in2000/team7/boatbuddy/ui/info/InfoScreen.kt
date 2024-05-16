@@ -332,7 +332,7 @@ fun NotificationCard( // må etterhvert hente inn posisjon
     {
         Row {
             Button(
-                onClick = onDismissRequested,
+                onClick = onDismissRequested
                 modifier = Modifier
                     .wrapContentSize(Alignment.TopEnd), // MÅ FÅ FLYTTA TIL TOPP HØYRE
                 colors = xButtonColor

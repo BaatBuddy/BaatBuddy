@@ -396,9 +396,10 @@ fun NavGraph(
                     }
                 }
                 if (mainScreenUIState.showDialog == ShowStartDialog) {
+                    // If we have location
                     StartTrackingDialog(
                         navController = navController,
-                        mainViewModel = mainViewModel
+                        mainViewModel = mainViewModel,
                     )
                 } else if (mainScreenUIState.showDialog == ShowFinishDialog) {
                     StopTrackingDialog(
