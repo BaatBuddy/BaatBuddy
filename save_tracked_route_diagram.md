@@ -1,7 +1,7 @@
 Tekstlig beskrivelse av "Været for posisjon"
 -
-Aktører: Bruker, Metrologisk institutt
-Prebetingelse: Bruker har åpnet appen før, Bruker har gitt posisjon og notifikasjons tillatelser, Bruker har internett til alle tider.
+Aktører: Bruker, Metrologisk institutt. <br>
+Prebetingelse: Bruker har åpnet appen før, Bruker har gitt posisjon og notifikasjons tillatelser, Bruker har internett til alle tider. <br>
 Postbetingelse: Bruker lagrer rute i databasen
 
 Hovedflyt: 
