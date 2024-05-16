@@ -1,3 +1,10 @@
+asdasdasd
+asd
+as
+das
+d
+asd
+asd
 
 ```mermaid
 classDiagram
@@ -53,7 +60,7 @@ ProfileViewModel -- RouteRepository
 
 NavGraph -- MainViewModel
 NavGraph -- MetAlertsViewModel
-NavGraph -- OnBoardingViewModel
+NavGraph -- OnboardingViewModel
 NavGraph -- UserLocationViewModel
 NavGraph -- LocationForecastViewModel
 NavGraph -- ProfileViewModel
