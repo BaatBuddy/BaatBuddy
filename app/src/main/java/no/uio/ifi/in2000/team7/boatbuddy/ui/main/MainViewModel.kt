@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.ui.main
 
 import android.app.Application
 import android.content.Intent

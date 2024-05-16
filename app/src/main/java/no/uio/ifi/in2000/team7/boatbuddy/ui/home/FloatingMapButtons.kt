@@ -32,7 +32,6 @@ fun FloatingMapButtons(
     homeViewModel: HomeViewModel,
     mapboxViewModel: MapboxViewModel,
     locationForecastViewModel: LocationForecastViewModel,
-    //networkConnectivityViewModel: NetworkConnectivityViewModel
 ) {
 
     val mapboxUIState by mapboxViewModel.mapboxUIState.collectAsState()

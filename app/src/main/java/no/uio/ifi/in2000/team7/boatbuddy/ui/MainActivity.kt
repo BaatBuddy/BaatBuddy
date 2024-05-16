@@ -9,13 +9,15 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.HomeViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.MapboxViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.home.UserLocationViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NavGraph
 import no.uio.ifi.in2000.team7.boatbuddy.ui.onboarding.OnBoardingViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.profile.ProfileViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.theme.BoatbuddyTheme

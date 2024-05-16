@@ -27,12 +27,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.NetworkConnectivityViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.R
+import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
 import no.uio.ifi.in2000.team7.boatbuddy.data.location.foreground_location.LocationService
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
-import no.uio.ifi.in2000.team7.boatbuddy.ui.MainViewModel
-import no.uio.ifi.in2000.team7.boatbuddy.ui.NetworkConnectivityObserver
+import no.uio.ifi.in2000.team7.boatbuddy.ui.main.MainViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.InfoScreenViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.LocationForecastViewModel
 import no.uio.ifi.in2000.team7.boatbuddy.ui.info.MetAlertsViewModel
@@ -79,7 +79,7 @@ fun HomeScreen(
     // Show map and buttons if we have internet connection, otherwise show info explaining why user needs internet access
     Scaffold(
         floatingActionButton = {
-            if (status == NetworkConnectivityObserver.Status.Available) {
+            if (status == Status.AVAILABLE) {
                 FloatingMapButtons(
                     homeViewModel = homeViewModel,
                     mapboxViewModel = mapboxViewModel,
@@ -103,7 +103,7 @@ fun HomeScreen(
                 )
             }
 
-            if (status != NetworkConnectivityObserver.Status.Available && mapboxUIState.mapView == null) {
+            if (status != Status.AVAILABLE && mapboxUIState.mapView == null) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,

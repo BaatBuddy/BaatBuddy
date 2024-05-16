@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team7.boatbuddy.ui
+package no.uio.ifi.in2000.team7.boatbuddy.ui.main
 
 import android.Manifest
 import android.app.Activity
@@ -39,7 +39,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.team7.boatbuddy.NetworkConnectivityViewModel
+import no.uio.ifi.in2000.team7.boatbuddy.model.internet.Status
 import no.uio.ifi.in2000.team7.boatbuddy.model.APIStatus
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowFinishDialog
 import no.uio.ifi.in2000.team7.boatbuddy.model.dialog.Dialog.ShowStartDialog
@@ -152,7 +152,7 @@ fun NavGraph(
 
         // If user does not have internet access, show snackbar
         LaunchedEffect(status) {
-            if (status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Losing) {
+            if (status == Status.LOST || status == Status.UNAVAILABLE || status == Status.LOSING) {
                 scope.launch {
                     snackbarHostState.showSnackbar(
                         message = "Du er ikke koblet til Internett",
@@ -169,7 +169,7 @@ fun NavGraph(
             ) {
                 scope.launch {
                     snackbarHostState.showSnackbar(
-                        message = if (status == NetworkConnectivityObserver.Status.Available) {
+                        message = if (status == Status.AVAILABLE) {
                             "Ruten er for lang eller inneholder punkter på land"
                         } else {
                             "Kan ikke generere rute uten tilgang til Internett"
@@ -417,12 +417,12 @@ fun NavGraph(
 
 @Composable
 fun InitializeMap(
-    status: NetworkConnectivityObserver.Status,
+    status: Status,
     mapboxViewModel: MapboxViewModel,
     context: Context,
 ) {
 
-    if (status == NetworkConnectivityObserver.Status.Available) {
+    if (status == Status.AVAILABLE) {
         mapboxViewModel.initialize(
             context = context,
             cameraOptions = CameraOptions.Builder()
@@ -440,13 +440,13 @@ fun InitializeMap(
 fun ShowSnackbars(
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
-    status: NetworkConnectivityObserver.Status,
+    status: Status,
     mapboxUIState: MapboxUIState,
 ) {
 
     // If user does not have internet access, show snackbar
     LaunchedEffect(status) {
-        if (status == NetworkConnectivityObserver.Status.Unavailable || status == NetworkConnectivityObserver.Status.Lost || status == NetworkConnectivityObserver.Status.Losing) {
+        if (status == Status.UNAVAILABLE || status == Status.LOST || status == Status.LOSING) {
             scope.launch {
                 snackbarHostState.showSnackbar(
                     message = "Du er ikke koblet til Internett",
@@ -463,7 +463,7 @@ fun ShowSnackbars(
         ) {
             scope.launch {
                 snackbarHostState.showSnackbar(
-                    message = if (status == NetworkConnectivityObserver.Status.Available) {
+                    message = if (status == Status.AVAILABLE) {
                         "Ruten er for lang eller inneholder punkter på land"
                     } else {
                         "Kan ikke generere rute uten tilgang til Internett"
