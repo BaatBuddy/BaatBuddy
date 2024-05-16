@@ -138,14 +138,11 @@ class MapboxRepository @Inject constructor(
                         stop {
                             literal(0.0)
                             literal(0.45)
-                            literal(0.5)
 
                         }
                         stop {
                             literal(15.0)
                             literal(0.75)
-                            literal(0.5)
-
                         }
                     }.toJson()
                 )

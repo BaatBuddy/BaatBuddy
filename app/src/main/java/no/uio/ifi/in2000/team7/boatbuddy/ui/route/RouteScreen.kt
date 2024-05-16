@@ -68,7 +68,6 @@ fun RouteScreen(
                     // Text to display when no routes saved
                     item {
 
-
                         Column(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,

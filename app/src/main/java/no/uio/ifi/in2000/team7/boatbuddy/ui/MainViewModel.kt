@@ -256,7 +256,7 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun updateShowDeleteRouteDialog(state: Boolean) {
         viewModelScope.launch {
             _mainScreenUIState.update {
