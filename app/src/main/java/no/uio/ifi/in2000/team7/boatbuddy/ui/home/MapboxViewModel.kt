@@ -114,16 +114,6 @@ class MapboxViewModel @Inject constructor(
         }
     }
 
-    private fun updateCameraOptions(cameraOptions: CameraOptions) {
-        viewModelScope.launch {
-            _mapboxUIState.update {
-                it.copy(
-                    cameraOptions = cameraOptions
-                )
-            }
-        }
-    }
-
     fun toggleRouteClicking() {
         viewModelScope.launch {
             mapboxRepository.toggleRouteClicking()

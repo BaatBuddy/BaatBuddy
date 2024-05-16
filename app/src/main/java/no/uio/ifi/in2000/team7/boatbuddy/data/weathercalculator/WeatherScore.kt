@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.team7.boatbuddy.data.weathercalculator
 
-import android.util.Log
-import androidx.compose.ui.graphics.Color
 import com.mapbox.geojson.Point
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.PathWeatherData
 import no.uio.ifi.in2000.team7.boatbuddy.model.locationforecast.WeekForecast
@@ -20,15 +18,6 @@ import kotlin.math.sqrt
 
 object WeatherScore {
 
-    fun mapValue(v: Double, A: Double, B: Double, a: Double, b: Double): Double {
-        return a + (v - A) * (b - a) / (B - A)
-    }
-
-    fun getColor(score: Double): Color {
-        val scaledValue = (mapValue(score, 0.0, 100.0, 255.0, 0.0) * 1.5).toInt().coerceIn(0, 255)
-
-        return Color(scaledValue, 255 - scaledValue, 0)
-    }
 
     fun calculateWaves(realData: Double, preferredData: Double): Double {
         // set ratio between difference of data to score -> 0.01m = 1score
@@ -41,14 +30,14 @@ object WeatherScore {
         ) * if (realData < preferredData) 1.5 else 1.0 // everything above 1,5m waves gives 0 but under 0.5 is preferred
     }
 
-    fun calculatePercentages(
+    private fun calculatePercentages(
         realData: Double,
         preferredData: Double
     ): Double { // used for cloud area and humidity
         return 100 - abs(realData - preferredData)
     }
 
-    fun calculateTemp(realData: Double, preferredData: Double): Double {
+    private fun calculateTemp(realData: Double, preferredData: Double): Double {
         val diff = abs(realData - preferredData)
         val ratio = 0.15
 
@@ -58,7 +47,7 @@ object WeatherScore {
         ) // makes sure that the data is between 0 and 100
     }
 
-    fun calculateSpeed(realData: Double, preferredData: Double): Double {
+    private fun calculateSpeed(realData: Double, preferredData: Double): Double {
         val diff = abs(realData - preferredData)
         val ratio = 0.15
 
@@ -119,18 +108,16 @@ object WeatherScore {
         weatherPreferences: WeatherPreferences
     ): Double {
         val formattedTWD = selectWeatherDataFromDay(timeWeatherData)
-        Log.i("ASDASD", formattedTWD.toString())
         return formattedTWD.sumOf {
             calculateHour(
                 it,
                 weatherPreferences,
-                // it == timeWeatherData.last()
             )
         } / formattedTWD.size
 
     }
 
-    fun selectWeatherDataFromDay(twd: List<TimeWeatherData>): List<TimeWeatherData> {
+    private fun selectWeatherDataFromDay(twd: List<TimeWeatherData>): List<TimeWeatherData> {
         if (twd.size > 4) {
             return twd.map {
                 it.copy(
@@ -197,7 +184,7 @@ object WeatherScore {
     }
 
     // calculates the amount of points based on the length in km
-    suspend fun calculateScorePath(
+    fun calculateScorePath(
         pathWeatherData: List<PathWeatherData>,
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
@@ -212,7 +199,7 @@ object WeatherScore {
         }
     }
 
-    suspend fun calculateScoreWeekDay(
+    fun calculateScoreWeekDay(
         weekForecast: WeekForecast,
         weatherPreferences: WeatherPreferences
     ): List<DateScore> {
@@ -259,7 +246,7 @@ object WeatherScore {
 
     // converts distance between two geopoints to km (gpt / website)
     fun distanceBetweenPoints(first: Point, second: Point): Double {
-        val R = 6371.0 // Radius of the Earth in kilometers
+        val r = 6371.0 // Radius of the Earth in kilometers
 
         val lat1Rad = Math.toRadians(first.latitude())
         val lon1Rad = Math.toRadians(first.longitude())
@@ -269,10 +256,10 @@ object WeatherScore {
         val dLat = lat2Rad - lat1Rad
         val dLon = lon2Rad - lon1Rad
 
-        val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2);
+        val a = sin(dLat / 2).pow(2) + cos(lat1Rad) * cos(lat2Rad) * sin(dLon / 2).pow(2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-        return R * c
+        return r * c
     }
 
     // gets total distance in a list of points
@@ -285,7 +272,7 @@ object WeatherScore {
     // function to return point based on distance from first of two points in km (gpt)
     private fun intermediatePoint(first: Point, second: Point, nKmFromFirst: Double): Point {
 
-        val radius = 6371.0 // Earth's Radius in Kms
+        val r = 6371.0 // Earth's Radius in Kms
 
         // Convert latitudes from degrees to radians
         val lat1 = first.latitude() * PI / 180.0
@@ -297,16 +284,16 @@ object WeatherScore {
         val a =
             sin((lat2 - lat1) / 2).pow(2.0) + cos(lat1) * cos(lat2) * sin((lon2 - lon1) / 2).pow(2.0)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        val totalDistance = radius * c
+        val totalDistance = r * c
 
         // Calculate the ratio
-        val A = sin((1 - (nKmFromFirst / totalDistance)) * c) / sin(c)
-        val B = sin((nKmFromFirst / totalDistance) * c) / sin(c)
+        val a1 = sin((1 - (nKmFromFirst / totalDistance)) * c) / sin(c)
+        val b1 = sin((nKmFromFirst / totalDistance) * c) / sin(c)
 
         // Calculating intermediary point's coordinates
-        val x = A * cos(lat1) * cos(lon1) + B * cos(lat2) * cos(lon2)
-        val y = A * cos(lat1) * sin(lon1) + B * cos(lat2) * sin(lon2)
-        val z = A * sin(lat1) + B * sin(lat2)
+        val x = a1 * cos(lat1) * cos(lon1) + b1 * cos(lat2) * cos(lon2)
+        val y = a1 * cos(lat1) * sin(lon1) + b1 * cos(lat2) * sin(lon2)
+        val z = a1 * sin(lat1) + b1 * sin(lat2)
 
         val lat3 = atan2(z, sqrt(x * x + y * y)) * 180 / PI
         val lon3 = atan2(y, x) * 180 / PI
