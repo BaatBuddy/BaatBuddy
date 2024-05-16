@@ -18,3 +18,94 @@ Mermaidkoden ligger i diagrams-mappen: HER
 <img width="906" alt="Screenshot 2024-05-16 at 18 55 48" src="https://media.github.uio.no/user/8216/files/8807c840-0984-416a-9803-a61b8e172a2b">
 
 <img width="395" alt="Screenshot 2024-05-16 at 18 56 33" src="https://media.github.uio.no/user/8216/files/7ac77b6f-ab6a-42e4-aacf-25e0fd3b4d20">
+
+
+```mermaid
+---
+title: create route and see weather info
+---
+sequenceDiagram
+    actor User
+    participant BåtBuddy
+    participant Skippo API
+    participant MET API
+
+    User->>BåtBuddy: opens app
+    BåtBuddy ->> BåtBuddy: checks if first time
+    BåtBuddy ->> BåtBuddy: starts onboarding squence
+    User ->> BåtBuddy: creates user
+    User ->> BåtBuddy: finishes onboarding segment
+
+    BåtBuddy ->> MET API: sends get request to MET
+    MET API -->> BåtBuddy: returns alert info
+
+    BåtBuddy->>User: requests location
+
+    User->>BåtBuddy: gives permission
+
+    User ->> BåtBuddy: clicks on "create route" button
+
+    BåtBuddy -->> BåtBuddy: enbales creating route
+
+    loop until min 2 points or max 10 points 
+        User ->> BåtBuddy: clicks on map
+        BåtBuddy -->> BåtBuddy: adds points to the list
+    end
+
+    User ->> BåtBuddy: clicks on "generate route" button
+
+    BåtBuddy ->> Skippo API: sends get request with list of points formatted  
+
+    alt invalid points
+        Skippo API -->> BåtBuddy: returns nothing
+        BåtBuddy ->> User: snackbar display saying invalid route
+
+        loop until user is satisfied or list is empty
+            User ->> BåtBuddy: clicks undo button
+            BåtBuddy -->> BåtBuddy: removes point from the list
+        end
+
+        loop until min 2 points or max 10 points 
+            User ->> BåtBuddy: clicks on map
+            BåtBuddy -->> BåtBuddy: adds points to the list
+        end
+
+        User ->> BåtBuddy: clicks on "generate route" button
+        BåtBuddy ->> Skippo API: sends get request with list of points formatted 
+    end
+
+    alt invalid points
+        Skippo API -->> BåtBuddy: returns nothing
+        BåtBuddy ->> User: snackbar display saying no internett connection
+
+        User ->> BåtBuddy: turns on internett
+
+        loop until user is satisfied or list is empty
+            User ->> BåtBuddy: clicks undo button
+            BåtBuddy -->> BåtBuddy: removes point from the list
+        end
+
+        loop until min 2 points or max 10 points 
+            User ->> BåtBuddy: clicks on map
+            BåtBuddy -->> BåtBuddy: adds points to the list
+        end
+
+        User ->> BåtBuddy: clicks on "generate route" button
+        BåtBuddy ->> Skippo API: sends get request with list of points formatted 
+    end
+
+    Skippo API -->> BåtBuddy: returns list of points representing a driveable route
+
+    BåtBuddy -->> BåtBuddy: displays new route
+    BåtBuddy -->> BåtBuddy: creates swipeup at the bottom of the screen
+
+    BåtBuddy ->> MET API: sends get request for each point in a list
+    MET API -->> BåtBuddy: returns weather data for ocean and air
+
+    BåtBuddy --> BåtBuddy: displays general weather data for each day with scores
+
+    User ->> BåtBuddy: clicks on one of the weather cards
+
+    BåtBuddy --> BåtBuddy: displays weather data in detail on a new screen with score
+ ```
+
