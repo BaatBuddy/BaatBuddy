@@ -9,6 +9,7 @@ import io.ktor.util.appendIfNameAbsent
 
 object APIClient {
     // default client for all MET API
+    // uses uio proxy
     val client = HttpClient {
         defaultRequest {
             url("https://gw-uio.intark.uh-it.no/in2000/")
