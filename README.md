@@ -45,11 +45,11 @@ Coroutine-bibliotek er et bibliotek som er nyttig for asynkron programmering. Co
 MapBox: 
 MapBox-biblioteket er et bibliotek som tilbyr kart. Det er ett av verdens ledene selskaper innen kartteknologi. Derfor er det et svært godt bibliotek som tilbyr kart og stedtjenester. Kartdataen de baserer seg på kommer fra OpenStreetMap-data (OSM), dette oppdateres kontinuerlig noe som fører til at kartdataen er veldig presis og pålitelig. En av det mest populere funksjonene som kan anvendes er såkalt "ruting". Ruting er noe som kan brukes for å planlegge en rute mellom to eller flere punkter. Noe som vi bruker som en av våres viktige funksjoner. 
 
-Marius skriver litt om disse bibliotekene:
-- Dagger Hilt
-- Room Database: 
+Dagger Hilt:
+Dagger Hilt er et bibliotek som tilatter for dependency injection i android app utvikling. Det ble brukt for å kunne implementere klasser som var avhengig av hverandre.
 
+Room Database: 
+Room Database er en SQL database som er innebygd i utvikling med android studios. Databasen lar oss lagre data på mobilen lokalt slik at vi kan holde på ruter og båter som bruker har lagt inn i appen.
 
-Worker: Er dette ett bibliotek?
-
-Er det flere biblioteker som må med?
+Worker:
+Worker er et bibliotek som kjøres i bakgrunnen selv utenfor aktiv bruk av appen. Dette tillater oss å kunne oppdatere viktig data for å unngå falsk positiv data. Farevarsler var hoved bruksområde for dette.
